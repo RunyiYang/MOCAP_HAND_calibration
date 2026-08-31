@@ -1,6 +1,21 @@
 {
   "schema": "gt_calib.no_glove_world_calibration_video.v1",
   "status": "calibration_evidence_complete",
+  "source_recording": "camera_glove_recording_20260831_155410",
+  "source_rgb": "project://thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/RGB.mp4",
+  "source_rgb_sha256": "edb666414d3527b6490c5e1e8b41913fd7de8486eda71c946d34133a44af72c0",
+  "source_intrinsics": "project://thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/camera_1_intrinsics.json",
+  "source_intrinsics_sha256": "087a1703dd2b8bed990cbbb0bd0636bbd07d5f04fad40a973338eb4785cdd1c8",
+  "calibration_reference_frame": 30,
+  "calibration_reference_identity": {
+    "status": "pixel_identical",
+    "reference_recording": "camera_glove_recording_20260831_155410",
+    "reference_rgb_frame_index": 30,
+    "archive_member": "movementcap_20260831_worldcalib/results/20260831_processed_tabletop_origin/reference_rgb.png",
+    "archive_png_sha256": "e4a31ff908a01af7474b7705077c19d58bf435d07e9eaece2f1be50b5ae83388",
+    "decoded_bgr_sha256": "cabc821fb4397117c722e1c1b2e2dad7a05e9a63590d35c49fd6b736a4d1bf9e"
+  },
+  "calibration_method": "multi_frame_visual_CS400_RGB_PnP_tabletop_origin",
   "frames": 98,
   "world_coordinate_system": {
     "origin": "CS-400 black vertex-hole axis projected vertically onto the tabletop",

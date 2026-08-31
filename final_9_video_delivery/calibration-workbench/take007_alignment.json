@@ -1,0 +1,222 @@
+{
+  "schema": "gt_calib.manual_xyz_workbench.v1",
+  "source_recording": "camera_glove_recording_20260831_161912",
+  "source_take": "Take_007",
+  "video": {
+    "path": "take007_clean_rgb.mp4",
+    "width": 960,
+    "height": 540,
+    "source_width": 1920,
+    "source_height": 1080,
+    "fps": 30.0,
+    "frame_count": 1981,
+    "sha256": "d662306b8e4ce6a5cd80af03d9cc88657e820fd486ccc771054c895a2480961e"
+  },
+  "camera": {
+    "source_width": 1920,
+    "source_height": 1080,
+    "matrix": [
+      [
+        1124.425537109375,
+        0.0,
+        955.9957275390625
+      ],
+      [
+        0.0,
+        1123.7166748046875,
+        544.3760986328125
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "distortion": [
+      0.08412469923496246,
+      -0.11113318800926208,
+      0.0006237360648810863,
+      0.000592515105381608,
+      0.046208806335926056
+    ],
+    "world_to_color": [
+      [
+        -0.9956884934783647,
+        -0.06777592310694165,
+        -0.06333125769938815,
+        -8.271017625053197
+      ],
+      [
+        0.035748470234242546,
+        0.34963263730185457,
+        -0.9362046068083951,
+        207.1312255536191
+      ],
+      [
+        0.08559480609649077,
+        -0.9344321501213195,
+        -0.345702308336164,
+        996.8445466201373
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "units": "millimetres"
+  },
+  "rear_offset_mm": 20.0,
+  "rear_offset_definition": "marker #11 plus offset along normalize(#11 - mean(#4,#6,#8,#10))",
+  "side_order": [
+    "left",
+    "right"
+  ],
+  "layers": {
+    "mocap": {
+      "path": "take007_mocap.f32",
+      "sha256": "a0e7a711d04c4e9b133fe27a4626d25d4c1dbfe8681325824f57513cbd99bc40",
+      "dtype": "float32-le",
+      "shape": [
+        1981,
+        2,
+        11,
+        3
+      ],
+      "node_semantics": [
+        "virtual_wrist",
+        "marker_1",
+        "marker_2",
+        "marker_3",
+        "marker_4",
+        "marker_5",
+        "marker_6",
+        "marker_7",
+        "marker_8",
+        "marker_9",
+        "marker_10"
+      ],
+      "chains": [
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          0,
+          6,
+          5
+        ],
+        [
+          0,
+          8,
+          7
+        ],
+        [
+          0,
+          10,
+          9
+        ]
+      ]
+    },
+    "solved": {
+      "path": "take007_solved.f32",
+      "sha256": "cff733d63e826fcd95bc40e3ff3380c338460856e8b8a14b4346427dce63d56f",
+      "dtype": "float32-le",
+      "shape": [
+        1981,
+        2,
+        20,
+        3
+      ],
+      "node_semantics": [
+        "wrist",
+        "thumb_mcp",
+        "thumb_pip",
+        "thumb_tip",
+        "index_mcp",
+        "index_pip",
+        "index_dip",
+        "index_tip",
+        "middle_mcp",
+        "middle_pip",
+        "middle_dip",
+        "middle_tip",
+        "ring_mcp",
+        "ring_pip",
+        "ring_dip",
+        "ring_tip",
+        "pinky_mcp",
+        "pinky_pip",
+        "pinky_dip",
+        "pinky_tip"
+      ],
+      "chains": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          0,
+          4,
+          5,
+          6,
+          7
+        ],
+        [
+          0,
+          8,
+          9,
+          10,
+          11
+        ],
+        [
+          0,
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          0,
+          16,
+          17,
+          18,
+          19
+        ]
+      ]
+    }
+  },
+  "default_manual_profile": {
+    "schema": "gt_calib.manual_xyz_profile.v1",
+    "source_recording": "camera_glove_recording_20260831_161912",
+    "source_take": "Take_007",
+    "coordinate_system": "mocap_world_mm",
+    "units": "mm",
+    "global_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "left_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "right_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rear_offset_mm": 20.0
+  },
+  "claim_boundary": "Manual XYZ is an operator-selected display calibration, not independent accuracy evidence."
+}

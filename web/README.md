@@ -2,11 +2,16 @@
 
 ## Final nine-video page
 
-The final handoff page is `/final-nine/`. Publish the already validated folder
-from the UV project root, then serve it with byte-range support:
+The final handoff page is `/final-nine/`. `npm run build` recreates
+`public/downloads/final-nine/` from the tracked
+`../final_9_video_delivery/`; the generated web mirror stays ignored so Git has
+only one authoritative copy. Then serve the completed tree with byte-range
+support:
 
 ```bash
-uv run gt-calib-delivery publish-web
+cd web
+npm run build
+cd ..
 uv run gt-calib-delivery serve --host 127.0.0.1 --port 8811
 ```
 
@@ -14,6 +19,22 @@ The page reads `/downloads/final-nine/manifest.json` and requires exactly nine
 matching video IDs before showing the manifest as verified. Its four paired
 groups offer synchronized play/reset controls; the ninth player is no-glove
 world-calibration evidence.
+
+The mirror step is fail-closed. Before replacing an existing published tree it
+stages a non-symlink copy and verifies all of the following:
+
+- manifest schema/status, exactly nine unique video IDs/files and orders 1–9;
+- every manifest byte count and SHA-256, including poster/metrics/frame-map,
+  camera calibration and optional calibration-workbench assets;
+- `validation.json` is a clean nine-video pass;
+- `SHA256SUMS.txt` covers every regular artifact exactly once;
+- every asset is within the Cloudflare 25 MiB per-file limit.
+
+Only after the staged copy passes does the builder swap it into
+`public/downloads/final-nine/`, retaining the previous complete tree for
+rollback during the swap. A failed validation leaves the previous publication
+unchanged. The final-page HTML/CSS/JS and all mirrored delivery files are also
+included in `data/asset-manifest.json`.
 
 ## Local review with video seeking
 
@@ -39,16 +60,38 @@ diagnostic comparison.
 ## Build
 
 ```bash
-npm install
+git lfs pull
+npm ci
 npm run build
 npm run dev
 ```
 
-The build is source-grounded: `build_site.py` reads MOCAP/video alignment,
-MOCAP-root fusion, wrist-preserved diagnostic metrics, the held-out wrist
-semantics audit and the request CSV. It copies only explicitly allow-listed
-assets, generates the site JSON/manifest, and rejects any Cloudflare asset
-above 25 MiB.
+The default build is a standard-library-only deployment assembly. It validates
+the checked-in `public/` tree against `data/asset-manifest.json`, validates and
+mirrors the tracked final delivery, then writes the aggregate asset manifest
+atomically. It does not read raw acquisition data or ignored `outputs/`, so it
+is the command for clean clones and Cloudflare Git builds. Run `git lfs pull`
+first: the final nine and the checked-in legacy review MP4s are Git LFS objects,
+and unresolved pointer files intentionally fail byte/hash validation instead
+of producing a broken website.
+
+To regenerate the older dataset-review assets from the local raw/derived
+workspace, use the explicit source build:
+
+```bash
+npm run build:source
+```
+
+`build:source` reads MOCAP/video alignment, MOCAP-root fusion,
+wrist-preserved diagnostic metrics, the held-out wrist-semantics audit and the
+request CSV. It requires the project Python dependencies plus the ignored raw
+and `outputs/` directories, copies only allow-listed assets, and then performs
+the same final-delivery mirror and Cloudflare size checks. It is not the
+Cloudflare clean-clone build command.
+
+For a manual UV-only refresh, `uv run gt-calib-delivery publish-web` remains
+available, but it is not required before `npm run build` and it refuses to
+overwrite an existing mirror.
 
 ## Deploy
 

@@ -27,7 +27,7 @@ class ReviewSiteContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         subprocess.run(
-            [sys.executable, str(WEB / "build_site.py")],
+            [sys.executable, str(WEB / "build_site.py"), "--source"],
             cwd=ROOT,
             check=True,
             capture_output=True,
@@ -120,6 +120,47 @@ class ReviewSiteContractTests(unittest.TestCase):
             max(item["bytes"] for item in manifest["assets"]),
             manifest["cloudflareMaxAssetBytes"],
         )
+
+    def test_final_delivery_mirror_and_aggregate_manifest_are_exact(self) -> None:
+        source = ROOT / "final_9_video_delivery"
+        mirror = PUBLIC / "downloads/final-nine"
+        delivery_manifest = json.loads(
+            (source / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(delivery_manifest["video_count"], 9)
+        self.assertEqual(delivery_manifest["status"], "pass")
+
+        source_files = {
+            path.relative_to(source).as_posix(): path
+            for path in source.rglob("*")
+            if path.is_file()
+        }
+        mirror_files = {
+            path.relative_to(mirror).as_posix(): path
+            for path in mirror.rglob("*")
+            if path.is_file()
+        }
+        self.assertEqual(set(source_files), set(mirror_files))
+        self.assertFalse(any(path.is_symlink() for path in mirror.rglob("*")))
+        for relative, source_path in source_files.items():
+            self.assertEqual(
+                source_path.stat().st_size,
+                mirror_files[relative].stat().st_size,
+            )
+            self.assertEqual(sha256(source_path), sha256(mirror_files[relative]))
+
+        aggregate = json.loads(
+            (PUBLIC / "data/asset-manifest.json").read_text(encoding="utf-8")
+        )
+        final_entries = {
+            item["path"].removeprefix("downloads/final-nine/"): item
+            for item in aggregate["assets"]
+            if item["path"].startswith("downloads/final-nine/")
+        }
+        self.assertEqual(set(final_entries), set(source_files))
+        for relative, item in final_entries.items():
+            self.assertEqual(item["bytes"], source_files[relative].stat().st_size)
+            self.assertEqual(item["sha256"], sha256(source_files[relative]))
 
     def test_authored_page_defaults_to_mocap_and_has_privacy_headers(self) -> None:
         html = (PUBLIC / "index.html").read_text(encoding="utf-8")

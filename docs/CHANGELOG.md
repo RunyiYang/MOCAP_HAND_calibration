@@ -2,6 +2,46 @@
 
 ## 2026-08-31
 
+### Final Take_007 revision
+
+- 最终九视频的新增动作从 `161610 / Take_006` 改为 `161912 / Take_007`；
+  video 07/08 现在各为 1981 帧，source RGB frame 1981 因无 reconstructed
+  camera/CMM anchor 明确排除。
+- 按用户提供的 marker 表和实物照片固化每手 #1..#10 tip/base 对应；左 thumb
+  tip logical track 支持 `11781 → 12503` re-ID。#11 只构造 virtual wrist，不再
+  画作第 21 joint。
+- Virtual wrist 改为 `p11 + 20 mm * normalize(p11 -
+  mean(p4,p6,p8,p10))`，实现逐帧 hand-local 后移 2 cm，避免误用固定世界轴
+  offset 或把 thumb-tip marker 当 root。
+- Take_007 solved pose 现在用全部十个照片对应做 per-frame proper Kabsch，尺度
+  按侧跨有效帧冻结；联合有效覆盖为 1367/1981（69.01%）。左/右十点
+  same-take residual median 为 21.02/22.11 mm、P95 为 52.37/54.09 mm；该
+  residual 不是 held-out 或 independent GT accuracy。
+- Camera→CMM 的 980 个 anchor absolute median/P95/max 为
+  2.238/3.988/4.577 ms，980/980 在 20 ms 内。上游总 `pass=false` 来自
+  glove-to-CMAvatar 的 48 个 timing outlier，不再被错误解释成 Take_007 的
+  camera/CMM 对齐失败。
+- Video 09 强制绑定 `camera_glove_recording_20260831_155410` 的 98 帧无手套
+  RGB、该 recording 自己的 intrinsics 与 CS-400 world calibration；不再复用
+  错误的动作 recording calibration provenance。
+- Video 09 新增 reference-image hard gate：archive `reference_rgb.png` 必须与
+  155410 RGB frame 30 decoded BGR 逐像素一致，否则 build 失败；当前状态
+  `pixel_identical`，并在 metrics 写入 `calibration_reference_identity`、PNG
+  SHA-256 `e4a31ff9…3388` 与 decoded-BGR SHA-256 `cabc821f…bf9e`。
+- 最终网页新增 Take_007 manual XYZ workbench，可叠加 clean RGB、CMM 和 solved
+  trajectory，控制 global/left/right world-mm offset，并导出
+  `gt_calib.manual_xyz_profile.v1`。`render-new` 与 `build` 新增
+  `--manual-profile` 复跑入口；人工结果明确是 display calibration。
+- Manual profile loader 现在对 `source_recording`、`source_take=Take_007`、
+  `coordinate_system=mocap_world_mm`、`units=mm` 和三个 finite XYZ vector 做
+  fail-closed 校验，并固定 `rear_offset_mm=20`。应用的 JSON 会原样复制到
+  package、写入 SHA-256 并纳入 delivery validation；默认包显式记录 `null`。
+- Take_007 正式九视频包已验证：40 files / 118.38 MiB，9/9 H.264 full decode，
+  manifest/validation pass、`failures=[]`，39 项 SHA-256，全量测试 114 项
+  通过（记录基线 `114 passed in 99.08s`）。
+- 新增 `TAKE007_CMM_ALIGNMENT_V1.md`，并修订数据集说明、日报、根 README 与
+  文档入口；旧 Take_006 选择保留为 superseded 历史，不再作为最终交付口径。
+
 ### Fixed
 
 - 修复相机—MOCAP 时间语义：旧实现把 `color_device_timestamp_us` 直接映射到约 254–255 ms 之后的 Thor poll/callback 时刻，导致 MOCAP 动作在视频上提前约 7–8 帧。

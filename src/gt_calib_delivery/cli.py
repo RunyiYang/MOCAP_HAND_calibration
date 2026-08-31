@@ -35,15 +35,25 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     subparsers.add_parser("inspect", help="Check all source inputs and system tools.")
 
     render_new = subparsers.add_parser(
-        "render-new", help="Render only Take_006 marker/pose and no-glove videos."
+        "render-new", help="Render only Take_007 marker/pose and no-glove videos."
     )
     render_new.add_argument(
         "--destination", type=Path, default=root / "outputs" / "new_capture_review"
+    )
+    render_new.add_argument(
+        "--manual-profile",
+        type=Path,
+        help="Apply a gt_calib.manual_xyz_profile.v1 exported by the browser workbench.",
     )
 
     build = subparsers.add_parser("build", help="Build the complete nine-video folder.")
     build.add_argument(
         "--destination", type=Path, default=root / "final_9_video_delivery"
+    )
+    build.add_argument(
+        "--manual-profile",
+        type=Path,
+        help="Apply a browser-exported XYZ profile to Take_007 videos 07/08.",
     )
 
     validate = subparsers.add_parser("validate", help="Validate the delivery manifest and media.")
@@ -95,11 +105,27 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0 if result["status"] == "pass" else 2
     if args.command == "render-new":
-        outputs = render_new_three(root, args.destination.expanduser().resolve())
+        outputs = render_new_three(
+            root,
+            args.destination.expanduser().resolve(),
+            manual_profile=(
+                args.manual_profile.expanduser().resolve()
+                if args.manual_profile is not None
+                else None
+            ),
+        )
         print(json.dumps({key: str(value) for key, value in outputs.items()}, indent=2))
         return 0
     if args.command == "build":
-        output = build_delivery(root, args.destination.expanduser().resolve())
+        output = build_delivery(
+            root,
+            args.destination.expanduser().resolve(),
+            manual_profile=(
+                args.manual_profile.expanduser().resolve()
+                if args.manual_profile is not None
+                else None
+            ),
+        )
         print(output)
         return 0
     if args.command == "validate":

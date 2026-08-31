@@ -3,35 +3,83 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
+import os
+from pathlib import Path, PurePosixPath
+import re
 import shutil
 import sys
+import tempfile
 import zipfile
 from datetime import datetime, timezone
-from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_ROOT = Path(__file__).resolve().parent
 PUBLIC_ROOT = WEB_ROOT / "public"
 MAX_STATIC_ASSET_BYTES = 25 * 1024 * 1024
-
-# Keep the publish naming contract tied to the renderer rather than duplicating
-# its strict-gap stem logic in the site builder.
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-from depth_mocap_overlay import DEPTH_OVERLAY_SCHEMA, depth_output_stem
-from bvh_web_export import (
-    DEFAULT_DATASET_ROOT as BVH_DATASET_ROOT,
-    DEFAULT_OUTPUT_DIR as BVH_OUTPUT_DIR,
-    EXPORT_SCHEMA as BVH_EXPORT_SCHEMA,
-    FORMAL_SEGMENTS as BVH_FORMAL_SEGMENTS,
-    MANIFEST_SCHEMA as BVH_MANIFEST_SCHEMA,
-    discover_formal_take,
-    export_segments as export_bvh_segments,
+FINAL_DELIVERY_SCHEMA = "gt_calib.final_nine_video_delivery.v1"
+FINAL_DELIVERY_SOURCE = PROJECT_ROOT / "final_9_video_delivery"
+FINAL_DELIVERY_PUBLIC = PUBLIC_ROOT / "downloads/final-nine"
+FINAL_DELIVERY_WEB_PREFIX = "downloads/final-nine/"
+ASSET_MANIFEST_RELATIVE = "data/asset-manifest.json"
+AUTHORED_PUBLIC_ASSETS = (
+    "index.html",
+    "styles.css",
+    "app.js",
+    "404.html",
+    "favicon.svg",
+    "_headers",
+    "bvh/index.html",
+    "bvh/bvh-viewer.css",
+    "bvh/bvh-viewer.js",
+    "final-nine/index.html",
+    "final-nine/styles.css",
+    "final-nine/app.js",
 )
+
+
+def _load_source_build_dependencies() -> None:
+    """Load raw-data rebuild dependencies only for ``--source`` builds.
+
+    Deployment assembly intentionally remains standard-library-only so a
+    Cloudflare Git checkout does not need UV, OpenCV, NumPy, ffmpeg, or any
+    ignored acquisition/output directory.
+    """
+
+    global DEPTH_OVERLAY_SCHEMA, depth_output_stem
+    global BVH_DATASET_ROOT, BVH_OUTPUT_DIR, BVH_EXPORT_SCHEMA
+    global BVH_FORMAL_SEGMENTS, BVH_MANIFEST_SCHEMA
+    global discover_formal_take, export_bvh_segments
+
+    if "depth_output_stem" in globals():
+        return
+    if str(PROJECT_ROOT) not in sys.path:
+        sys.path.insert(0, str(PROJECT_ROOT))
+    from depth_mocap_overlay import DEPTH_OVERLAY_SCHEMA as depth_schema
+    from depth_mocap_overlay import depth_output_stem as output_stem
+    from bvh_web_export import (
+        DEFAULT_DATASET_ROOT as dataset_root,
+        DEFAULT_OUTPUT_DIR as output_dir,
+        EXPORT_SCHEMA as export_schema,
+        FORMAL_SEGMENTS as formal_segments,
+        MANIFEST_SCHEMA as manifest_schema,
+        discover_formal_take as discover_take,
+        export_segments as export_segments,
+    )
+
+    DEPTH_OVERLAY_SCHEMA = depth_schema
+    depth_output_stem = output_stem
+    BVH_DATASET_ROOT = dataset_root
+    BVH_OUTPUT_DIR = output_dir
+    BVH_EXPORT_SCHEMA = export_schema
+    BVH_FORMAL_SEGMENTS = formal_segments
+    BVH_MANIFEST_SCHEMA = manifest_schema
+    discover_formal_take = discover_take
+    export_bvh_segments = export_segments
 
 
 DEPTH_OUTPUT_DIR = PROJECT_ROOT / "outputs/depth_mocap_alignment_review"
@@ -231,6 +279,468 @@ def ensure_cloudflare_size(path: Path) -> None:
             f"Cloudflare Static Assets limit exceeded: {path} is {size} bytes "
             f"(limit {MAX_STATIC_ASSET_BYTES})"
         )
+
+
+def _safe_delivery_relative_path(value: object, *, field: str) -> PurePosixPath:
+    """Parse one manifest/checksum path without allowing path traversal."""
+
+    if not isinstance(value, str) or not value or "\\" in value:
+        raise ValueError(f"Invalid final-delivery path in {field}: {value!r}")
+    relative = PurePosixPath(value)
+    if (
+        relative.is_absolute()
+        or value != relative.as_posix()
+        or any(part in ("", ".", "..") for part in relative.parts)
+    ):
+        raise ValueError(f"Unsafe final-delivery path in {field}: {value!r}")
+    return relative
+
+
+def _delivery_artifact(
+    root: Path,
+    relative_value: object,
+    *,
+    field: str,
+    expected_hash: object,
+    expected_bytes: object | None = None,
+) -> Path:
+    """Resolve and cryptographically validate one regular delivery artifact."""
+
+    relative = _safe_delivery_relative_path(relative_value, field=field)
+    artifact = root.joinpath(*relative.parts)
+    if artifact.is_symlink() or not artifact.is_file():
+        raise ValueError(f"Missing or non-regular final-delivery artifact: {relative}")
+    ensure_cloudflare_size(artifact)
+    if expected_bytes is not None:
+        if type(expected_bytes) is not int or expected_bytes < 0:
+            raise ValueError(f"Invalid byte count for {relative}: {expected_bytes!r}")
+        if artifact.stat().st_size != expected_bytes:
+            raise ValueError(
+                f"Final-delivery byte mismatch for {relative}: "
+                f"{artifact.stat().st_size} != {expected_bytes}"
+            )
+    if not isinstance(expected_hash, str) or re.fullmatch(r"[0-9a-f]{64}", expected_hash) is None:
+        raise ValueError(f"Invalid SHA-256 for {relative}: {expected_hash!r}")
+    actual_hash = sha256(artifact)
+    if actual_hash != expected_hash:
+        raise ValueError(
+            f"Final-delivery SHA-256 mismatch for {relative}: "
+            f"{actual_hash} != {expected_hash}"
+        )
+    return artifact
+
+
+def validate_final_delivery_for_web(source: Path) -> list[dict]:
+    """Validate the tracked nine-video delivery using only the standard library.
+
+    This deliberately does not depend on ffmpeg, UV, or the raw acquisition
+    folders, so a clean Git/Cloudflare checkout can assemble the static tree.
+    The already generated delivery remains the trust boundary: its manifest,
+    validation record, complete checksum inventory, byte counts, and every
+    regular file are checked before anything under ``web/public`` is touched.
+    """
+
+    source_input = Path(source).expanduser()
+    if source_input.is_symlink():
+        raise ValueError(f"Final delivery is a symlink: {source_input}")
+    source = source_input.resolve()
+    if not source.is_dir():
+        raise ValueError(f"Final delivery is missing: {source}")
+    if (source / "_render_scratch").exists():
+        raise ValueError("Final delivery contains forbidden _render_scratch")
+
+    files: dict[str, Path] = {}
+    for path in source.rglob("*"):
+        if path.is_symlink():
+            raise ValueError(f"Symlinks are forbidden in final delivery: {path}")
+        if path.is_dir():
+            continue
+        if not path.is_file():
+            raise ValueError(f"Non-regular final-delivery entry: {path}")
+        relative = path.relative_to(source).as_posix()
+        files[relative] = path
+        ensure_cloudflare_size(path)
+
+    required = {"README.md", "manifest.json", "validation.json", "SHA256SUMS.txt"}
+    missing_required = sorted(required - files.keys())
+    if missing_required:
+        raise ValueError(f"Final delivery is missing required files: {missing_required}")
+
+    try:
+        manifest = json.loads(files["manifest.json"].read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("Final-delivery manifest is not valid UTF-8 JSON") from exc
+    videos = manifest.get("videos")
+    if (
+        manifest.get("schema") != FINAL_DELIVERY_SCHEMA
+        or manifest.get("status") != "pass"
+        or manifest.get("video_count") != 9
+        or not isinstance(videos, list)
+        or len(videos) != 9
+    ):
+        raise ValueError("Final-delivery manifest must be status=pass with exactly 9 videos")
+
+    orders: list[int] = []
+    ids: list[str] = []
+    video_names: list[str] = []
+    for index, item in enumerate(videos):
+        if not isinstance(item, dict):
+            raise ValueError(f"Final-delivery video entry {index} is not an object")
+        order = item.get("order")
+        video_id = item.get("id")
+        filename = item.get("filename")
+        if type(order) is not int or not isinstance(video_id, str) or not video_id:
+            raise ValueError(f"Invalid final-delivery video identity at index {index}")
+        relative_name = _safe_delivery_relative_path(
+            filename, field=f"videos[{index}].filename"
+        )
+        if len(relative_name.parts) != 1 or relative_name.suffix.lower() != ".mp4":
+            raise ValueError(f"Video filename must be one MP4 basename: {filename!r}")
+        orders.append(order)
+        ids.append(video_id)
+        video_names.append(relative_name.name)
+        _delivery_artifact(
+            source,
+            f"videos/{relative_name.name}",
+            field=f"videos[{index}].filename",
+            expected_hash=item.get("sha256"),
+            expected_bytes=item.get("bytes"),
+        )
+        for path_key, hash_key in (
+            ("poster", "poster_sha256"),
+            ("metrics", "metrics_sha256"),
+            ("frame_map", "frame_map_sha256"),
+        ):
+            relative_value = item.get(path_key)
+            expected_hash = item.get(hash_key)
+            if relative_value is None:
+                if expected_hash is not None:
+                    raise ValueError(
+                        f"videos[{index}].{hash_key} must be null when {path_key} is null"
+                    )
+                continue
+            _delivery_artifact(
+                source,
+                relative_value,
+                field=f"videos[{index}].{path_key}",
+                expected_hash=expected_hash,
+            )
+
+    if sorted(orders) != list(range(1, 10)) or len(set(ids)) != 9 or len(set(video_names)) != 9:
+        raise ValueError("Final-delivery video orders, IDs, and filenames must be unique 1..9")
+    videos_dir = source / "videos"
+    if not videos_dir.is_dir() or videos_dir.is_symlink():
+        raise ValueError("Final-delivery videos directory is missing or a symlink")
+    actual_video_names = {
+        path.name
+        for path in videos_dir.iterdir()
+        if path.is_file() and not path.is_symlink() and path.suffix.lower() == ".mp4"
+    }
+    if actual_video_names != set(video_names) or any(
+        path.is_dir() for path in videos_dir.iterdir()
+    ):
+        raise ValueError("Final-delivery videos directory does not match the 9-video manifest")
+
+    calibration = manifest.get("calibration")
+    if not isinstance(calibration, dict):
+        raise ValueError("Final-delivery calibration manifest entry is missing")
+    _delivery_artifact(
+        source,
+        calibration.get("path"),
+        field="calibration.path",
+        expected_hash=calibration.get("sha256"),
+    )
+
+    workbench = manifest.get("calibration_workbench")
+    if workbench is not None:
+        if not isinstance(workbench, dict):
+            raise ValueError("calibration_workbench must be an object")
+        for label, entry in (
+            ("metadata", workbench),
+            ("clean_rgb", workbench.get("clean_rgb")),
+            ("mocap_trajectory", workbench.get("mocap_trajectory")),
+            ("solved_trajectory", workbench.get("solved_trajectory")),
+        ):
+            if not isinstance(entry, dict):
+                raise ValueError(f"calibration_workbench.{label} is missing")
+            _delivery_artifact(
+                source,
+                entry.get("path"),
+                field=f"calibration_workbench.{label}.path",
+                expected_hash=entry.get("sha256"),
+            )
+        manual_profile = workbench.get("applied_manual_profile")
+        if manual_profile is not None:
+            if not isinstance(manual_profile, dict):
+                raise ValueError(
+                    "calibration_workbench.applied_manual_profile must be null or an object"
+                )
+            _delivery_artifact(
+                source,
+                manual_profile.get("path"),
+                field="calibration_workbench.applied_manual_profile.path",
+                expected_hash=manual_profile.get("sha256"),
+            )
+
+    try:
+        validation = json.loads(files["validation.json"].read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("Final-delivery validation record is not valid UTF-8 JSON") from exc
+    if (
+        validation.get("schema") != "gt_calib.delivery_validation.v1"
+        or validation.get("status") != "pass"
+        or validation.get("video_count") != 9
+        or validation.get("failures") != []
+    ):
+        raise ValueError("Final-delivery validation record is not a clean 9-video pass")
+
+    checksum_entries: dict[str, str] = {}
+    for line_number, line in enumerate(
+        files["SHA256SUMS.txt"].read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        match = re.fullmatch(r"([0-9a-f]{64})  (.+)", line)
+        if match is None:
+            raise ValueError(f"Malformed SHA256SUMS.txt line {line_number}")
+        digest, value = match.groups()
+        relative = _safe_delivery_relative_path(value, field=f"SHA256SUMS.txt:{line_number}")
+        relative_text = relative.as_posix()
+        if relative_text in checksum_entries:
+            raise ValueError(f"Duplicate checksum entry: {relative_text}")
+        checksum_entries[relative_text] = digest
+
+    expected_checksum_paths = set(files) - {"SHA256SUMS.txt"}
+    if set(checksum_entries) != expected_checksum_paths:
+        missing = sorted(expected_checksum_paths - set(checksum_entries))
+        extra = sorted(set(checksum_entries) - expected_checksum_paths)
+        raise ValueError(f"Checksum inventory mismatch: missing={missing}, extra={extra}")
+    for relative, expected_hash in checksum_entries.items():
+        actual_hash = sha256(files[relative])
+        if actual_hash != expected_hash:
+            raise ValueError(
+                f"SHA256SUMS mismatch for {relative}: {actual_hash} != {expected_hash}"
+            )
+
+    return [
+        {
+            "path": f"downloads/final-nine/{relative}",
+            "source": f"final_9_video_delivery/{relative}",
+            "bytes": path.stat().st_size,
+            "sha256": sha256(path),
+        }
+        for relative, path in sorted(files.items())
+    ]
+
+
+def mirror_final_delivery(source: Path, destination: Path) -> list[dict]:
+    """Stage, revalidate, and swap the final delivery into ``web/public``.
+
+    The previous complete tree is retained until the staged copy passes every
+    check.  The swap uses same-filesystem directory renames with rollback, so a
+    failed build can never expose a partially copied delivery.
+    """
+
+    source = Path(source).expanduser()
+    destination_input = Path(destination).expanduser()
+    if destination_input.is_symlink():
+        raise ValueError(f"Unsafe final-delivery web destination: {destination_input}")
+    destination = destination_input.resolve()
+    source_entries = validate_final_delivery_for_web(source)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.exists() and not destination.is_dir():
+        raise ValueError(f"Unsafe final-delivery web destination: {destination}")
+
+    staging_root = Path(
+        tempfile.mkdtemp(prefix=".final-nine-publish-", dir=destination.parent)
+    )
+    staged = staging_root / "final-nine"
+    backup = staging_root / "previous-final-nine"
+    moved_previous = False
+    try:
+        shutil.copytree(source, staged, symlinks=False)
+        staged_entries = validate_final_delivery_for_web(staged)
+        if source_entries != staged_entries:
+            raise ValueError("Staged final delivery differs from its validated source")
+
+        if destination.exists():
+            destination.rename(backup)
+            moved_previous = True
+        try:
+            staged.rename(destination)
+        except Exception:
+            if moved_previous and backup.exists() and not destination.exists():
+                backup.rename(destination)
+            raise
+        if backup.exists():
+            shutil.rmtree(backup)
+        return staged_entries
+    finally:
+        if staging_root.exists():
+            shutil.rmtree(staging_root)
+
+
+def validate_tracked_public_assets(public_root: Path) -> tuple[dict, list[dict]]:
+    """Validate every checked-in public asset recorded by asset-manifest.
+
+    Entries under ``downloads/final-nine`` are intentionally skipped here:
+    that ignored mirror is rebuilt and independently validated from the
+    tracked delivery.  Every other regular file must have a one-to-one
+    manifest entry, exact byte count, and exact SHA-256.
+    """
+
+    public_input = Path(public_root).expanduser()
+    if public_input.is_symlink():
+        raise ValueError(f"Public root is a symlink: {public_input}")
+    public_root = public_input.resolve()
+    if not public_root.is_dir():
+        raise ValueError(f"Public root is missing: {public_root}")
+    manifest_path = public_root / ASSET_MANIFEST_RELATIVE
+    if manifest_path.is_symlink() or not manifest_path.is_file():
+        raise ValueError(f"Tracked asset manifest is missing: {manifest_path}")
+    try:
+        payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("Tracked asset manifest is not valid UTF-8 JSON") from exc
+    assets = payload.get("assets")
+    if payload.get("schema") != "gt-calib.asset-manifest.v1" or not isinstance(
+        assets, list
+    ):
+        raise ValueError("Tracked asset manifest schema/assets are invalid")
+
+    checked_entries: list[dict] = []
+    checked_paths: set[str] = set()
+    for index, item in enumerate(assets):
+        if not isinstance(item, dict):
+            raise ValueError(f"Tracked asset entry {index} is not an object")
+        relative = _safe_delivery_relative_path(
+            item.get("path"), field=f"asset-manifest.assets[{index}].path"
+        ).as_posix()
+        if relative in checked_paths:
+            raise ValueError(f"Duplicate tracked asset path: {relative}")
+        if relative.startswith(FINAL_DELIVERY_WEB_PREFIX):
+            continue
+        if relative == ASSET_MANIFEST_RELATIVE:
+            raise ValueError("Asset manifest must not recursively inventory itself")
+        _delivery_artifact(
+            public_root,
+            relative,
+            field=f"asset-manifest.assets[{index}].path",
+            expected_hash=item.get("sha256"),
+            expected_bytes=item.get("bytes"),
+        )
+        checked_paths.add(relative)
+        checked_entries.append(dict(item))
+
+    missing_authored = sorted(set(AUTHORED_PUBLIC_ASSETS) - checked_paths)
+    if missing_authored:
+        raise ValueError(
+            f"Tracked asset manifest is missing authored assets: {missing_authored}"
+        )
+
+    actual_paths: set[str] = set()
+    for path in public_root.rglob("*"):
+        if path.is_symlink():
+            raise ValueError(f"Symlinks are forbidden in public tree: {path}")
+        if path.is_dir():
+            continue
+        if not path.is_file():
+            raise ValueError(f"Non-regular public-tree entry: {path}")
+        relative = path.relative_to(public_root).as_posix()
+        ensure_cloudflare_size(path)
+        if relative == ASSET_MANIFEST_RELATIVE or relative.startswith(
+            FINAL_DELIVERY_WEB_PREFIX
+        ):
+            continue
+        actual_paths.add(relative)
+    if actual_paths != checked_paths:
+        missing = sorted(checked_paths - actual_paths)
+        extra = sorted(actual_paths - checked_paths)
+        raise ValueError(
+            f"Tracked public-tree inventory mismatch: missing={missing}, extra={extra}"
+        )
+    return payload, checked_entries
+
+
+def _atomic_write_json(path: Path, payload: object) -> None:
+    """Write JSON next to its destination and replace the old file atomically."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f".{path.name}.", suffix=".staging", dir=path.parent
+    )
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            json.dump(payload, stream, ensure_ascii=False, indent=2)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        ensure_cloudflare_size(temporary)
+        os.replace(temporary, path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+
+
+def assemble_deploy_site(
+    public_root: Path = PUBLIC_ROOT,
+    final_source: Path = FINAL_DELIVERY_SOURCE,
+) -> Path:
+    """Assemble a clean-clone deploy tree from tracked, prebuilt artifacts."""
+
+    public_root = Path(public_root).expanduser().resolve()
+    payload, tracked_entries = validate_tracked_public_assets(public_root)
+    final_destination = public_root / "downloads/final-nine"
+    final_entries = mirror_final_delivery(final_source, final_destination)
+
+    combined_entries = tracked_entries + final_entries
+    combined_paths = [str(item["path"]) for item in combined_entries]
+    if len(combined_paths) != len(set(combined_paths)):
+        raise ValueError("Deployment assembly produced duplicate asset paths")
+
+    actual_paths: set[str] = set()
+    for path in public_root.rglob("*"):
+        if path.is_symlink():
+            raise ValueError(f"Symlinks are forbidden in assembled public tree: {path}")
+        if path.is_dir():
+            continue
+        if not path.is_file():
+            raise ValueError(f"Non-regular assembled public-tree entry: {path}")
+        ensure_cloudflare_size(path)
+        relative = path.relative_to(public_root).as_posix()
+        if relative != ASSET_MANIFEST_RELATIVE:
+            actual_paths.add(relative)
+    if actual_paths != set(combined_paths):
+        missing = sorted(set(combined_paths) - actual_paths)
+        extra = sorted(actual_paths - set(combined_paths))
+        raise ValueError(
+            f"Assembled public-tree inventory mismatch: missing={missing}, extra={extra}"
+        )
+
+    delivery_manifest = json.loads(
+        (Path(final_source) / "manifest.json").read_text(encoding="utf-8")
+    )
+    assembled_manifest = dict(payload)
+    assembled_manifest["cloudflareMaxAssetBytes"] = MAX_STATIC_ASSET_BYTES
+    assembled_manifest["deploymentAssembly"] = {
+        "mode": "tracked_public_plus_tracked_final_delivery",
+        "finalDeliverySchema": FINAL_DELIVERY_SCHEMA,
+        "finalDeliveryGeneratedAt": delivery_manifest.get("generated_at_utc"),
+    }
+    assembled_manifest["assets"] = sorted(
+        combined_entries, key=lambda item: str(item["path"])
+    )
+    asset_manifest_path = public_root / ASSET_MANIFEST_RELATIVE
+    _atomic_write_json(asset_manifest_path, assembled_manifest)
+
+    published_files = [path for path in public_root.rglob("*") if path.is_file()]
+    total_bytes = sum(path.stat().st_size for path in published_files)
+    largest = max(published_files, key=lambda path: path.stat().st_size)
+    print(
+        f"Assembled {len(published_files)} files "
+        f"({total_bytes / 1024 / 1024:.2f} MiB) under {public_root}"
+    )
+    print(f"Largest asset: {largest}")
+    return public_root
 
 
 def copy_asset(source_rel: str, destination_rel: str, manifest: list[dict]) -> None:
@@ -975,7 +1485,10 @@ def create_evidence_zip(manifest: list[dict]) -> Path:
     return destination
 
 
-def main() -> int:
+def build_source_site() -> int:
+    """Regenerate every source-grounded site artifact from local raw outputs."""
+
+    _load_source_build_dependencies()
     PUBLIC_ROOT.mkdir(parents=True, exist_ok=True)
     for relative in OBSOLETE_GENERATED_PATHS:
         obsolete = PUBLIC_ROOT / relative
@@ -1195,18 +1708,7 @@ def main() -> int:
 
     create_evidence_zip(manifest)
 
-    authored = [
-        "index.html",
-        "styles.css",
-        "app.js",
-        "404.html",
-        "favicon.svg",
-        "_headers",
-        "bvh/index.html",
-        "bvh/bvh-viewer.css",
-        "bvh/bvh-viewer.js",
-    ]
-    for relative in authored:
+    for relative in AUTHORED_PUBLIC_ASSETS:
         path = PUBLIC_ROOT / relative
         if not path.is_file():
             raise FileNotFoundError(f"Authored public file is missing: {path}")
@@ -1219,6 +1721,15 @@ def main() -> int:
                 "sha256": sha256(path),
             }
         )
+
+    # The downloadable final package is intentionally ignored under
+    # web/public so Git stores only one reviewed copy.  Recreate that mirror
+    # from the tracked delivery on every build, after all authored/source
+    # assets have passed their own checks and before emitting the aggregate
+    # Cloudflare asset manifest.
+    manifest.extend(
+        mirror_final_delivery(FINAL_DELIVERY_SOURCE, FINAL_DELIVERY_PUBLIC)
+    )
 
     manifest_path = data_dir / "asset-manifest.json"
     manifest_payload = {
@@ -1244,6 +1755,32 @@ def main() -> int:
         f"under {PUBLIC_ROOT}"
     )
     print(f"Largest asset: {max(published_files, key=lambda path: path.stat().st_size)}")
+    return 0
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Assemble tracked Cloudflare assets or rebuild them from local sources."
+    )
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
+        "--assemble",
+        action="store_true",
+        help="Assemble a deploy tree from tracked assets (default; clean-clone safe).",
+    )
+    mode.add_argument(
+        "--source",
+        action="store_true",
+        help="Regenerate the full review site from local raw/outputs sources.",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    if args.source:
+        return build_source_site()
+    assemble_deploy_site(PUBLIC_ROOT, FINAL_DELIVERY_SOURCE)
     return 0
 
 

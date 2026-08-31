@@ -172,9 +172,17 @@ def inspect_inputs(project_root: Path) -> dict[str, Any]:
         "gt_calib_viz.py",
         "outputs/mocap_root_fusion_review/01_210814_Take_000_mocap_root_fusion_registration_profile.json",
         "movementcap_20260831_worldcalib_tabletop_final.tar.gz",
-        "thor_new4_20260831_processed/camera_glove_recording_20260831_161610/rgbd_unpack/RGB.mp4",
-        "thor_new4_20260831_processed/camera_glove_recording_20260831_161610/mocap/Take_006/Take_006.cmm",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/RGB.mp4",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/Depth.mp4",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/camera_1_intrinsics.json",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/mocap/Take_007/Take_007.cmm",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/mocap/Take_007/alignment/camera_cmavatar_alignment.csv",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/aligned/primary/aligned_frame_summary.csv",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/solved/primary/left_hand_keypoints.csv",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/solved/primary/right_hand_keypoints.csv",
         "thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/RGB.mp4",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/Depth.mp4",
+        "thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/camera_1_intrinsics.json",
     )
     for relative in required:
         if not (root / relative).is_file():
@@ -184,7 +192,7 @@ def inspect_inputs(project_root: Path) -> dict[str, Any]:
         "status": "pass" if not missing else "fail",
         "expected_video_count": 9,
         "old_take_count": 3,
-        "new_action_take": "camera_glove_recording_20260831_161610 / Take_006",
+        "new_action_take": "camera_glove_recording_20260831_161912 / Take_007",
         "no_glove_recording": "camera_glove_recording_20260831_155410",
         "missing": missing,
         "system_tools": _require_system_tools(),
@@ -315,33 +323,33 @@ def _delivery_video_specs() -> list[dict[str, Any]]:
         (
             {
                 "order": 7,
-                "id": "take006-raw-markers",
-                "group": "take006",
-                "label": "Take_006 · Raw MOCAP markers",
-                "variant": "anonymous_persistent_raw_marker_clusters",
-                "filename": "07_take006_raw_mocap_markers.mp4",
-                "expected_frames": 2619,
+                "id": "take007-mocap-markers",
+                "group": "take007",
+                "label": "Take_007 · Labeled CMM markers",
+                "variant": "twenty_surface_markers_plus_virtual_wrist",
+                "filename": "07_take007_labeled_mocap_markers.mp4",
+                "expected_frames": 1981,
                 "source_rgb_first": 0,
-                "source_rgb_last": 2618,
-                "poster": "posters/07_take006_raw_mocap_markers.jpg",
-                "metrics": "metrics/07_take006_raw_mocap_markers.json",
-                "frame_map": "frame_maps/take006_rgb_to_cmm.csv",
-                "semantics": "22 persistent anonymous markers in two spatial hand clusters; no joint topology",
+                "source_rgb_last": 1980,
+                "poster": "posters/07_take007_labeled_mocap_markers.jpg",
+                "metrics": "metrics/07_take007_labeled_mocap_markers.json",
+                "frame_map": "frame_maps/take007_rgb_to_cmm.csv",
+                "semantics": "20 photographed CMM surface markers (10/hand); marker #11 is hidden and conditions a VIZ-only virtual wrist 20 mm proximal",
             },
             {
                 "order": 8,
-                "id": "take006-solved",
-                "group": "take006",
-                "label": "Take_006 · Solved pose",
-                "variant": "mocap_palm_conditioned_glove_articulation",
-                "filename": "08_take006_solved_hand_pose.mp4",
-                "expected_frames": 2619,
+                "id": "take007-solved",
+                "group": "take007",
+                "label": "Take_007 · Aligned solved pose",
+                "variant": "cmm_palm_conditioned_glove_articulation",
+                "filename": "08_take007_aligned_hand_pose.mp4",
+                "expected_frames": 1981,
                 "source_rgb_first": 0,
-                "source_rgb_last": 2618,
-                "poster": "posters/08_take006_solved_hand_pose.jpg",
-                "metrics": "metrics/08_take006_solved_hand_pose.json",
-                "frame_map": "frame_maps/take006_rgb_to_cmm.csv",
-                "semantics": "glove 20-joint local articulation with wrist+four-palm MOCAP root conditioning; fingertips never fitted",
+                "source_rgb_last": 1980,
+                "poster": "posters/08_take007_aligned_hand_pose.jpg",
+                "metrics": "metrics/08_take007_aligned_hand_pose.json",
+                "frame_map": "frame_maps/take007_rgb_to_cmm.csv",
+                "semantics": "glove 20-joint/hand articulation with virtual wrist and an anchored similarity fit to all ten photographed CMM surface markers",
             },
             {
                 "order": 9,
@@ -377,9 +385,9 @@ in the parent directory.
 4. Take 02 solved hand pose
 5. Take 03 MOCAP
 6. Take 03 solved hand pose
-7. Take_006 persistent raw MOCAP marker clusters
-8. Take_006 solved hand pose with MOCAP palm-root conditioning
-9. No-glove CS-400 world/camera calibration evidence
+7. Take_007 labeled CMM markers: 10 measured surface points per hand plus a virtual wrist
+8. Take_007 solved hand pose aligned from the corrected CMM palm/root mapping
+9. Matching no-glove 155410 CS-400 world/camera calibration evidence
 
 All media are H.264/yuv420p, 960x540, 30 fps, fast-start MP4.  See
 `manifest.json` for exact frame counts, provenance, hashes, and semantics.
@@ -388,13 +396,18 @@ Important boundaries:
 
 - Old solved-pose videos are MOCAP-wrist-SE(3)-conditioned visualizations, not
   independent glove wrist 6DoF.
-- Take_006 CMM contains anonymous marker positions but no anatomical joint
-  names or skeleton edges; video 7 therefore draws points, not a fake skeleton.
-- Take_006 video 8 uses only wrist and four palm markers to obtain root pose;
-  fingertip articulation remains entirely from the glove solver.
-- Take_006 RGB frame 2619 is excluded because the last delivered timecode closes
-  on frame 2618.  No frame is held or fabricated.
-- Video 9 validates the camera/world calibration.  It is not dynamic hand GT.
+- The placement photograph maps CMM marker #1..#10 to five fingertip/base pairs.
+  Marker #11 is not shown as a joint; it only conditions a virtual wrist located
+  another 20 mm toward the forearm.
+- Take_007 video 8 fixes the root at the virtual wrist and estimates a frozen
+  scale plus per-frame rotation from all ten photographed surface markers.
+  This same-take fit is visualization alignment, not independent accuracy GT.
+- Take_007 RGB frame 1981 is excluded because the final timecode anchor closes
+  on frame 1980.  No frame is held or fabricated.
+- Video 9 uses the matching no-glove 155410 RGB, its own intrinsics, and the
+  2026-08-31 CS-400 calibration.  It is not dynamic hand GT.
+- `calibration-workbench/` contains clean RGB and binary 3D trajectories for the
+  browser XYZ tool.  Exported manual offsets are operator calibration, not GT.
 """
     (destination / "README.md").write_text(text, encoding="utf-8")
 
@@ -418,7 +431,12 @@ def write_checksums(destination: Path) -> Path:
     return output
 
 
-def build_delivery(project_root: Path, destination: Path) -> Path:
+def build_delivery(
+    project_root: Path,
+    destination: Path,
+    *,
+    manual_profile: Path | None = None,
+) -> Path:
     project_root = Path(project_root).resolve()
     destination = Path(destination).resolve()
     preflight = inspect_inputs(project_root)
@@ -469,7 +487,7 @@ def build_delivery(project_root: Path, destination: Path) -> Path:
     # not part of the downloadable delivery, and can more than double its size.
     shutil.rmtree(staging / "_render_scratch")
 
-    render_new_three(project_root, staging)
+    render_new_three(project_root, staging, manual_profile=manual_profile)
     normalize_delivery_provenance(project_root, staging)
     _extract_calibration(
         project_root, staging / "calibration" / "camera_to_world.json"
@@ -497,6 +515,16 @@ def build_delivery(project_root: Path, destination: Path) -> Path:
         )
         item["faststart"] = _faststart(path)
         videos.append(item)
+    applied_profile = staging / "calibration-workbench" / "applied_manual_profile.json"
+    reproducibility_command = (
+        "uv run gt-calib-delivery build "
+        "--destination final_9_video_delivery.rebuilt"
+    )
+    if applied_profile.is_file():
+        reproducibility_command += (
+            " --manual-profile "
+            "final_9_video_delivery/calibration-workbench/applied_manual_profile.json"
+        )
     manifest = {
         "schema": "gt_calib.final_nine_video_delivery.v1",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -512,8 +540,40 @@ def build_delivery(project_root: Path, destination: Path) -> Path:
                 project_root / "movementcap_20260831_worldcalib_tabletop_final.tar.gz"
             ),
         },
+        "calibration_workbench": {
+            "path": "calibration-workbench/take007_alignment.json",
+            "sha256": sha256_file(
+                staging / "calibration-workbench" / "take007_alignment.json"
+            ),
+            "clean_rgb": {
+                "path": "calibration-workbench/take007_clean_rgb.mp4",
+                "sha256": sha256_file(
+                    staging / "calibration-workbench" / "take007_clean_rgb.mp4"
+                ),
+            },
+            "mocap_trajectory": {
+                "path": "calibration-workbench/take007_mocap.f32",
+                "sha256": sha256_file(
+                    staging / "calibration-workbench" / "take007_mocap.f32"
+                ),
+            },
+            "solved_trajectory": {
+                "path": "calibration-workbench/take007_solved.f32",
+                "sha256": sha256_file(
+                    staging / "calibration-workbench" / "take007_solved.f32"
+                ),
+            },
+            "applied_manual_profile": (
+                {
+                    "path": "calibration-workbench/applied_manual_profile.json",
+                    "sha256": sha256_file(applied_profile),
+                }
+                if applied_profile.is_file()
+                else None
+            ),
+        },
         "reproducibility": {
-            "command": "uv run gt-calib-delivery build",
+            "command": reproducibility_command,
             "system_tools": preflight["system_tools"],
         },
         "claim_boundary": (
@@ -606,6 +666,37 @@ def validate_delivery(destination: Path, *, full_decode: bool = False) -> dict[s
         b = next((item for item in manifest["videos"] if item["order"] == second), None)
         if a and b and probes.get(a["filename"], {}).get("frame_count") != probes.get(b["filename"], {}).get("frame_count"):
             failures.append(f"pair {first}/{second} frame counts differ")
+    workbench = manifest.get("calibration_workbench", {})
+    for label, entry in (
+        ("metadata", workbench),
+        ("clean_rgb", workbench.get("clean_rgb", {})),
+        ("mocap_trajectory", workbench.get("mocap_trajectory", {})),
+        ("solved_trajectory", workbench.get("solved_trajectory", {})),
+    ):
+        relative = entry.get("path")
+        expected_hash = entry.get("sha256")
+        if not isinstance(relative, str) or not isinstance(expected_hash, str):
+            failures.append(f"calibration workbench {label} manifest entry is incomplete")
+            continue
+        artifact = destination / relative
+        if not artifact.is_file() or artifact.is_symlink():
+            failures.append(f"calibration workbench {label} is missing or a symlink")
+        elif sha256_file(artifact) != expected_hash:
+            failures.append(f"calibration workbench {label} SHA256 mismatch")
+    profile = workbench.get("applied_manual_profile")
+    if profile is not None:
+        if not isinstance(profile, dict):
+            failures.append("calibration workbench applied_manual_profile must be an object or null")
+        else:
+            relative = profile.get("path")
+            expected_hash = profile.get("sha256")
+            artifact = destination / str(relative)
+            if not isinstance(relative, str) or not isinstance(expected_hash, str):
+                failures.append("calibration workbench applied_manual_profile entry is incomplete")
+            elif not artifact.is_file() or artifact.is_symlink():
+                failures.append("calibration workbench applied_manual_profile is missing or a symlink")
+            elif sha256_file(artifact) != expected_hash:
+                failures.append("calibration workbench applied_manual_profile SHA256 mismatch")
     return {
         "schema": "gt_calib.delivery_validation.v1",
         "status": "pass" if not failures else "fail",

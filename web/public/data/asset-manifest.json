@@ -1,6 +1,6 @@
 {
   "schema": "gt-calib.asset-manifest.v1",
-  "generatedAt": "2026-08-31T13:49:33+00:00",
+  "generatedAt": "2026-08-31T18:41:47+00:00",
   "cloudflareMaxAssetBytes": 26214400,
   "assets": [
     {
@@ -157,7 +157,7 @@
       "path": "data/site-data.json",
       "source": "generated from MOCAP/video + raw-depth/MOCAP alignment + fusion + diagnostic strict metrics and request CSV",
       "bytes": 38389,
-      "sha256": "514691b201c50b4e1e70fe0fd16896aa4b3e188eb02b0cc203b50cf6a8819e29"
+      "sha256": "0dd107e955327fad9dca47c5232db895978f8aaad591d53ad8ba2ddff676a19f"
     },
     {
       "path": "downloads/BVH_LOCAL_VIEWER_V1.md",
@@ -240,14 +240,14 @@
     {
       "path": "downloads/daily-2026-08-31.md",
       "source": "docs/daily/2026/2026-08-31.md",
-      "bytes": 27113,
-      "sha256": "e3c1895d5403fd72eabda9d7236022bf6de3f28b317621c0ee385a7ba1cb2a49"
+      "bytes": 29895,
+      "sha256": "b73eae8e65a1b8f76d63e6b65dabda2aeddd11b7362cfb2af3b5cf9785c7ac9e"
     },
     {
       "path": "downloads/dataset-inventory.csv",
       "source": "docs/dataset/datalist.csv",
-      "bytes": 1548,
-      "sha256": "cd9aa4b46b6ea9386ea98629332ceb180efa89a8ba30fe72d5c19cc30182cc7d"
+      "bytes": 2298,
+      "sha256": "03b91b0a1f8f3b185a1168f052f73fee2678ed20f183a365874dbaa602591509"
     },
     {
       "path": "downloads/depth-camera-pose-audit.json",
@@ -262,10 +262,250 @@
       "sha256": "bc9dd17398599222c9165f05d0ad91d0bf96f683999a6e3dcb1ba4e7cdbbc3b4"
     },
     {
+      "path": "downloads/final-nine/README.md",
+      "source": "final_9_video_delivery/README.md",
+      "bytes": 1661,
+      "sha256": "e7c60b501709b5fdd09bd1a6b5babcc98cc105ce97ee974c1c84a41a5df67e11"
+    },
+    {
+      "path": "downloads/final-nine/SHA256SUMS.txt",
+      "source": "final_9_video_delivery/SHA256SUMS.txt",
+      "bytes": 3898,
+      "sha256": "724298edfdfe05301a18c3f8428a32afa0e9045d02b482ef86ec3425cbc97dff"
+    },
+    {
+      "path": "downloads/final-nine/calibration-workbench/take007_alignment.json",
+      "source": "final_9_video_delivery/calibration-workbench/take007_alignment.json",
+      "bytes": 4149,
+      "sha256": "31b0d448e73cd2072a276880fc79e8d52e2d99a951bee17ac7c87bb28bd71a1a"
+    },
+    {
+      "path": "downloads/final-nine/calibration-workbench/take007_clean_rgb.mp4",
+      "source": "final_9_video_delivery/calibration-workbench/take007_clean_rgb.mp4",
+      "bytes": 7472382,
+      "sha256": "d662306b8e4ce6a5cd80af03d9cc88657e820fd486ccc771054c895a2480961e"
+    },
+    {
+      "path": "downloads/final-nine/calibration-workbench/take007_mocap.f32",
+      "source": "final_9_video_delivery/calibration-workbench/take007_mocap.f32",
+      "bytes": 522984,
+      "sha256": "a0e7a711d04c4e9b133fe27a4626d25d4c1dbfe8681325824f57513cbd99bc40"
+    },
+    {
+      "path": "downloads/final-nine/calibration-workbench/take007_solved.f32",
+      "source": "final_9_video_delivery/calibration-workbench/take007_solved.f32",
+      "bytes": 950880,
+      "sha256": "cff733d63e826fcd95bc40e3ff3380c338460856e8b8a14b4346427dce63d56f"
+    },
+    {
+      "path": "downloads/final-nine/calibration/camera_to_world.json",
+      "source": "final_9_video_delivery/calibration/camera_to_world.json",
+      "bytes": 18586,
+      "sha256": "adb579ae322febc86dc3c967a5094ffa3f1a6b040bd7dedec0554ce09e671249"
+    },
+    {
+      "path": "downloads/final-nine/frame_maps/take007_rgb_to_cmm.csv",
+      "source": "final_9_video_delivery/frame_maps/take007_rgb_to_cmm.csv",
+      "bytes": 168908,
+      "sha256": "31f73f89048ae257701ce0f1068dc8836c019e4ac11937b2bb9bc0ae183cc05f"
+    },
+    {
+      "path": "downloads/final-nine/frame_maps/take01_rgb_to_mocap.csv",
+      "source": "final_9_video_delivery/frame_maps/take01_rgb_to_mocap.csv",
+      "bytes": 495975,
+      "sha256": "976dc65b4ab50f6d433f270bc7c24d24690706f73da559c245bcfae6a856aad7"
+    },
+    {
+      "path": "downloads/final-nine/frame_maps/take02_rgb_to_mocap.csv",
+      "source": "final_9_video_delivery/frame_maps/take02_rgb_to_mocap.csv",
+      "bytes": 512149,
+      "sha256": "c662f89dcf5dca4a7a5720a7a3e8367c1e946d517654bf9d38abb5462b4289a8"
+    },
+    {
+      "path": "downloads/final-nine/frame_maps/take03_rgb_to_mocap.csv",
+      "source": "final_9_video_delivery/frame_maps/take03_rgb_to_mocap.csv",
+      "bytes": 510622,
+      "sha256": "a37de53909289102ff2c89ba27c87f8c4e78473f6bde807f7d3cb3417ca141ea"
+    },
+    {
+      "path": "downloads/final-nine/manifest.json",
+      "source": "final_9_video_delivery/manifest.json",
+      "bytes": 12384,
+      "sha256": "0d59fe1b41b3a981d47dfc942b6111e900db0a5594c14a0a8b830094ebaba6e6"
+    },
+    {
+      "path": "downloads/final-nine/metrics/01_take01_mocap.json",
+      "source": "final_9_video_delivery/metrics/01_take01_mocap.json",
+      "bytes": 2697868,
+      "sha256": "48d29e85da7c6ab91fd09c18ebf51c8bc813bccfbadc6f83635e43bccc9f6501"
+    },
+    {
+      "path": "downloads/final-nine/metrics/02_take01_solved_pose.json",
+      "source": "final_9_video_delivery/metrics/02_take01_solved_pose.json",
+      "bytes": 16463,
+      "sha256": "174fd6a1f53ae67daa1c81cb4bf1519228ffe4e13f8e7b462795a6e996708b06"
+    },
+    {
+      "path": "downloads/final-nine/metrics/03_take02_mocap.json",
+      "source": "final_9_video_delivery/metrics/03_take02_mocap.json",
+      "bytes": 2693410,
+      "sha256": "8872f6808736ea050c9bf2b30d0cf149106d0491f809dcca00d5c017bc5b0d8f"
+    },
+    {
+      "path": "downloads/final-nine/metrics/04_take02_solved_pose.json",
+      "source": "final_9_video_delivery/metrics/04_take02_solved_pose.json",
+      "bytes": 16596,
+      "sha256": "99cb70c36c0ae9c56ac9888c8bc8a7cc04caa89d636f0bd26f4ffe8d7112f072"
+    },
+    {
+      "path": "downloads/final-nine/metrics/05_take03_mocap.json",
+      "source": "final_9_video_delivery/metrics/05_take03_mocap.json",
+      "bytes": 2689643,
+      "sha256": "57f3e3ffdeff66d7f9e196936ecc8cd3b342cfe7e9e11ded92be9cdbe98bf740"
+    },
+    {
+      "path": "downloads/final-nine/metrics/06_take03_solved_pose.json",
+      "source": "final_9_video_delivery/metrics/06_take03_solved_pose.json",
+      "bytes": 16590,
+      "sha256": "2a1b0767cc2c79bc2188f27080a48d46dad820cd7cf0aafb4f030331c40bcfcc"
+    },
+    {
+      "path": "downloads/final-nine/metrics/07_take007_labeled_mocap_markers.json",
+      "source": "final_9_video_delivery/metrics/07_take007_labeled_mocap_markers.json",
+      "bytes": 2770,
+      "sha256": "c2c608e98a2a977525bc37bf8ddf1ebf9b28003159beef3f0ad1a16e06097689"
+    },
+    {
+      "path": "downloads/final-nine/metrics/08_take007_aligned_hand_pose.json",
+      "source": "final_9_video_delivery/metrics/08_take007_aligned_hand_pose.json",
+      "bytes": 3449,
+      "sha256": "295d5581e3481498504ad5fc5b413e7627f9fd7d92017299bd003294951148f0"
+    },
+    {
+      "path": "downloads/final-nine/metrics/09_no_glove_world_calibration.json",
+      "source": "final_9_video_delivery/metrics/09_no_glove_world_calibration.json",
+      "bytes": 5754,
+      "sha256": "3013c0a9ee7a6e324c467f2694621a5d262261513083fbc42f0431b7427f6362"
+    },
+    {
+      "path": "downloads/final-nine/posters/01_take01_mocap.jpg",
+      "source": "final_9_video_delivery/posters/01_take01_mocap.jpg",
+      "bytes": 1158853,
+      "sha256": "f960434a47e7e30fbd1d5cda42ee7fb94121e27377446bb76c065cca6b0d226a"
+    },
+    {
+      "path": "downloads/final-nine/posters/02_take01_solved_pose.jpg",
+      "source": "final_9_video_delivery/posters/02_take01_solved_pose.jpg",
+      "bytes": 1094757,
+      "sha256": "70a323db432a67736ebc2a6eab3ee8dc29f989d0a033b8d592e46cac5e09c0dc"
+    },
+    {
+      "path": "downloads/final-nine/posters/03_take02_mocap.jpg",
+      "source": "final_9_video_delivery/posters/03_take02_mocap.jpg",
+      "bytes": 1161202,
+      "sha256": "1ccca21806e90690caf1d9d3f2698e0a2741b1910ed733916ac86ba172d68d7c"
+    },
+    {
+      "path": "downloads/final-nine/posters/04_take02_solved_pose.jpg",
+      "source": "final_9_video_delivery/posters/04_take02_solved_pose.jpg",
+      "bytes": 1102674,
+      "sha256": "207a61a988a2d95dfece44f5618c8588c24da4f2ae8b812680cc6a3447fac2cc"
+    },
+    {
+      "path": "downloads/final-nine/posters/05_take03_mocap.jpg",
+      "source": "final_9_video_delivery/posters/05_take03_mocap.jpg",
+      "bytes": 1162984,
+      "sha256": "09de2a8f322564f76433e8f1fe50138a985010fa3113eea0a5122f5a763d3c02"
+    },
+    {
+      "path": "downloads/final-nine/posters/06_take03_solved_pose.jpg",
+      "source": "final_9_video_delivery/posters/06_take03_solved_pose.jpg",
+      "bytes": 1100163,
+      "sha256": "56e16ad57190b0b985589e2eaf2a82dec0cc9ab9b0927c244045a6ce55d3312b"
+    },
+    {
+      "path": "downloads/final-nine/posters/07_take007_labeled_mocap_markers.jpg",
+      "source": "final_9_video_delivery/posters/07_take007_labeled_mocap_markers.jpg",
+      "bytes": 1092754,
+      "sha256": "84bbe2d6b30dd5ba2b654567eae00f4915862344f9b2081f8e252c0248750cc4"
+    },
+    {
+      "path": "downloads/final-nine/posters/08_take007_aligned_hand_pose.jpg",
+      "source": "final_9_video_delivery/posters/08_take007_aligned_hand_pose.jpg",
+      "bytes": 1124793,
+      "sha256": "ea7026ec3061a93a12e4fdb6b2a99d10be5736be6bd082251bbcd3f17c43802f"
+    },
+    {
+      "path": "downloads/final-nine/posters/09_no_glove_world_calibration.jpg",
+      "source": "final_9_video_delivery/posters/09_no_glove_world_calibration.jpg",
+      "bytes": 748552,
+      "sha256": "4e982771d8b37d3c835ffd7c1cfef50b0af70b433ecbe76cb4fcb1b4b8fdea50"
+    },
+    {
+      "path": "downloads/final-nine/validation.json",
+      "source": "final_9_video_delivery/validation.json",
+      "bytes": 2299,
+      "sha256": "c8546877bc96a272d4b4a8573bb15f7120c30566ae8c9dd17416cb572ebe3c33"
+    },
+    {
+      "path": "downloads/final-nine/videos/01_take01_mocap.mp4",
+      "source": "final_9_video_delivery/videos/01_take01_mocap.mp4",
+      "bytes": 7926783,
+      "sha256": "431a0b8849311de98e60e6dc5ee679763ab4f5955c5cf25509142ccbfededf1b"
+    },
+    {
+      "path": "downloads/final-nine/videos/02_take01_solved_pose.mp4",
+      "source": "final_9_video_delivery/videos/02_take01_solved_pose.mp4",
+      "bytes": 13410194,
+      "sha256": "70bedaf973c5b00b6e9d9f1309ce657962cc59ae53f6863c4a59581b09440e22"
+    },
+    {
+      "path": "downloads/final-nine/videos/03_take02_mocap.mp4",
+      "source": "final_9_video_delivery/videos/03_take02_mocap.mp4",
+      "bytes": 8753867,
+      "sha256": "7a141794217dd773c1a7b4c51d21980210c078047edee0e260013c9acc968093"
+    },
+    {
+      "path": "downloads/final-nine/videos/04_take02_solved_pose.mp4",
+      "source": "final_9_video_delivery/videos/04_take02_solved_pose.mp4",
+      "bytes": 14294867,
+      "sha256": "e0b2265fa2df55e084789f9091d286a086965d45796bc639b68e24e99e4dc09d"
+    },
+    {
+      "path": "downloads/final-nine/videos/05_take03_mocap.mp4",
+      "source": "final_9_video_delivery/videos/05_take03_mocap.mp4",
+      "bytes": 8869599,
+      "sha256": "c3d9dc519a99efe56d52047b49120b25ab432efb2f8fdf3c1d96d69aec7c12da"
+    },
+    {
+      "path": "downloads/final-nine/videos/06_take03_solved_pose.mp4",
+      "source": "final_9_video_delivery/videos/06_take03_solved_pose.mp4",
+      "bytes": 14465329,
+      "sha256": "0693fdae8606767b435001a23e9c4ba0313a82fd8300804eab441ea78b269fd1"
+    },
+    {
+      "path": "downloads/final-nine/videos/07_take007_labeled_mocap_markers.mp4",
+      "source": "final_9_video_delivery/videos/07_take007_labeled_mocap_markers.mp4",
+      "bytes": 14135748,
+      "sha256": "a2e1b7f554ef5f3de27f26c80123b53cf98cb93e0c0e15094bb889c4891e56a7"
+    },
+    {
+      "path": "downloads/final-nine/videos/08_take007_aligned_hand_pose.mp4",
+      "source": "final_9_video_delivery/videos/08_take007_aligned_hand_pose.mp4",
+      "bytes": 13076239,
+      "sha256": "3490429df32d15c2326296fea26787e1f5d25327de5f073de0908c8afded7fa0"
+    },
+    {
+      "path": "downloads/final-nine/videos/09_no_glove_world_calibration.mp4",
+      "source": "final_9_video_delivery/videos/09_no_glove_world_calibration.mp4",
+      "bytes": 632083,
+      "sha256": "27c2185b2d5978546ce1da5e6aa719b5db83e462ead79112efa85e481107f22e"
+    },
+    {
       "path": "downloads/gt-calib-evidence-2026-08-31.zip",
       "source": "generated allow-listed evidence bundle (videos excluded)",
-      "bytes": 3295055,
-      "sha256": "90f687c93ef168246e4f976b8d4fbc7611ec559186b0e22023c517655a8420b3"
+      "bytes": 3296542,
+      "sha256": "7526854d97537d8348af17e16ce0c8ecbadc94e8dd9c733f851ffa61d1519cd5"
     },
     {
       "path": "downloads/mocap-root-fusion-profile-take-000.json",
@@ -428,6 +668,24 @@
       "source": "web/public/favicon.svg",
       "bytes": 415,
       "sha256": "4e7c7dff0613ede0b103ebbf0e3adf7912363ab1073ae858af1c2d940eb7c319"
+    },
+    {
+      "path": "final-nine/app.js",
+      "source": "web/public/final-nine/app.js",
+      "bytes": 31742,
+      "sha256": "104cde8d26ba7e8736998f54400c30b8eaf567433fe16ed20bf8654cbef5c27b"
+    },
+    {
+      "path": "final-nine/index.html",
+      "source": "web/public/final-nine/index.html",
+      "bytes": 27658,
+      "sha256": "5dccea665f18b53a4321fead1bc559f1cd7f38e9cd46662d02824a933c31e215"
+    },
+    {
+      "path": "final-nine/styles.css",
+      "source": "web/public/final-nine/styles.css",
+      "bytes": 26653,
+      "sha256": "a0ee3cffd1222b8012760859a1d84da7cddc34dd2bfe966f61f744eceee7ece8"
     },
     {
       "path": "index.html",
@@ -621,5 +879,10 @@
       "bytes": 32625,
       "sha256": "9816b045395f96e789dc0607d45d92309b70093247d48143dbdb1e5057ce3137"
     }
-  ]
+  ],
+  "deploymentAssembly": {
+    "mode": "tracked_public_plus_tracked_final_delivery",
+    "finalDeliverySchema": "gt_calib.final_nine_video_delivery.v1",
+    "finalDeliveryGeneratedAt": "2026-08-31T17:56:39.102012+00:00"
+  }
 }

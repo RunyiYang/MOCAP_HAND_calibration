@@ -4,7 +4,8 @@
   "private": true,
   "description": "Cloudflare-hosted review site for the GT_calib glove and MOCAP dataset.",
   "scripts": {
-    "build": "python3 build_site.py",
+    "build": "python3 build_site.py --assemble",
+    "build:source": "python3 build_site.py --source",
     "dev": "wrangler dev --local --port 8810",
     "deploy:dry": "wrangler deploy --dry-run --outdir .wrangler-dry-run",
     "deploy": "wrangler deploy"

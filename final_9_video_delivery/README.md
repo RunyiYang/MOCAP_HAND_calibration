@@ -11,9 +11,9 @@ in the parent directory.
 4. Take 02 solved hand pose
 5. Take 03 MOCAP
 6. Take 03 solved hand pose
-7. Take_006 persistent raw MOCAP marker clusters
-8. Take_006 solved hand pose with MOCAP palm-root conditioning
-9. No-glove CS-400 world/camera calibration evidence
+7. Take_007 labeled CMM markers: 10 measured surface points per hand plus a virtual wrist
+8. Take_007 solved hand pose aligned from the corrected CMM palm/root mapping
+9. Matching no-glove 155410 CS-400 world/camera calibration evidence
 
 All media are H.264/yuv420p, 960x540, 30 fps, fast-start MP4.  See
 `manifest.json` for exact frame counts, provenance, hashes, and semantics.
@@ -22,10 +22,15 @@ Important boundaries:
 
 - Old solved-pose videos are MOCAP-wrist-SE(3)-conditioned visualizations, not
   independent glove wrist 6DoF.
-- Take_006 CMM contains anonymous marker positions but no anatomical joint
-  names or skeleton edges; video 7 therefore draws points, not a fake skeleton.
-- Take_006 video 8 uses only wrist and four palm markers to obtain root pose;
-  fingertip articulation remains entirely from the glove solver.
-- Take_006 RGB frame 2619 is excluded because the last delivered timecode closes
-  on frame 2618.  No frame is held or fabricated.
-- Video 9 validates the camera/world calibration.  It is not dynamic hand GT.
+- The placement photograph maps CMM marker #1..#10 to five fingertip/base pairs.
+  Marker #11 is not shown as a joint; it only conditions a virtual wrist located
+  another 20 mm toward the forearm.
+- Take_007 video 8 fixes the root at the virtual wrist and estimates a frozen
+  scale plus per-frame rotation from all ten photographed surface markers.
+  This same-take fit is visualization alignment, not independent accuracy GT.
+- Take_007 RGB frame 1981 is excluded because the final timecode anchor closes
+  on frame 1980.  No frame is held or fabricated.
+- Video 9 uses the matching no-glove 155410 RGB, its own intrinsics, and the
+  2026-08-31 CS-400 calibration.  It is not dynamic hand GT.
+- `calibration-workbench/` contains clean RGB and binary 3D trajectories for the
+  browser XYZ tool.  Exported manual offsets are operator calibration, not GT.

@@ -1,0 +1,145 @@
+{
+  "schema": "gt_calib.take007_labeled_cmm_markers.v2",
+  "status": "visualization_complete",
+  "source_recording": "camera_glove_recording_20260831_161912",
+  "source_take": "Take_007",
+  "source_rgb_frames": 1982,
+  "rendered_frames": 1981,
+  "excluded_unsynchronized_rgb_frames": [
+    1981
+  ],
+  "source_marker_count": 22,
+  "displayed_measured_marker_count": 20,
+  "displayed_marker_count_per_hand": 10,
+  "hidden_conditioning_marker_number": 11,
+  "virtual_root_count": 2,
+  "virtual_root_definition": "marker #11 plus rear_offset_mm along normalize(#11 - mean(#4,#6,#8,#10))",
+  "rear_offset_mm": 20.0,
+  "marker_names_1_to_11": [
+    "thumb_tip",
+    "thumb_base",
+    "index_tip",
+    "index_base",
+    "middle_tip",
+    "middle_base",
+    "ring_tip",
+    "ring_base",
+    "pinky_tip",
+    "pinky_base",
+    "dorsum_module"
+  ],
+  "marker_tracks": {
+    "left": [
+      [
+        "11781",
+        "12503"
+      ],
+      [
+        "11978"
+      ],
+      [
+        "12003"
+      ],
+      [
+        "12001"
+      ],
+      [
+        "12006"
+      ],
+      [
+        "12013"
+      ],
+      [
+        "12045"
+      ],
+      [
+        "12015"
+      ],
+      [
+        "12076"
+      ],
+      [
+        "12051"
+      ],
+      [
+        "12064"
+      ]
+    ],
+    "right": [
+      [
+        "12436"
+      ],
+      [
+        "12435"
+      ],
+      [
+        "11619"
+      ],
+      [
+        "11614"
+      ],
+      [
+        "11616"
+      ],
+      [
+        "12434"
+      ],
+      [
+        "11625"
+      ],
+      [
+        "11685"
+      ],
+      [
+        "11627"
+      ],
+      [
+        "11630"
+      ],
+      [
+        "12433"
+      ]
+    ]
+  },
+  "manual_calibration": {
+    "global_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "left_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "right_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "mocap_representation": "ten photographed surface-marker correspondences per hand plus a VIZ-only virtual wrist",
+  "frame_mapping": {
+    "status": "derived_from_sparse_device_timestamps",
+    "anchor_count": 980,
+    "cadence_us": 33427.0,
+    "step_counts": {
+      "1": 40,
+      "2": 878,
+      "3": 60,
+      "4": 1
+    },
+    "last_anchor_rgb_index": 1980
+  },
+  "camera_alignment_abs_error_ms": {
+    "median": 2.2375735,
+    "p95": 3.9879258500000003,
+    "max": 4.577429
+  },
+  "limitations": [
+    "The MP4 has no embedded per-frame hardware timestamps; the frame map is structurally derived.",
+    "Surface reflectors approximate glove bases/tips; they are not anatomical joint centers.",
+    "Marker #11 conditions the virtual wrist but is not drawn as a twenty-first joint.",
+    "Pixel alignment is calibration consistency, not independent dynamic hand GT accuracy."
+  ]
+}

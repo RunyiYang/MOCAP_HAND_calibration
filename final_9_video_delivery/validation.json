@@ -65,25 +65,25 @@
       "duration_s": 60.0,
       "bytes": 14465329
     },
-    "07_take006_raw_mocap_markers.mp4": {
+    "07_take007_labeled_mocap_markers.mp4": {
       "codec": "h264",
       "pixel_format": "yuv420p",
       "width": 960,
       "height": 540,
       "fps": 30.0,
-      "frame_count": 2619,
-      "duration_s": 87.3,
-      "bytes": 15918508
+      "frame_count": 1981,
+      "duration_s": 66.033333,
+      "bytes": 14135748
     },
-    "08_take006_solved_hand_pose.mp4": {
+    "08_take007_aligned_hand_pose.mp4": {
       "codec": "h264",
       "pixel_format": "yuv420p",
       "width": 960,
       "height": 540,
       "fps": 30.0,
-      "frame_count": 2619,
-      "duration_s": 87.3,
-      "bytes": 16682456
+      "frame_count": 1981,
+      "duration_s": 66.033333,
+      "bytes": 13076239
     },
     "09_no_glove_world_calibration.mp4": {
       "codec": "h264",
@@ -93,7 +93,7 @@
       "fps": 30.0,
       "frame_count": 98,
       "duration_s": 3.266667,
-      "bytes": 623964
+      "bytes": 632083
     }
   }
 }

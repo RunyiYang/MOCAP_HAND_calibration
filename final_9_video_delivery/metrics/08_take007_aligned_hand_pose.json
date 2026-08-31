@@ -1,0 +1,124 @@
+{
+  "schema": "gt_calib.take007_cmm_aligned_glove_pose.v2",
+  "status": "visualization_complete",
+  "source_recording": "camera_glove_recording_20260831_161912",
+  "source_take": "Take_007",
+  "rendered_frames": 1981,
+  "validity": {
+    "valid_frames": 1367,
+    "total_frames": 1981,
+    "coverage_percent": 69.0055527511358,
+    "nearest_solver_sample_error_ms": {
+      "left": {
+        "median": 2.3883040000782785,
+        "p95": 15.894094599980237,
+        "max": 19.938476499874014
+      },
+      "right": {
+        "median": 2.3883040000782785,
+        "p95": 15.894094599980237,
+        "max": 19.938476499874014
+      }
+    }
+  },
+  "root_conditioning": {
+    "conditional_on_cmm_dorsum_marker_translation": true,
+    "conditional_on_mocap_palm_orientation": true,
+    "per_frame_fit_uses_virtual_wrist_and_ten_surface_markers": true,
+    "finger_or_fingertip_markers_used_in_fit": true,
+    "glove_input": "root-local solved 20-joint keypoints",
+    "rear_offset_mm": 20.0,
+    "fit_marker_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "hidden_dorsum_marker_number": 11
+  },
+  "alignment_diagnostics": {
+    "left": {
+      "frozen_10_marker_scale": 0.8317459896345867,
+      "scale_samples": {
+        "sample_count": 1367,
+        "median": 0.8317459896345867,
+        "p05": 0.7932281738729244,
+        "p95": 0.8687403743921857
+      },
+      "all_10_surface_marker_correspondences": {
+        "count": 13670,
+        "median_mm": 21.017440364045008,
+        "p95_mm": 52.37294248552525,
+        "max_mm": 85.57932085795409
+      },
+      "five_fingertip_correspondences_used_in_fit": {
+        "count": 6835,
+        "median_mm": 24.141431672611773,
+        "p95_mm": 61.738419375959126,
+        "max_mm": 85.57932085795409
+      },
+      "five_base_surface_markers": {
+        "count": 6835,
+        "median_mm": 17.986483549383234,
+        "p95_mm": 46.76491395738709,
+        "max_mm": 52.15239607796597
+      }
+    },
+    "right": {
+      "frozen_10_marker_scale": 0.8592533294833126,
+      "scale_samples": {
+        "sample_count": 1367,
+        "median": 0.8592533294833126,
+        "p05": 0.8095141576887942,
+        "p95": 0.8974480745434515
+      },
+      "all_10_surface_marker_correspondences": {
+        "count": 13670,
+        "median_mm": 22.114286319675745,
+        "p95_mm": 54.09193205527507,
+        "max_mm": 99.1641019115583
+      },
+      "five_fingertip_correspondences_used_in_fit": {
+        "count": 6835,
+        "median_mm": 23.76418474714168,
+        "p95_mm": 60.485026009077664,
+        "max_mm": 99.1641019115583
+      },
+      "five_base_surface_markers": {
+        "count": 6835,
+        "median_mm": 20.14528812413456,
+        "p95_mm": 47.318758605397825,
+        "max_mm": 51.34370895015132
+      }
+    }
+  },
+  "manual_calibration": {
+    "global_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "left_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "right_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "evaluation_scope": "same-take visualization fit; not an independent accuracy evaluation",
+  "limitations": [
+    "CMM reflectors lie on glove surfaces and are not anatomical joint centers.",
+    "Global wrist/palm pose is conditioned on MOCAP markers and is not glove-only 6DoF.",
+    "Invalid glove/camera intervals are shown as unavailable and are not held or extrapolated."
+  ]
+}

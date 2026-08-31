@@ -1,6 +1,6 @@
 {
   "schema": "gt_calib.final_nine_video_delivery.v1",
-  "generated_at_utc": "2026-08-31T13:05:20.730387+00:00",
+  "generated_at_utc": "2026-08-31T17:56:39.102012+00:00",
   "status": "pass",
   "video_count": 9,
   "groups": 5,
@@ -28,10 +28,10 @@
       "duration_s": 58.266667,
       "bytes": 7926783,
       "sha256": "431a0b8849311de98e60e6dc5ee679763ab4f5955c5cf25509142ccbfededf1b",
-      "faststart": true,
       "poster_sha256": "f960434a47e7e30fbd1d5cda42ee7fb94121e27377446bb76c065cca6b0d226a",
       "metrics_sha256": "48d29e85da7c6ab91fd09c18ebf51c8bc813bccfbadc6f83635e43bccc9f6501",
-      "frame_map_sha256": "976dc65b4ab50f6d433f270bc7c24d24690706f73da559c245bcfae6a856aad7"
+      "frame_map_sha256": "976dc65b4ab50f6d433f270bc7c24d24690706f73da559c245bcfae6a856aad7",
+      "faststart": true
     },
     {
       "order": 2,
@@ -56,10 +56,10 @@
       "duration_s": 58.266667,
       "bytes": 13410194,
       "sha256": "70bedaf973c5b00b6e9d9f1309ce657962cc59ae53f6863c4a59581b09440e22",
-      "faststart": true,
-      "poster_sha256": "e90a4f7dc1a073d35e27d6db28571ef7044cfc581a901399736c34d6c6b9b9d3",
+      "poster_sha256": "70a323db432a67736ebc2a6eab3ee8dc29f989d0a033b8d592e46cac5e09c0dc",
       "metrics_sha256": "174fd6a1f53ae67daa1c81cb4bf1519228ffe4e13f8e7b462795a6e996708b06",
-      "frame_map_sha256": "976dc65b4ab50f6d433f270bc7c24d24690706f73da559c245bcfae6a856aad7"
+      "frame_map_sha256": "976dc65b4ab50f6d433f270bc7c24d24690706f73da559c245bcfae6a856aad7",
+      "faststart": true
     },
     {
       "order": 3,
@@ -84,10 +84,10 @@
       "duration_s": 60.166667,
       "bytes": 8753867,
       "sha256": "7a141794217dd773c1a7b4c51d21980210c078047edee0e260013c9acc968093",
-      "faststart": true,
       "poster_sha256": "1ccca21806e90690caf1d9d3f2698e0a2741b1910ed733916ac86ba172d68d7c",
       "metrics_sha256": "8872f6808736ea050c9bf2b30d0cf149106d0491f809dcca00d5c017bc5b0d8f",
-      "frame_map_sha256": "c662f89dcf5dca4a7a5720a7a3e8367c1e946d517654bf9d38abb5462b4289a8"
+      "frame_map_sha256": "c662f89dcf5dca4a7a5720a7a3e8367c1e946d517654bf9d38abb5462b4289a8",
+      "faststart": true
     },
     {
       "order": 4,
@@ -112,10 +112,10 @@
       "duration_s": 60.166667,
       "bytes": 14294867,
       "sha256": "e0b2265fa2df55e084789f9091d286a086965d45796bc639b68e24e99e4dc09d",
-      "faststart": true,
-      "poster_sha256": "3f983194a4aef59b254c304d182112131f4995a590f9e8b084c509d8e624e5d9",
+      "poster_sha256": "207a61a988a2d95dfece44f5618c8588c24da4f2ae8b812680cc6a3447fac2cc",
       "metrics_sha256": "99cb70c36c0ae9c56ac9888c8bc8a7cc04caa89d636f0bd26f4ffe8d7112f072",
-      "frame_map_sha256": "c662f89dcf5dca4a7a5720a7a3e8367c1e946d517654bf9d38abb5462b4289a8"
+      "frame_map_sha256": "c662f89dcf5dca4a7a5720a7a3e8367c1e946d517654bf9d38abb5462b4289a8",
+      "faststart": true
     },
     {
       "order": 5,
@@ -140,10 +140,10 @@
       "duration_s": 60.0,
       "bytes": 8869599,
       "sha256": "c3d9dc519a99efe56d52047b49120b25ab432efb2f8fdf3c1d96d69aec7c12da",
-      "faststart": true,
       "poster_sha256": "09de2a8f322564f76433e8f1fe50138a985010fa3113eea0a5122f5a763d3c02",
       "metrics_sha256": "57f3e3ffdeff66d7f9e196936ecc8cd3b342cfe7e9e11ded92be9cdbe98bf740",
-      "frame_map_sha256": "a37de53909289102ff2c89ba27c87f8c4e78473f6bde807f7d3cb3417ca141ea"
+      "frame_map_sha256": "a37de53909289102ff2c89ba27c87f8c4e78473f6bde807f7d3cb3417ca141ea",
+      "faststart": true
     },
     {
       "order": 6,
@@ -168,66 +168,66 @@
       "duration_s": 60.0,
       "bytes": 14465329,
       "sha256": "0693fdae8606767b435001a23e9c4ba0313a82fd8300804eab441ea78b269fd1",
-      "faststart": true,
-      "poster_sha256": "900d9d5863b08d0aea7fa1fc1f0e3ce5f9b3f79faf9da73dc90ca8f27b43a0ce",
+      "poster_sha256": "56e16ad57190b0b985589e2eaf2a82dec0cc9ab9b0927c244045a6ce55d3312b",
       "metrics_sha256": "2a1b0767cc2c79bc2188f27080a48d46dad820cd7cf0aafb4f030331c40bcfcc",
-      "frame_map_sha256": "a37de53909289102ff2c89ba27c87f8c4e78473f6bde807f7d3cb3417ca141ea"
+      "frame_map_sha256": "a37de53909289102ff2c89ba27c87f8c4e78473f6bde807f7d3cb3417ca141ea",
+      "faststart": true
     },
     {
       "order": 7,
-      "id": "take006-raw-markers",
-      "group": "take006",
-      "label": "Take_006 · Raw MOCAP markers",
-      "variant": "anonymous_persistent_raw_marker_clusters",
-      "filename": "07_take006_raw_mocap_markers.mp4",
-      "expected_frames": 2619,
+      "id": "take007-mocap-markers",
+      "group": "take007",
+      "label": "Take_007 · Labeled CMM markers",
+      "variant": "twenty_surface_markers_plus_virtual_wrist",
+      "filename": "07_take007_labeled_mocap_markers.mp4",
+      "expected_frames": 1981,
       "source_rgb_first": 0,
-      "source_rgb_last": 2618,
-      "poster": "posters/07_take006_raw_mocap_markers.jpg",
-      "metrics": "metrics/07_take006_raw_mocap_markers.json",
-      "frame_map": "frame_maps/take006_rgb_to_cmm.csv",
-      "semantics": "22 persistent anonymous markers in two spatial hand clusters; no joint topology",
+      "source_rgb_last": 1980,
+      "poster": "posters/07_take007_labeled_mocap_markers.jpg",
+      "metrics": "metrics/07_take007_labeled_mocap_markers.json",
+      "frame_map": "frame_maps/take007_rgb_to_cmm.csv",
+      "semantics": "20 photographed CMM surface markers (10/hand); marker #11 is hidden and conditions a VIZ-only virtual wrist 20 mm proximal",
       "codec": "h264",
       "pixel_format": "yuv420p",
       "width": 960,
       "height": 540,
       "fps": 30.0,
-      "frame_count": 2619,
-      "duration_s": 87.3,
-      "bytes": 15918508,
-      "sha256": "a0243cc456df59dbadb6336e3ead9dce1a75aa08201f7767ad373cb380378246",
-      "faststart": true,
-      "poster_sha256": "45459b786be6c9dd1b1fc2a9b897543ad1cc2e4674128a14032d1b1d5058d33d",
-      "metrics_sha256": "7131caadc69503c27953389d9fd7c80f32e631b101e0f982845686c14e82ba85",
-      "frame_map_sha256": "e7ece07d575dbdd4a235d138b87d8ad7c9281820e94cfe1c115e25b3aa87a0ef"
+      "frame_count": 1981,
+      "duration_s": 66.033333,
+      "bytes": 14135748,
+      "sha256": "a2e1b7f554ef5f3de27f26c80123b53cf98cb93e0c0e15094bb889c4891e56a7",
+      "poster_sha256": "84bbe2d6b30dd5ba2b654567eae00f4915862344f9b2081f8e252c0248750cc4",
+      "metrics_sha256": "c2c608e98a2a977525bc37bf8ddf1ebf9b28003159beef3f0ad1a16e06097689",
+      "frame_map_sha256": "31f73f89048ae257701ce0f1068dc8836c019e4ac11937b2bb9bc0ae183cc05f",
+      "faststart": true
     },
     {
       "order": 8,
-      "id": "take006-solved",
-      "group": "take006",
-      "label": "Take_006 · Solved pose",
-      "variant": "mocap_palm_conditioned_glove_articulation",
-      "filename": "08_take006_solved_hand_pose.mp4",
-      "expected_frames": 2619,
+      "id": "take007-solved",
+      "group": "take007",
+      "label": "Take_007 · Aligned solved pose",
+      "variant": "cmm_palm_conditioned_glove_articulation",
+      "filename": "08_take007_aligned_hand_pose.mp4",
+      "expected_frames": 1981,
       "source_rgb_first": 0,
-      "source_rgb_last": 2618,
-      "poster": "posters/08_take006_solved_hand_pose.jpg",
-      "metrics": "metrics/08_take006_solved_hand_pose.json",
-      "frame_map": "frame_maps/take006_rgb_to_cmm.csv",
-      "semantics": "glove 20-joint local articulation with wrist+four-palm MOCAP root conditioning; fingertips never fitted",
+      "source_rgb_last": 1980,
+      "poster": "posters/08_take007_aligned_hand_pose.jpg",
+      "metrics": "metrics/08_take007_aligned_hand_pose.json",
+      "frame_map": "frame_maps/take007_rgb_to_cmm.csv",
+      "semantics": "glove 20-joint/hand articulation with virtual wrist and an anchored similarity fit to all ten photographed CMM surface markers",
       "codec": "h264",
       "pixel_format": "yuv420p",
       "width": 960,
       "height": 540,
       "fps": 30.0,
-      "frame_count": 2619,
-      "duration_s": 87.3,
-      "bytes": 16682456,
-      "sha256": "640307a7d396230b497e606ba11e8c6b2809cecde7eaa221347e01843ea05823",
-      "faststart": true,
-      "poster_sha256": "2feefbf3b9feb58467ade18f8653e8893e9cdacdc187f6b5d7bcafb944bd1e68",
-      "metrics_sha256": "f7298734b81deaf14418fac321573e992252996089aaaa9cc0a0505da02eae88",
-      "frame_map_sha256": "e7ece07d575dbdd4a235d138b87d8ad7c9281820e94cfe1c115e25b3aa87a0ef"
+      "frame_count": 1981,
+      "duration_s": 66.033333,
+      "bytes": 13076239,
+      "sha256": "3490429df32d15c2326296fea26787e1f5d25327de5f073de0908c8afded7fa0",
+      "poster_sha256": "ea7026ec3061a93a12e4fdb6b2a99d10be5736be6bd082251bbcd3f17c43802f",
+      "metrics_sha256": "295d5581e3481498504ad5fc5b413e7627f9fd7d92017299bd003294951148f0",
+      "frame_map_sha256": "31f73f89048ae257701ce0f1068dc8836c019e4ac11937b2bb9bc0ae183cc05f",
+      "faststart": true
     },
     {
       "order": 9,
@@ -250,12 +250,12 @@
       "fps": 30.0,
       "frame_count": 98,
       "duration_s": 3.266667,
-      "bytes": 623964,
-      "sha256": "5b845966d243dfb4b95772b47a4ef37e3ad76aaefd62b8a1a75d289a68a49315",
-      "faststart": true,
-      "poster_sha256": "3d1bdcad24bdac7480964c623278a9e81ba2670495c835f96a99b841b041f476",
-      "metrics_sha256": "cb8abf6e964829f2d5ce37ee73e1857d611821d06351f5445d8c813d45ddc940",
-      "frame_map_sha256": null
+      "bytes": 632083,
+      "sha256": "27c2185b2d5978546ce1da5e6aa719b5db83e462ead79112efa85e481107f22e",
+      "poster_sha256": "4e982771d8b37d3c835ffd7c1cfef50b0af70b433ecbe76cb4fcb1b4b8fdea50",
+      "metrics_sha256": "3013c0a9ee7a6e324c467f2694621a5d262261513083fbc42f0431b7427f6362",
+      "frame_map_sha256": null,
+      "faststart": true
     }
   ],
   "calibration": {
@@ -264,13 +264,29 @@
     "source_archive": "movementcap_20260831_worldcalib_tabletop_final.tar.gz",
     "source_archive_sha256": "9fd2e3b3b4f8a7d735eb4f001077f4681092cf84ffecc7ac9654f8ed4b0a194b"
   },
+  "calibration_workbench": {
+    "path": "calibration-workbench/take007_alignment.json",
+    "sha256": "31b0d448e73cd2072a276880fc79e8d52e2d99a951bee17ac7c87bb28bd71a1a",
+    "clean_rgb": {
+      "path": "calibration-workbench/take007_clean_rgb.mp4",
+      "sha256": "d662306b8e4ce6a5cd80af03d9cc88657e820fd486ccc771054c895a2480961e"
+    },
+    "mocap_trajectory": {
+      "path": "calibration-workbench/take007_mocap.f32",
+      "sha256": "a0e7a711d04c4e9b133fe27a4626d25d4c1dbfe8681325824f57513cbd99bc40"
+    },
+    "solved_trajectory": {
+      "path": "calibration-workbench/take007_solved.f32",
+      "sha256": "cff733d63e826fcd95bc40e3ff3380c338460856e8b8a14b4346427dce63d56f"
+    },
+    "applied_manual_profile": null
+  },
   "reproducibility": {
-    "command": "uv run gt-calib-delivery build",
+    "command": "uv run gt-calib-delivery build --destination final_9_video_delivery.rebuilt",
     "system_tools": {
       "ffmpeg": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
       "ffprobe": "ffprobe version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2007-2024 the FFmpeg developers"
     }
   },
-  "claim_boundary": "Videos demonstrate synchronization, projection, and conditioned composition. They do not establish independent dynamic hand-pose ground-truth accuracy.",
-  "auxiliary_hashes_refreshed_at_utc": "2026-08-31T13:37:20.782048+00:00"
+  "claim_boundary": "Videos demonstrate synchronization, projection, and conditioned composition. They do not establish independent dynamic hand-pose ground-truth accuracy."
 }

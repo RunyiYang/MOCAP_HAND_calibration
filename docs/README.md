@@ -1,13 +1,14 @@
 # GT Calib 文档入口
 
-- 当前状态：`final_nine_video_delivery_in_progress + verified_new_world_projection`
+- 当前状态：`verified_take007_final_nine + verified_9_of_9_full_decode`
 - 最近更新：2026-08-31
-- 当前数据版本：`20260829_take000-002 + thor_new4_take006 + 20260831_tabletop_worldcalib`
+- 当前数据版本：`20260829_take000-002 + thor_new4_take007 + no_glove_155410 + 20260831_tabletop_worldcalib`
 - 最新日报：[2026-08-31](daily/2026/2026-08-31.md)
 - 数据契约：[dataset/README.md](dataset/README.md)
 - 数据清单：[dataset/datalist.csv](dataset/datalist.csv)
 - 明日索取清单：[DATA_REQUEST_2026-08-31.md](dataset/DATA_REQUEST_2026-08-31.md)
 - 新采集与新世界坐标理解：[NEW_CAPTURE_2026-08-31.md](dataset/NEW_CAPTURE_2026-08-31.md)
+- Take_007 CMM 对齐合同：[TAKE007_CMM_ALIGNMENT_V1.md](calibration/TAKE007_CMM_ALIGNMENT_V1.md)
 - 评估协议：[CROSS_TAKE_EVALUATION.md](protocols/CROSS_TAKE_EVALUATION.md)
 - 当前推荐 calibrated fusion：[MOCAP_ROOT_FUSION_V1.md](calibration/MOCAP_ROOT_FUSION_V1.md)
 - 当前视频动作匹配协议：[MOCAP_VIDEO_ALIGNMENT_V1.md](calibration/MOCAP_VIDEO_ALIGNMENT_V1.md)
@@ -21,6 +22,25 @@
 - 变更日志：[CHANGELOG.md](CHANGELOG.md)
 
 ## 当前一句话结论
+
+最终新增动作已从 Take_006 修订为 `161912 / Take_007`。照片 #1..#10 被解释为
+每手五组 tip/base CMM 表面点（双手共 20 个实测点），#11 只用于构造
+`#11 + 20 mm * normalize(#11 - mean(#4,#6,#8,#10))` 的 hand-local virtual
+wrist，不再画成第 21 点。左 thumb tip 已 stitch `11781 → 12503`；RGB 只发布
+有同步锚的 0..1980 共 1981 帧。Video 08 是十点 same-take Kabsch + frozen-scale
+可视化，残差不是独立 GT；video 09 明确绑定 155410 无手套 RGB 和该 recording
+自己的 intrinsics。网页同时提供可导出 profile 的 manual world-XYZ 工具。
+
+正式 `final_9_video_delivery/` 已重建完成：40 个 regular files、
+124,130,375 bytes（118.38 MiB，`du -sh` 为 119M），其中 9/9 H.264 视频通过
+全片解码，delivery validation 为 `status=pass`、`failures=[]`。
+`SHA256SUMS.txt` 含 39 行，覆盖除 checksum 文件自身外的全部 regular files。
+全量回归当前 114 项通过；记录基线为 `114 passed in 99.08s`。
+
+Manual profile 采用 fail-closed 合同：必须属于 `161912 / Take_007`，坐标系为
+`mocap_world_mm`、单位 `mm`，且 `rear_offset_mm` 固定为 20。实际应用时原始
+JSON 会复制到 delivery，并由 manifest SHA-256 与 validation 共同验收；当前
+默认零-offset 包的 `applied_manual_profile` 明确为 `null`。
 
 当前已将 MOCAP 按 **RGB 曝光时刻**逐帧匹配到视频：旧链路误用了约 254–255 ms 之后的 host poll/callback 时刻；逐行移除该延迟后，三段 zero-lag motion correlation 从 0.395–0.626 提升到 0.876–0.899，残余峰值 +10/+16/+17 ms 均小于一帧且不回写为拟合偏移。正式 `gt_calib.mocap_video_alignment.v2` 还用 `--frame-content-samples 0` 对三段全部 BAG/MP4 frame index 完成 240×135 解码内容 gate。
 
@@ -57,7 +77,10 @@ Take 02/03 的 fusion P95 仍为 joint 86.06–97.44 mm、tip 104.87–113.80 mm
 - 冻结 pose 后可报告 projected joint/wrist 的 positive-depth、inside-frame 与 raw-depth nonzero coverage，作为数据链和投影覆盖检查。
 - 可用 Take 01 wrist-local MCP 拟合固定 canonical rotation 和统一尺度，并冻结到 Take 02/03。
 - 在每帧使用 MOCAP wrist SE(3) 的条件下，可报告 glove local finger articulation 的 root-normalized median/P95 与覆盖率。
-- 最终全量单元/数据契约测试 `90/90` 通过（89.468 s，含 15 项腕端语义/depth 审计、BVH 导出、本地网页契约和 Range 服务）；MOCAP-only、fusion、diagnostic 与新增 depth 媒体均已完成全帧解码。Depth H.264 为 1747/1804/1799 帧，CSV rows 和 evidence hashes 已复核。
+- 最终全量回归 `114` 项通过（记录基线 `114 passed in 99.08s`，含
+  Take_007 marker/re-ID/root、strict manual-profile、final-nine、网页与 HTTP
+  Range 合同）；正式九视频 9/9 全片解码通过，validation `failures=[]`。
+  旧 MOCAP-only、fusion、diagnostic 与 depth 媒体的既有验证仍保留。
 
 ## 当前不可宣称
 

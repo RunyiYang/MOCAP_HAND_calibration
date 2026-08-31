@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="GT_CALIB 最终九视频审阅页：三组旧数据 MOCAP / 手部解算对照、新 Take_006 raw marker / solved pose 对照，以及无手套世界坐标系标定。">
+    <meta name="description" content="GT_CALIB 最终九视频审阅页：三组旧数据 MOCAP / 手部解算对照、Take_007 CMM 20 点 / solved pose 对照、手动 XYZ 标定台，以及匹配的无手套世界坐标系标定。">
     <meta name="theme-color" content="#07111f">
     <title>GT_CALIB · 最终九视频</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -19,6 +19,7 @@
         <span>GT_CALIB</span>
       </a>
       <nav aria-label="页面导航">
+        <a href="#manual-calibration">手动标定</a>
         <a href="#review">九视频</a>
         <a href="#boundary">结论边界</a>
         <a href="/downloads/final-nine/README.md">交付说明</a>
@@ -32,9 +33,10 @@
           <div class="hero-copy">
             <p class="eyebrow"><span class="status-light" aria-hidden="true"></span> FINAL REVIEW · 2026-08-31</p>
             <h1 id="page-title">同一帧里，<br><em>看清两套手。</em></h1>
-            <p class="hero-lead">最终 9 段 H.264 视频：旧数据的 MOCAP 与手部解算分开呈现，新数据用新世界坐标变换完成 marker / pose 投影，并补齐无手套的世界坐标系标定证据。</p>
+            <p class="hero-lead">最终 9 段 H.264 视频：旧数据的 MOCAP 与手部解算分开呈现；最后一段动作改为 Take_007，按照片恢复 CMM 20 点语义并修正掌根；第 9 段绑定同批 155410 无手套标定。</p>
             <div class="hero-actions">
-              <a class="button primary" href="#review">开始逐组检查 <span aria-hidden="true">↓</span></a>
+              <a class="button primary" href="#manual-calibration">打开 XYZ 标定台 <span aria-hidden="true">↓</span></a>
+              <a class="button secondary" href="#review">逐组检查九视频</a>
               <a class="button secondary" href="/downloads/final-nine/SHA256SUMS.txt" download>下载校验和</a>
             </div>
           </div>
@@ -61,6 +63,112 @@
           <span class="scope-icon" aria-hidden="true">i</span>
           <p><strong>这组视频验证的是同步、坐标投影和条件组合。</strong>手部解算与 MOCAP 来自同一段记录，而且 solved pose 的 root 使用 MOCAP 条件，因此它们的贴合是 same-recording consistency，<em>不是独立动态手部 GT 精度</em>。</p>
         </div>
+      </section>
+
+      <section class="workbench-shell" id="manual-calibration" aria-labelledby="workbench-title">
+        <header class="workbench-heading">
+          <div>
+            <p class="eyebrow">TAKE_007 · MANUAL CALIBRATION</p>
+            <h2 id="workbench-title">在原始 RGB 上，手动对齐世界 XYZ</h2>
+          </div>
+          <p>蓝/粉是反光片 MOCAP，绿/黄是手套解算。所有 XYZ 数值单位均为毫米，调整先在世界坐标中相加，再经过完整相机外参与 OpenCV 畸变投影。</p>
+        </header>
+
+        <div class="workbench-grid">
+          <article class="alignment-viewer" aria-label="Take 007 对齐预览">
+            <div class="alignment-stage">
+              <canvas id="alignment-canvas" width="960" height="540" role="img" aria-label="Take 007 RGB 视频、MOCAP 与 solved pose 叠加画面"></canvas>
+              <div class="alignment-loading" id="alignment-loading" role="status" aria-live="polite">
+                <span class="spinner" aria-hidden="true"></span>
+                <span>正在读取 Take_007 标定数据…</span>
+              </div>
+              <div class="alignment-legend" aria-label="标定图层颜色">
+                <span><i class="left-mocap"></i>左 MOCAP</span>
+                <span><i class="right-mocap"></i>右 MOCAP</span>
+                <span><i class="left-solved"></i>左 solved</span>
+                <span><i class="right-solved"></i>右 solved</span>
+              </div>
+            </div>
+
+            <div class="alignment-transport" aria-label="Take 007 帧控制">
+              <button id="alignment-play" type="button" disabled>播放</button>
+              <button id="alignment-prev" type="button" disabled aria-label="上一帧">−1 帧</button>
+              <input id="alignment-frame" type="range" min="0" max="0" value="0" step="1" disabled aria-label="当前视频帧">
+              <button id="alignment-next" type="button" disabled aria-label="下一帧">+1 帧</button>
+              <output id="alignment-time" for="alignment-frame">0 / 0 · 0.000 s</output>
+            </div>
+          </article>
+
+          <aside class="xyz-panel" aria-labelledby="xyz-title">
+            <header>
+              <div>
+                <p class="control-kicker">WORLD TRANSLATION</p>
+                <h3 id="xyz-title">手动 XYZ</h3>
+              </div>
+              <span class="unit-badge">WORLD · mm</span>
+            </header>
+
+            <fieldset class="xyz-fieldset">
+              <legend>双手全局平移</legend>
+              <div class="axis-grid">
+                <label class="axis-x">X<input id="global-x" data-scope="global" data-axis="x" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                <label class="axis-y">Y<input id="global-y" data-scope="global" data-axis="y" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                <label class="axis-z">Z<input id="global-z" data-scope="global" data-axis="z" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+              </div>
+            </fieldset>
+
+            <div class="switch-stack">
+              <label class="switch-row"><span><strong>两手联动</strong><small>修改任一 residual 时同步另一只手</small></span><input id="link-hands" type="checkbox" checked><i aria-hidden="true"></i></label>
+              <label class="switch-row"><span><strong>启用左右 residual</strong><small>在 global XYZ 之后追加单手微调</small></span><input id="enable-residual" type="checkbox"><i aria-hidden="true"></i></label>
+            </div>
+
+            <div class="residual-controls" id="residual-controls" aria-disabled="true">
+              <fieldset class="xyz-fieldset side-left" disabled>
+                <legend>左手 residual</legend>
+                <div class="axis-grid">
+                  <label>X<input data-scope="left" data-axis="x" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                  <label>Y<input data-scope="left" data-axis="y" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                  <label>Z<input data-scope="left" data-axis="z" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                </div>
+              </fieldset>
+              <fieldset class="xyz-fieldset side-right" disabled>
+                <legend>右手 residual</legend>
+                <div class="axis-grid">
+                  <label>X<input data-scope="right" data-axis="x" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                  <label>Y<input data-scope="right" data-axis="y" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                  <label>Z<input data-scope="right" data-axis="z" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                </div>
+              </fieldset>
+            </div>
+
+            <div class="layer-switches" aria-label="叠加图层">
+              <label><input id="show-mocap" type="checkbox" checked><span>MOCAP marker</span></label>
+              <label><input id="show-solved" type="checkbox" checked><span>Solved pose</span></label>
+            </div>
+
+            <div class="rear-offset-note">
+              <span>DEFAULT HAND-LOCAL REAR OFFSET</span>
+              <strong id="rear-offset-value">20 mm</strong>
+              <p>掌根汇聚点已沿 hand-local 后向移动 20 mm；上面的 XYZ 是额外的 world-frame 平移。</p>
+            </div>
+
+            <dl class="effective-offsets">
+              <div><dt>左手有效 XYZ</dt><dd id="effective-left">0.0, 0.0, 0.0 mm</dd></div>
+              <div><dt>右手有效 XYZ</dt><dd id="effective-right">0.0, 0.0, 0.0 mm</dd></div>
+            </dl>
+
+            <div class="xyz-actions">
+              <button id="alignment-reset" class="reset" type="button">恢复 0 / 0 / 0</button>
+              <button id="alignment-export" class="export" type="button">导出标定 JSON</button>
+            </div>
+            <p class="save-state" id="alignment-save-state" role="status" aria-live="polite">参数会自动保存在当前浏览器。</p>
+          </aside>
+        </div>
+
+        <details class="schema-details">
+          <summary>数据与变换约定</summary>
+          <p><code>take007_alignment.json</code> 索引两个 little-endian Float32 文件；MOCAP 为 <code>[frame, 2, 11, 3]</code>（synthetic root + 10 markers），solved 为 <code>[frame, 2, 20, 3]</code>。计算顺序固定为 <code>world point + global XYZ + side residual → world_to_color → OpenCV distortion → RGB pixel</code>。</p>
+        </details>
       </section>
 
       <section class="review-shell" id="review" aria-labelledby="review-title">
@@ -202,49 +310,49 @@
           </div>
         </section>
 
-        <section class="take-group new-capture" data-pair="take006" aria-labelledby="take006-title">
+        <section class="take-group new-capture" data-pair="take007" aria-labelledby="take007-title">
           <header class="group-heading">
-            <div><p class="group-index">04 / 05 · NEW</p><h3 id="take006-title">Take_006</h3></div>
-            <p>新世界坐标变换 · 2619 个可同步 RGB 帧 · 最后一帧因无同步 anchor 明确排除</p>
-            <div class="pair-controls" aria-label="Take 006 播放控制">
-              <button type="button" data-sync-play="take006">同步播放</button>
-              <button type="button" data-sync-reset="take006">归零</button>
+            <div><p class="group-index">04 / 05 · NEW</p><h3 id="take007-title">Take_007</h3></div>
+            <p>新世界坐标变换 · 1981 个可同步 RGB 帧 · 未锚定尾帧 1981 明确排除</p>
+            <div class="pair-controls" aria-label="Take 007 播放控制">
+              <button type="button" data-sync-play="take007">同步播放</button>
+              <button type="button" data-sync-reset="take007">归零</button>
             </div>
           </header>
           <div class="capture-callout">
-            <div><strong>22</strong><span>persistent anonymous markers</span></div>
-            <div><strong>72.4%</strong><span>solved pose 有效覆盖 · 1897 / 2619</span></div>
-            <p>raw CMM 只有 marker ID 和 3D 轨迹，没有解剖 joint 名称或连接关系；页面不会伪造 21-joint skeleton。</p>
+            <div><strong>20</strong><span>显示的实测 CMM surface markers · 10 / 手</span></div>
+            <div><strong>69.0%</strong><span>solved pose 有效覆盖 · 1367 / 1981</span></div>
+            <p>照片把 #1–#10 映射为五组指尖/近端反光片；#11 不作为第 21 点显示，只用于生成位于掌背模块后方 20 mm 的虚拟掌根。</p>
           </div>
           <div class="video-pair">
-            <article class="video-card" data-video-id="take006-raw-markers">
+            <article class="video-card" data-video-id="take007-mocap-markers">
               <div class="video-wrap">
-                <video controls playsinline preload="metadata" poster="/downloads/final-nine/posters/07_take006_raw_mocap_markers.jpg" aria-label="Take 006 原始 MOCAP marker 视频">
-                  <source src="/downloads/final-nine/videos/07_take006_raw_mocap_markers.mp4" type="video/mp4">
+                <video controls playsinline preload="metadata" poster="/downloads/final-nine/posters/07_take007_labeled_mocap_markers.jpg" aria-label="Take 007 CMM 20 点视频">
+                  <source src="/downloads/final-nine/videos/07_take007_labeled_mocap_markers.mp4" type="video/mp4">
                 </video>
-                <span class="layer-badge marker">RAW MOCAP · 22 markers</span>
+                <span class="layer-badge marker">CMM · 20 measured points</span>
               </div>
               <div class="card-body">
-                <div class="card-title"><h4>原始 MOCAP marker clusters</h4><span>视频 07</span></div>
-                <p>左右空间簇中的 22 个持续匿名 marker；它们准确投影到反光点，但没有 anatomical topology。</p>
-                <div class="asset-meta"><span data-field="frames">2619 frames</span><span data-field="duration">87.30 s</span><span data-field="bytes">—</span></div>
-                <div class="card-links"><a data-download href="/downloads/final-nine/videos/07_take006_raw_mocap_markers.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/07_take006_raw_mocap_markers.json">Metrics</a><code data-field="sha">SHA —</code></div>
+                <div class="card-title"><h4>标记语义恢复后的 MOCAP</h4><span>视频 07</span></div>
+                <p>每手只画 #1–#10 的五组 base→tip；白心汇聚点是 #11 沿 hand-local 后向 20 mm 的虚拟掌根，不计入 20 个实测点。</p>
+                <div class="asset-meta"><span data-field="frames">1981 frames</span><span data-field="duration">66.03 s</span><span data-field="bytes">—</span></div>
+                <div class="card-links"><a data-download href="/downloads/final-nine/videos/07_take007_labeled_mocap_markers.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/07_take007_labeled_mocap_markers.json">Metrics</a><code data-field="sha">SHA —</code></div>
               </div>
             </article>
 
-            <article class="video-card" data-video-id="take006-solved">
+            <article class="video-card" data-video-id="take007-solved">
               <div class="video-wrap">
-                <video controls playsinline preload="metadata" poster="/downloads/final-nine/posters/08_take006_solved_hand_pose.jpg" aria-label="Take 006 手部解算视频">
-                  <source src="/downloads/final-nine/videos/08_take006_solved_hand_pose.mp4" type="video/mp4">
+                <video controls playsinline preload="metadata" poster="/downloads/final-nine/posters/08_take007_aligned_hand_pose.jpg" aria-label="Take 007 对齐后的手部解算视频">
+                  <source src="/downloads/final-nine/videos/08_take007_aligned_hand_pose.mp4" type="video/mp4">
                 </video>
-                <span class="layer-badge solved">SOLVED · 72.4% valid</span>
+                <span class="layer-badge solved">SOLVED · 69.0% valid</span>
               </div>
               <div class="card-body">
-                <div class="card-title"><h4>解算 pose + MOCAP root</h4><span>视频 08</span></div>
-                <p>20-joint local articulation 由 wrist + 4 palm markers 条件定位；指尖从不参与拟合，无效帧明确显示而不 hold。</p>
-                <div class="coverage-line" aria-label="有效覆盖 72.4%"><i style="width:72.4%"></i></div>
-                <div class="asset-meta"><span data-field="frames">2619 frames</span><span data-field="duration">87.30 s</span><span data-field="bytes">—</span></div>
-                <div class="card-links"><a data-download href="/downloads/final-nine/videos/08_take006_solved_hand_pose.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/08_take006_solved_hand_pose.json">Metrics</a><code data-field="sha">SHA —</code></div>
+                <div class="card-title"><h4>Take_007 解算 pose 对齐</h4><span>视频 08</span></div>
+                <p>掌根固定在正确的虚拟 root，冻结每手尺度，并用 #1–#10 逐帧求旋转；这是 same-take calibration fit，不是独立精度评估。</p>
+                <div class="coverage-line" aria-label="有效覆盖 69.0%"><i style="width:69%"></i></div>
+                <div class="asset-meta"><span data-field="frames">1981 frames</span><span data-field="duration">66.03 s</span><span data-field="bytes">—</span></div>
+                <div class="card-links"><a data-download href="/downloads/final-nine/videos/08_take007_aligned_hand_pose.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/08_take007_aligned_hand_pose.json">Metrics</a><code data-field="sha">SHA —</code></div>
               </div>
             </article>
           </div>
@@ -253,7 +361,7 @@
         <section class="take-group calibration-group" aria-labelledby="calibration-title">
           <header class="group-heading">
             <div><p class="group-index">05 / 05 · CALIBRATION</p><h3 id="calibration-title">No-glove world calibration</h3></div>
-            <p>CS-400 世界坐标轴与 marker plane · 98 帧 · 标定证据，不是手部 GT</p>
+            <p>匹配的新 155410 无手套 RGB + 该录制自己的 intrinsics + 2026-08-31 CS-400 外参 · 98 帧</p>
           </header>
           <article class="video-card solo" data-video-id="no-glove-calibration">
             <div class="video-wrap">
@@ -264,7 +372,7 @@
             </div>
             <div class="card-body">
               <div class="card-title"><h4>无手套世界坐标系检查</h4><span>视频 09</span></div>
-              <p>用 RGB PnP 恢复 metric camera pose，并把 CS-400 世界轴投影回画面；不使用有损 Depth.mp4 做标定。</p>
+              <p>明确绑定 camera_glove_recording_20260831_155410：用它的 RGB frame 30、同录制 intrinsics 与 CS-400 PnP 外参回投影世界轴。</p>
               <div class="calibration-facts"><span><b>0.294 px</b> reprojection RMS</span><span><b>0.407 px</b> max</span><span><b>1.986 px</b> fixed-camera probe max</span></div>
               <div class="asset-meta"><span data-field="frames">98 frames</span><span data-field="duration">3.27 s</span><span data-field="bytes">—</span></div>
               <div class="card-links"><a data-download href="/downloads/final-nine/videos/09_no_glove_world_calibration.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/09_no_glove_world_calibration.json">Metrics</a><a href="/downloads/final-nine/calibration/camera_to_world.json">外参 JSON</a><code data-field="sha">SHA —</code></div>
@@ -277,7 +385,7 @@
         <div>
           <p class="eyebrow">REPRODUCIBLE DELIVERY</p>
           <h2 id="download-title">视频、逐帧映射、metrics 与标定在同一个 folder</h2>
-          <p>直接下载单段视频，或根据 manifest 和 SHA256SUMS.txt 验证整套交付。Take 01 / 02 / 03 与 Take_006 均附逐帧映射 CSV。</p>
+          <p>直接下载单段视频，或根据 manifest 和 SHA256SUMS.txt 验证整套交付。Take 01 / 02 / 03 与 Take_007 均附逐帧映射 CSV；calibration-workbench 另含 clean RGB 和两个 Float32 轨迹。</p>
         </div>
         <div class="download-links">
           <a href="/downloads/final-nine/README.md">阅读 README <span>↗</span></a>
