@@ -63,12 +63,20 @@ r = p11 + 20 mm * d
 每帧用十点 Kabsch 求 proper rotation。任意 solved point `g_k` 的世界位置为：
 
 ```text
-q_k = r + delta_global + delta_side + s * R * (g_k - g_wrist)
+q_k = r + delta_global + delta_video + delta_side + s * R * (g_k - g_wrist)
 ```
 
-默认 `delta_global=delta_left=delta_right=[0,0,0] mm`。人工 offset 由
-`gt_calib.manual_xyz_profile.v1` 提供，必须写入 metrics；不能静默烘焙。
-Profile loader 严格要求：
+当前 final-nine 审核值为 `delta_global=[0,-44,0] mm`，Take_007 的
+`delta_video=delta_left=delta_right=[0,0,0] mm`。它是 operator display
+correction，必须写入 metrics/header；不能静默烘焙，也不能解释为独立 GT。
+
+当前网页导出 `gt_calib.final_nine_manual_xyz.v1`。其 global 数值会分别在每段
+自己的 MOCAP world 中执行；只有 Take_007 video 07/08 可以使用左右手 residual，
+video 09 强制 excluded。完整合同见
+[FINAL_NINE_MANUAL_XYZ_V1.md](FINAL_NINE_MANUAL_XYZ_V1.md)。
+
+旧 `gt_calib.manual_xyz_profile.v1` loader 继续兼容，但严格只作用于 Take_007，
+并要求：
 
 ```text
 source_recording = camera_glove_recording_20260831_161912
@@ -80,6 +88,8 @@ rear_offset_mm   = 20
 
 三个 XYZ 字段都必须是三个有限数值。`rear_offset_mm` 不是人工自由度；任何非
 20 mm 值都会拒绝，以避免 manual translation 偷换已确认的 hand-local root。
+Legacy profile 不能移动 video 01-06；要对完整九视频应用 operator correction，
+必须使用 `gt_calib.final_nine_manual_xyz.v1`。
 
 ## 当前结果
 
@@ -107,24 +117,29 @@ same-take model consistency diagnostic。
 | `calibration-workbench/take007_mocap.f32` | float32-le `[1981,2,11,3]` |
 | `calibration-workbench/take007_solved.f32` | float32-le `[1981,2,20,3]` |
 | `calibration-workbench/take007_alignment.json` | `gt_calib.manual_xyz_workbench.v1` |
-| browser export | `gt_calib.manual_xyz_profile.v1` |
+| browser export | `gt_calib.final_nine_manual_xyz.v1`；legacy loader 仍接受 `gt_calib.manual_xyz_profile.v1` |
 | `calibration-workbench/applied_manual_profile.json` | 仅在传入 profile 时复制原始 JSON；manifest 记录 SHA-256 |
 
 Workbench 的 CMM node 0 是 synthetic wrist，node 1..10 才是实测 #1..#10。
 所有数组顺序均为 `[frame, left/right, node, xyz]`，坐标单位 mm。
 
-默认正式包使用零 XYZ，因此 manifest 的 `applied_manual_profile` 为 `null`。
-若通过 `--manual-profile` 重建，输入 JSON 必须原样复制到上述路径，manifest
-必须写入其 SHA-256，validation 必须复算并 fail closed；仅在 metrics 中记录
-数值而不保存输入文件不满足 provenance 合同。
+当前正式重建应使用
+`calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json`，对 video
+01-08 各自在本段 MOCAP world 中应用 `[0,-44,0] mm`，对 video 09 不应用。
+输入 JSON 必须原样复制到上述路径，manifest 必须写入其 SHA-256，validation
+必须复算并 fail closed；仅在 metrics 或浏览器 localStorage 中记录数值而不保存
+输入文件不满足 provenance 合同。
 
 ## 最终包验收
 
-当前 `final_9_video_delivery/` 有 40 个 regular files、124,130,375 bytes
-（118.38 MiB）；`SHA256SUMS.txt` 的 39 行覆盖除自身外的全部文件。9/9 H.264
-视频已通过 full decode，delivery validation 为 `status=pass`、
-`failures=[]`。全量回归 114 项通过，记录基线为
-`114 passed in 99.08s`。
+新的 BVH-FK + `[0,-44,0] mm` package 已从空 destination 正式重建：41 个
+regular files、122,158,302 bytes（116.50 MiB），`SHA256SUMS.txt` 40 行；9/9
+H.264 视频通过 full decode，validation `status=pass`、`failures=[]`。应用 profile
+SHA-256 为 `2eaf48440999a1efe8a27bb259a98e9305da5132f4783605ede7601f7e3c78d8`。
+Take_007 CMM source SHA-256 为
+`25bebdbb079d233b7c71ba94402531a9ed09b87ac690def05b012065b5748a08`，并写入
+video 07/08 metrics 与 workbench metadata。
+当前全量代码回归为 `155 passed in 107.14s`。
 
 ## Video 09 不变量
 
@@ -136,6 +151,8 @@ Workbench 的 CMM node 0 是 synthetic wrist，node 1..10 才是实测 #1..#10�
 - world transform 来自 2026-08-31 CS-400 calibration archive。
 
 不得以旧 `00`、Take_006 或 Take_007 的画面/intrinsics 代替。
+也不得对 video 09 应用 final-nine global/per-video XYZ；它没有手部 MOCAP
+overlay，profile 必须记录 `apply_translation=false` 且全部 residual 为零。
 
 Builder 还执行内容身份 hard gate：解码归档 member
 `.../20260831_processed_tabletop_origin/reference_rgb.png` 与 155410 RGB frame 30，
@@ -157,9 +174,18 @@ uv run gt-calib-delivery serve --host 127.0.0.1 --port 8811
 
 uv run gt-calib-delivery render-new \
   --destination outputs/take007_manual_review \
-  --manual-profile /path/to/take007_manual_xyz_calibration.json
+  --manual-profile calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json
+
+uv run gt-calib-delivery build \
+  --destination rebuilt_9_video_delivery \
+  --manual-profile calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json
+
+uv run gt-calib-delivery validate \
+  --destination rebuilt_9_video_delivery --full-decode
 ```
 
 网页地址为 `http://127.0.0.1:8811/final-nine/#manual-calibration`。调整结果是
-operator-selected display calibration；只有在独立 held-out 数据上冻结并验证后，
-才可讨论外部 accuracy。
+operator-selected display correction；网页可选择九段并编辑逐段 XYZ，但只有
+Take_007 video 07/08 支持左右手 residual/live reprojection，video 09 固定排除。
+该修正不是 cross-session shared extrinsic；只有在独立 held-out 数据上冻结并
+验证后，才可讨论外部 accuracy。

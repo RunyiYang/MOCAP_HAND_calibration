@@ -1,10 +1,10 @@
 {
   "schema": "gt_calib.mocap_video_alignment.v2",
   "artifact_type": "evaluation_metrics",
-  "generated_at": "2026-08-30T21:44:10+00:00",
+  "generated_at": "2026-08-31T20:36:38+00:00",
   "segment": "01_210814_Take_000",
   "status": "frame_complete_timestamp_mapping_with_content_validated_rgb_index_correspondence_and_metric_reprojection",
-  "claim": "Every published clip frame has a valid camera-timestamp -> CMAvatar interpolation bracket. The BAG-message -> MP4-frame index mapping is accepted only after decoded image-content validation, and joints are projected with the delivered camera/world calibration. Frame-complete does not mean independently measured <=1 ms physical synchronization.",
+  "claim": "Every published clip frame has a valid camera-timestamp -> CMAvatar interpolation bracket. The BAG-message -> MP4-frame index mapping is accepted only after decoded image-content validation, and joints are projected with the delivered camera/world calibration. Frame-complete does not mean independently measured <=1 ms physical synchronization. A candidate MOCAP-world origin translation is active; it is explicitly not a measured ground-truth calibration.",
   "inputs": {
     "rgb_video": {
       "path": "project://同步整理_20260829_三段/01_210814_Take_000/视频/RGB.mp4",
@@ -29,6 +29,80 @@
     "camera_to_world": {
       "path": "project://同步整理_20260829_三段/movementcap_worldcalib_pointcloud_package_20260830/movementcap_ruler_worldcalib/results/manual_final/camera_to_world.json",
       "sha256": "c020c67dc9266238366c511b8c24728c5915e61493d5ad51bac354f3f4582283"
+    },
+    "mocap_skeleton_0_bvh": {
+      "path": "project://同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Skeleton_0.bvh",
+      "sha256": "61301fcae506f6081522fb8b787839a5190679948867b6d8a4912cb07288e97c"
+    },
+    "mocap_skeleton_1_bvh": {
+      "path": "project://同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Skeleton_1.bvh",
+      "sha256": "fcf184d2f6211bb06f39487f14c68bcca5d188b0629917f15a9b7559ae2cc5d0"
+    }
+  },
+  "mocap_position_source": {
+    "selected": "skeleton-bvh",
+    "human_cma_supplies_timestamps_and_frame_counters": true,
+    "contract": {
+      "status": "pass",
+      "position_source": "skeleton-bvh",
+      "timestamp_and_frame_counter_source": "Human.cma",
+      "human_cma_timestamps_preserved_without_resampling": true,
+      "human_cma_joint_positions_used_as_render_source": false,
+      "human_cma_root_positions_used_for_ordinal_validation_only": true,
+      "bvh_forward_kinematics": "bvh_web_export.evaluate_world_positions",
+      "bvh_source_sha256": {
+        "left": "61301fcae506f6081522fb8b787839a5190679948867b6d8a4912cb07288e97c",
+        "right": "fcf184d2f6211bb06f39487f14c68bcca5d188b0629917f15a9b7559ae2cc5d0"
+      },
+      "cma_world_mm_to_bvh_units": "[-X, Z, Y] / 10",
+      "bvh_units_to_mocap_world_mm": "[-10*X_bvh, 10*Z_bvh, 10*Y_bvh] mm",
+      "ordinal_mapping": "raw BVH frame i = Human.cma data-row ordinal i",
+      "cma_row_count": 7215,
+      "bvh_source_frame_count": 7216,
+      "bvh_frame_zero_is_all_zero_vendor_seed_and_unavailable": true,
+      "strictly_usable_cma_ordinal_first": 1,
+      "strictly_usable_cma_ordinal_last": 7214,
+      "final_bvh_frame_without_cma_timestamp_omitted": true,
+      "joint_order": [
+        "wrist",
+        "thumb_cmc",
+        "thumb_mcp",
+        "thumb_ip",
+        "thumb_tip",
+        "index_mcp",
+        "index_pip",
+        "index_dip",
+        "index_tip",
+        "middle_mcp",
+        "middle_pip",
+        "middle_dip",
+        "middle_tip",
+        "ring_mcp",
+        "ring_pip",
+        "ring_dip",
+        "ring_tip",
+        "pinky_mcp",
+        "pinky_pip",
+        "pinky_dip",
+        "pinky_tip"
+      ],
+      "all_usable_root_ordinals_max_abs_error_mm": 0.0004999999999881766,
+      "all_usable_root_ordinals_tolerance_mm": 0.001,
+      "endpoint_root_ordinal_validation": {
+        "status": "pass",
+        "cma_mm_to_bvh_units_for_contract_check": "[-X, Z, Y] / 10",
+        "tolerance_bvh_units": 0.0001,
+        "checks": {
+          "Skeleton_0": {
+            "bvh_frame_1_matches_human_cma_row_1_max_abs_error_bvh_units": 3.5100000001619946e-05,
+            "bvh_frame_n_minus_2_matches_last_human_cma_row_max_abs_error_bvh_units": 4.436999999768432e-05
+          },
+          "Skeleton_1": {
+            "bvh_frame_1_matches_human_cma_row_1_max_abs_error_bvh_units": 4.802000000125872e-05,
+            "bvh_frame_n_minus_2_matches_last_human_cma_row_max_abs_error_bvh_units": 3.82399999985239e-05
+          }
+        }
+      }
     }
   },
   "video_frame_contract": {
@@ -53661,12 +53735,12 @@
       "each_timecode_row_matches_exactly_one_unique_bag_index": true,
       "pass": true
     },
-    "source_frame_first": 60,
+    "source_frame_first": 61,
     "source_frame_last_inclusive": 1807,
-    "published_clip_frames": 1748,
+    "published_clip_frames": 1747,
     "published_clip_all_frames_mocap_valid": true,
     "published_clip_coverage_percent": 100.0,
-    "trimmed_prefix_frames": 60,
+    "trimmed_prefix_frames": 61,
     "trimmed_suffix_frames": 7,
     "nominal_fps": 30.0,
     "width": 1920,
@@ -53675,7 +53749,7 @@
   "temporal_alignment": {
     "absolute_time_key": "cmavatar_windows_estimated_ns",
     "mocap_index_key": "FrameCounter",
-    "mapping": "RGB device acquisition timestamp -> remove measured callback latency row by row -> CMAvatar acquisition time -> linear 120 Hz position interpolation",
+    "mapping": "RGB device acquisition timestamp -> remove measured callback latency row by row -> CMAvatar acquisition time -> linear 120 Hz skeleton-bvh position interpolation",
     "camera_capture_to_thor_poll_latency_ms": {
       "min": 237.91526100000002,
       "median": 255.10294900000002,
@@ -53692,8 +53766,8 @@
     },
     "nearest_mocap_sample_delta_ms": {
       "min": 0.0002384185791015625,
-      "median": 2.090573310852051,
-      "p95": 3.9602041244506836,
+      "median": 2.0928382873535156,
+      "p95": 3.9602279663085938,
       "max": 4.163265228271484
     },
     "mocap_sample_timebase": {
@@ -53720,20 +53794,20 @@
       "centered_smoothing_frames": 7,
       "correlation_definition": "corr(video_energy[t], mocap_speed_at(camera_time[t] + adjustment))",
       "legacy_callback_time": {
-        "zero_adjustment_correlation": 0.6260699215440536,
-        "zero_adjustment_compared_motion_steps": 1741,
-        "best_timestamp_adjustment_ms": -233,
-        "best_correlation": 0.8755496531353493,
-        "compared_motion_steps": 1741
+        "zero_adjustment_correlation": 0.6440735195751635,
+        "zero_adjustment_compared_motion_steps": 1740,
+        "best_timestamp_adjustment_ms": -229,
+        "best_correlation": 0.8805320320154566,
+        "compared_motion_steps": 1740
       },
       "acquisition_time_corrected": {
-        "zero_adjustment_correlation": 0.8761437845962787,
-        "zero_adjustment_compared_motion_steps": 1741,
-        "best_timestamp_adjustment_ms": 16,
-        "best_correlation": 0.878986796550017,
-        "compared_motion_steps": 1741
+        "zero_adjustment_correlation": 0.8792289668025809,
+        "zero_adjustment_compared_motion_steps": 1740,
+        "best_timestamp_adjustment_ms": 30,
+        "best_correlation": 0.8832832347101705,
+        "compared_motion_steps": 1740
       },
-      "zero_adjustment_correlation_gain": 0.2500738630522251,
+      "zero_adjustment_correlation_gain": 0.23515544722741744,
       "one_video_frame_ms": 33.333333333333336,
       "acceptance": {
         "corrected_zero_correlation_at_least_0_80": true,
@@ -53805,35 +53879,58 @@
       "p50": 0.7673075866774752,
       "p95": 3.912497830671242
     },
-    "projected_joint_samples": 73416,
+    "projected_joint_samples": 73374,
     "positive_depth_fraction": 1.0,
     "inside_rgb_frame_fraction": 1.0,
     "wrist_inside_rgb_frame_fraction": 1.0,
+    "mocap_world_translation": {
+      "enabled": true,
+      "profile": "candidate_origin_translation_not_ground_truth",
+      "translation_xyz_mm": [
+        0.0,
+        -44.0,
+        0.0
+      ],
+      "applied_after_timestamp_interpolation_to_all_42_joints": true,
+      "changes_joint_relative_geometry": false,
+      "ground_truth_claimed": false,
+      "interpretation": "Optional candidate MOCAP-world origin correction for visual alignment; a non-zero value is not a measured ground-truth calibration."
+    },
+    "rear_wrist_mount_visualization": {
+      "enabled": false,
+      "method": "anchor = wrist - scale * (middle_mcp - wrist), evaluated in MOCAP world coordinates before RGB projection",
+      "wrist_joint_index": 0,
+      "middle_mcp_joint_index": 9,
+      "scale": 0.8,
+      "original_21_joint_positions_modified": false,
+      "additional_mocap_gt_joint": false,
+      "interpretation": "Display-only extrapolation toward the visible rear wrist module; the delivered Forearm rigid-body tracks are zero placeholders and do not measure this anchor."
+    },
     "independent_2d_joint_labels_available": false,
     "independent_2d_reprojection_error_measured": false,
     "world_to_color_linear_determinant": 0.994914215263282,
     "world_to_color_linear_orthogonality_max_abs_error": 0.010052020693670616
   },
   "artifacts": {
-    "frame_mapping_csv": {
-      "path": "project://outputs/mocap_video_alignment_review/01_210814_Take_000_mocap_video_aligned_strict25.alignment.csv",
-      "bytes": 495975,
-      "sha256": "976dc65b4ab50f6d433f270bc7c24d24690706f73da559c245bcfae6a856aad7"
-    },
     "mp4v_preview": {
-      "path": "project://outputs/mocap_video_alignment_review/01_210814_Take_000_mocap_video_aligned_strict25.mp4",
-      "bytes": 32965913,
-      "sha256": "6687222d7b4e9efc05a31eefafedb978b2ccae58d929ef4b61f6e65376c3d654"
+      "path": "project://final_9_video_delivery.y_minus_44.staging/_render_scratch/01/mocap/01_210814_Take_000_mocap_video_aligned_strict25_skeleton_bvh.mp4",
+      "bytes": 32757274,
+      "sha256": "36f90e7c9835eca2d7acbd4b582b761e21b97ca3fa67753af46ff1bf64f972f6"
+    },
+    "frame_mapping_csv": {
+      "path": "project://final_9_video_delivery.y_minus_44.staging/_render_scratch/01/mocap/01_210814_Take_000_mocap_video_aligned_strict25_skeleton_bvh.alignment.csv",
+      "bytes": 495797,
+      "sha256": "76b46463ad09394d1895b402f33c88d79418489c749cd3938878eadf25b83150"
     },
     "contact_sheet": {
-      "path": "project://outputs/mocap_video_alignment_review/01_210814_Take_000_mocap_video_aligned_strict25.contact.jpg",
-      "bytes": 1169114,
-      "sha256": "8edca693d14c26c21cdabd5e6fbf90324a58de752ddbf7f0bbc9a4d4a64dbc4e"
+      "path": "project://final_9_video_delivery.y_minus_44.staging/_render_scratch/01/mocap/01_210814_Take_000_mocap_video_aligned_strict25_skeleton_bvh.contact.jpg",
+      "bytes": 1143980,
+      "sha256": "fd5f378088aa68bc81dd16bdccbe96946817b656f321c3877e4d516041cef877"
     },
     "h264_delivery_video": {
-      "path": "project://outputs/mocap_video_alignment_review/01_210814_Take_000_mocap_video_aligned_strict25_h264.mp4",
-      "bytes": 7859475,
-      "sha256": "c711286edd5c6e7f3188e44e5178a5ca6780428c8eed115f54c186436195e049"
+      "path": "project://final_9_video_delivery.y_minus_44.staging/_render_scratch/01/mocap/01_210814_Take_000_mocap_video_aligned_strict25_skeleton_bvh_h264.mp4",
+      "bytes": 7685059,
+      "sha256": "f16e840d55aa4026ac55f9126ab93c5b0319083b9878cc4f584a4e9120463c88"
     }
   },
   "interpretation_limits": [
@@ -53844,6 +53941,6 @@
     "The CS-400 spatial calibration uses manual marker identity selection plus multi-frame metric depth.",
     "The delivered depth-to-color 3x3 block is slightly non-orthogonal, so world-to-color is treated as the recorded forward calibration rather than claimed as a pure SE(3).",
     "No independent per-frame 2D hand landmarks are available to measure pixel reprojection error over the full motion.",
-    "Human.cma does not include per-joint visibility, residual, occlusion, or gap-fill quality fields."
+    "Skeleton BVH supplies FK joint positions but no per-joint visibility, residual, occlusion, or gap-fill quality fields; Human.cma remains the timestamp/frame-counter authority."
   ]
 }

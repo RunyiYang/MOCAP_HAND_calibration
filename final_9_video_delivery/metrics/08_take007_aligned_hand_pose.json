@@ -3,6 +3,28 @@
   "status": "visualization_complete",
   "source_recording": "camera_glove_recording_20260831_161912",
   "source_take": "Take_007",
+  "source_assets": {
+    "rgb_video": {
+      "path": "project://thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/RGB.mp4",
+      "sha256": "314f4e7981c75a5c487a62ebb869201249df30699bda555c094afa512dcc3d0d"
+    },
+    "cmm_markers": {
+      "path": "project://thor_new4_20260831_processed/camera_glove_recording_20260831_161912/mocap/Take_007/Take_007.cmm",
+      "sha256": "25bebdbb079d233b7c71ba94402531a9ed09b87ac690def05b012065b5748a08"
+    },
+    "camera_cmavatar_alignment": {
+      "path": "project://thor_new4_20260831_processed/camera_glove_recording_20260831_161912/mocap/Take_007/alignment/camera_cmavatar_alignment.csv",
+      "sha256": "b3333a8dd9f704d3754006ea9c3154980877a211d15db80574e552954adc8360"
+    },
+    "glove_aligned_frame_summary": {
+      "path": "project://thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/aligned/primary/aligned_frame_summary.csv",
+      "sha256": "6273fc5eeaf5b50d3c8c0da0a409b0c131dc223ffebbadef58ae3dff7734ec33"
+    },
+    "camera_intrinsics": {
+      "path": "project://thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/camera_1_intrinsics.json",
+      "sha256": "7298ba3d82904c6d6b386b8fd58a3e2f773ead4f388702adce06161ef81287b8"
+    }
+  },
   "rendered_frames": 1981,
   "validity": {
     "valid_frames": 1367,
@@ -101,7 +123,7 @@
   "manual_calibration": {
     "global_world_xyz_mm": [
       0.0,
-      0.0,
+      -44.0,
       0.0
     ],
     "left_world_xyz_mm": [

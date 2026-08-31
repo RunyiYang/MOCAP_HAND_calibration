@@ -1,6 +1,6 @@
 {
   "schema": "gt-calib.asset-manifest.v1",
-  "generatedAt": "2026-08-31T18:41:47+00:00",
+  "generatedAt": "2026-08-31T21:54:30+00:00",
   "cloudflareMaxAssetBytes": 26214400,
   "assets": [
     {
@@ -157,7 +157,7 @@
       "path": "data/site-data.json",
       "source": "generated from MOCAP/video + raw-depth/MOCAP alignment + fusion + diagnostic strict metrics and request CSV",
       "bytes": 38389,
-      "sha256": "0dd107e955327fad9dca47c5232db895978f8aaad591d53ad8ba2ddff676a19f"
+      "sha256": "09df419b5b78c2a8e949369e4608144a4d663c32ae10ca3eac28bafcff0f04ce"
     },
     {
       "path": "downloads/BVH_LOCAL_VIEWER_V1.md",
@@ -202,6 +202,12 @@
       "sha256": "92083b37ee70050f30aac034926eddb806d1dc25385bd273bc22de9bba72b91c"
     },
     {
+      "path": "downloads/FINAL_NINE_MANUAL_XYZ_V1.md",
+      "source": "docs/calibration/FINAL_NINE_MANUAL_XYZ_V1.md",
+      "bytes": 7633,
+      "sha256": "fe96e539ddf504b8a9388919398c9a1475477d271028f9c84afb597821779025"
+    },
+    {
       "path": "downloads/MOCAP_ROOT_FUSION_V1.md",
       "source": "docs/calibration/MOCAP_ROOT_FUSION_V1.md",
       "bytes": 10010,
@@ -240,8 +246,14 @@
     {
       "path": "downloads/daily-2026-08-31.md",
       "source": "docs/daily/2026/2026-08-31.md",
-      "bytes": 29895,
-      "sha256": "b73eae8e65a1b8f76d63e6b65dabda2aeddd11b7362cfb2af3b5cf9785c7ac9e"
+      "bytes": 32327,
+      "sha256": "53acbcea5b4e010472382fd6c8fb3b2b5dfbd2af0b6cee7cbdcec22e4c7ed119"
+    },
+    {
+      "path": "downloads/daily-2026-09-01.md",
+      "source": "docs/daily/2026/2026-09-01.md",
+      "bytes": 6406,
+      "sha256": "b7ad5cfaf1b9790c82987f9718fb47c8a20a5cd6a7fb87773b977169e62135c2"
     },
     {
       "path": "downloads/dataset-inventory.csv",
@@ -264,20 +276,26 @@
     {
       "path": "downloads/final-nine/README.md",
       "source": "final_9_video_delivery/README.md",
-      "bytes": 1661,
-      "sha256": "e7c60b501709b5fdd09bd1a6b5babcc98cc105ce97ee974c1c84a41a5df67e11"
+      "bytes": 2700,
+      "sha256": "c261f094c084854484c595291b613ba73a78a82fc014f69501aef5c08f9a3bc4"
     },
     {
       "path": "downloads/final-nine/SHA256SUMS.txt",
       "source": "final_9_video_delivery/SHA256SUMS.txt",
-      "bytes": 3898,
-      "sha256": "724298edfdfe05301a18c3f8428a32afa0e9045d02b482ef86ec3425cbc97dff"
+      "bytes": 4014,
+      "sha256": "4ed9b5c98069c83f62d4368d9d0feaf8f467b64def95c4793031d29b9aafc502"
+    },
+    {
+      "path": "downloads/final-nine/calibration-workbench/applied_manual_profile.json",
+      "source": "final_9_video_delivery/calibration-workbench/applied_manual_profile.json",
+      "bytes": 4344,
+      "sha256": "2eaf48440999a1efe8a27bb259a98e9305da5132f4783605ede7601f7e3c78d8"
     },
     {
       "path": "downloads/final-nine/calibration-workbench/take007_alignment.json",
       "source": "final_9_video_delivery/calibration-workbench/take007_alignment.json",
-      "bytes": 4149,
-      "sha256": "31b0d448e73cd2072a276880fc79e8d52e2d99a951bee17ac7c87bb28bd71a1a"
+      "bytes": 5437,
+      "sha256": "1b22c17b076fa339a945f9d3184b85e59e95ee1aeebada1a68648be2e001f0f3"
     },
     {
       "path": "downloads/final-nine/calibration-workbench/take007_clean_rgb.mp4",
@@ -312,74 +330,74 @@
     {
       "path": "downloads/final-nine/frame_maps/take01_rgb_to_mocap.csv",
       "source": "final_9_video_delivery/frame_maps/take01_rgb_to_mocap.csv",
-      "bytes": 495975,
-      "sha256": "976dc65b4ab50f6d433f270bc7c24d24690706f73da559c245bcfae6a856aad7"
+      "bytes": 495797,
+      "sha256": "76b46463ad09394d1895b402f33c88d79418489c749cd3938878eadf25b83150"
     },
     {
       "path": "downloads/final-nine/frame_maps/take02_rgb_to_mocap.csv",
       "source": "final_9_video_delivery/frame_maps/take02_rgb_to_mocap.csv",
-      "bytes": 512149,
-      "sha256": "c662f89dcf5dca4a7a5720a7a3e8367c1e946d517654bf9d38abb5462b4289a8"
+      "bytes": 512140,
+      "sha256": "49294efac275497b61575f8d01dfd727d10926beb579f8b39260fd42d086af37"
     },
     {
       "path": "downloads/final-nine/frame_maps/take03_rgb_to_mocap.csv",
       "source": "final_9_video_delivery/frame_maps/take03_rgb_to_mocap.csv",
-      "bytes": 510622,
-      "sha256": "a37de53909289102ff2c89ba27c87f8c4e78473f6bde807f7d3cb3417ca141ea"
+      "bytes": 510446,
+      "sha256": "f6d5a3ef2d93252ecadd70a41f97b893293c02dfeb5011c3314cd988320590d9"
     },
     {
       "path": "downloads/final-nine/manifest.json",
       "source": "final_9_video_delivery/manifest.json",
-      "bytes": 12384,
-      "sha256": "0d59fe1b41b3a981d47dfc942b6111e900db0a5594c14a0a8b830094ebaba6e6"
+      "bytes": 13431,
+      "sha256": "6bfd88a0d76b44f641bc7b8553de9a38aa3bae2630c4cea0ebdd7265bf95a6d5"
     },
     {
       "path": "downloads/final-nine/metrics/01_take01_mocap.json",
       "source": "final_9_video_delivery/metrics/01_take01_mocap.json",
-      "bytes": 2697868,
-      "sha256": "48d29e85da7c6ab91fd09c18ebf51c8bc813bccfbadc6f83635e43bccc9f6501"
+      "bytes": 2702351,
+      "sha256": "efb2c35cc5ec4764bc545e917b29428cd28a6a37df89bbdecbb10e85ac073f5a"
     },
     {
       "path": "downloads/final-nine/metrics/02_take01_solved_pose.json",
       "source": "final_9_video_delivery/metrics/02_take01_solved_pose.json",
-      "bytes": 16463,
-      "sha256": "174fd6a1f53ae67daa1c81cb4bf1519228ffe4e13f8e7b462795a6e996708b06"
+      "bytes": 17573,
+      "sha256": "d73d5629cc180bf50c66dfa964e849f012f70891fa2792a10ca775c150c860f2"
     },
     {
       "path": "downloads/final-nine/metrics/03_take02_mocap.json",
       "source": "final_9_video_delivery/metrics/03_take02_mocap.json",
-      "bytes": 2693410,
-      "sha256": "8872f6808736ea050c9bf2b30d0cf149106d0491f809dcca00d5c017bc5b0d8f"
+      "bytes": 2697889,
+      "sha256": "b69a36080d0393f1d65a6dbc273842bc96301e25d44e5c3b1dfba87a52733132"
     },
     {
       "path": "downloads/final-nine/metrics/04_take02_solved_pose.json",
       "source": "final_9_video_delivery/metrics/04_take02_solved_pose.json",
-      "bytes": 16596,
-      "sha256": "99cb70c36c0ae9c56ac9888c8bc8a7cc04caa89d636f0bd26f4ffe8d7112f072"
+      "bytes": 17709,
+      "sha256": "9e3dc8800593634cb068cc409375d866cb66d6895a13ea000881a14bdadca72d"
     },
     {
       "path": "downloads/final-nine/metrics/05_take03_mocap.json",
       "source": "final_9_video_delivery/metrics/05_take03_mocap.json",
-      "bytes": 2689643,
-      "sha256": "57f3e3ffdeff66d7f9e196936ecc8cd3b342cfe7e9e11ded92be9cdbe98bf740"
+      "bytes": 2694130,
+      "sha256": "3fc27c645517a31386f8ca1d0f64f2c6f1113d19be880065ab20ffbbbfe5758a"
     },
     {
       "path": "downloads/final-nine/metrics/06_take03_solved_pose.json",
       "source": "final_9_video_delivery/metrics/06_take03_solved_pose.json",
-      "bytes": 16590,
-      "sha256": "2a1b0767cc2c79bc2188f27080a48d46dad820cd7cf0aafb4f030331c40bcfcc"
+      "bytes": 17697,
+      "sha256": "a4d66d0cecff10022a29a0234e328110b9fdef96b8b96f4b8e26d11a42f851d1"
     },
     {
       "path": "downloads/final-nine/metrics/07_take007_labeled_mocap_markers.json",
       "source": "final_9_video_delivery/metrics/07_take007_labeled_mocap_markers.json",
-      "bytes": 2770,
-      "sha256": "c2c608e98a2a977525bc37bf8ddf1ebf9b28003159beef3f0ad1a16e06097689"
+      "bytes": 4060,
+      "sha256": "36b4ea0e34b417d01d7bf66ffeb9e91a97ae68fb839e5bdc8b1b1b163ec084d4"
     },
     {
       "path": "downloads/final-nine/metrics/08_take007_aligned_hand_pose.json",
       "source": "final_9_video_delivery/metrics/08_take007_aligned_hand_pose.json",
-      "bytes": 3449,
-      "sha256": "295d5581e3481498504ad5fc5b413e7627f9fd7d92017299bd003294951148f0"
+      "bytes": 4739,
+      "sha256": "47644ef5c3e89c9476d4b8cb38e1689eae4d9f5c401d889aa88598b901d488a2"
     },
     {
       "path": "downloads/final-nine/metrics/09_no_glove_world_calibration.json",
@@ -390,50 +408,50 @@
     {
       "path": "downloads/final-nine/posters/01_take01_mocap.jpg",
       "source": "final_9_video_delivery/posters/01_take01_mocap.jpg",
-      "bytes": 1158853,
-      "sha256": "f960434a47e7e30fbd1d5cda42ee7fb94121e27377446bb76c065cca6b0d226a"
+      "bytes": 1143980,
+      "sha256": "fd5f378088aa68bc81dd16bdccbe96946817b656f321c3877e4d516041cef877"
     },
     {
       "path": "downloads/final-nine/posters/02_take01_solved_pose.jpg",
       "source": "final_9_video_delivery/posters/02_take01_solved_pose.jpg",
-      "bytes": 1094757,
-      "sha256": "70a323db432a67736ebc2a6eab3ee8dc29f989d0a033b8d592e46cac5e09c0dc"
+      "bytes": 1097676,
+      "sha256": "242ea454b289fb98165c39aaeb4ed01d932f8e79bb1213e7719412572e0a4e44"
     },
     {
       "path": "downloads/final-nine/posters/03_take02_mocap.jpg",
       "source": "final_9_video_delivery/posters/03_take02_mocap.jpg",
-      "bytes": 1161202,
-      "sha256": "1ccca21806e90690caf1d9d3f2698e0a2741b1910ed733916ac86ba172d68d7c"
+      "bytes": 1153844,
+      "sha256": "292124c284dc86163b55132a53daed6ce03916410fcd66a12f40e13d014dd6a8"
     },
     {
       "path": "downloads/final-nine/posters/04_take02_solved_pose.jpg",
       "source": "final_9_video_delivery/posters/04_take02_solved_pose.jpg",
-      "bytes": 1102674,
-      "sha256": "207a61a988a2d95dfece44f5618c8588c24da4f2ae8b812680cc6a3447fac2cc"
+      "bytes": 1104152,
+      "sha256": "0ab44d77d656d2e7d3b7d78f095709addb465a4d0846ba2065f3e5bbe068339a"
     },
     {
       "path": "downloads/final-nine/posters/05_take03_mocap.jpg",
       "source": "final_9_video_delivery/posters/05_take03_mocap.jpg",
-      "bytes": 1162984,
-      "sha256": "09de2a8f322564f76433e8f1fe50138a985010fa3113eea0a5122f5a763d3c02"
+      "bytes": 1154002,
+      "sha256": "523fdd58f412dfc1b0609767670fb975e124bedfbec911e64b4a5391e17ac453"
     },
     {
       "path": "downloads/final-nine/posters/06_take03_solved_pose.jpg",
       "source": "final_9_video_delivery/posters/06_take03_solved_pose.jpg",
-      "bytes": 1100163,
-      "sha256": "56e16ad57190b0b985589e2eaf2a82dec0cc9ab9b0927c244045a6ce55d3312b"
+      "bytes": 1107150,
+      "sha256": "395c226dd3a6465590118b4b406197bf02c15d9473fd2a3d400e8049e09c7c1e"
     },
     {
       "path": "downloads/final-nine/posters/07_take007_labeled_mocap_markers.jpg",
       "source": "final_9_video_delivery/posters/07_take007_labeled_mocap_markers.jpg",
-      "bytes": 1092754,
-      "sha256": "84bbe2d6b30dd5ba2b654567eae00f4915862344f9b2081f8e252c0248750cc4"
+      "bytes": 1086512,
+      "sha256": "1d432c314ac8d6c7bc06da2c7203009784200eed8004ecaa6d75596a6a57a7fb"
     },
     {
       "path": "downloads/final-nine/posters/08_take007_aligned_hand_pose.jpg",
       "source": "final_9_video_delivery/posters/08_take007_aligned_hand_pose.jpg",
-      "bytes": 1124793,
-      "sha256": "ea7026ec3061a93a12e4fdb6b2a99d10be5736be6bd082251bbcd3f17c43802f"
+      "bytes": 1119408,
+      "sha256": "9c0088c309ea2e9f218f36bc47b1e59982eaf4ce739acf0ed5b059db15e1a9a7"
     },
     {
       "path": "downloads/final-nine/posters/09_no_glove_world_calibration.jpg",
@@ -444,56 +462,56 @@
     {
       "path": "downloads/final-nine/validation.json",
       "source": "final_9_video_delivery/validation.json",
-      "bytes": 2299,
-      "sha256": "c8546877bc96a272d4b4a8573bb15f7120c30566ae8c9dd17416cb572ebe3c33"
+      "bytes": 2309,
+      "sha256": "0944f7b7166b911a147126c94456d55477fa0ce5d264d00affc49db12b7e9ccc"
     },
     {
       "path": "downloads/final-nine/videos/01_take01_mocap.mp4",
       "source": "final_9_video_delivery/videos/01_take01_mocap.mp4",
-      "bytes": 7926783,
-      "sha256": "431a0b8849311de98e60e6dc5ee679763ab4f5955c5cf25509142ccbfededf1b"
+      "bytes": 7685059,
+      "sha256": "f16e840d55aa4026ac55f9126ab93c5b0319083b9878cc4f584a4e9120463c88"
     },
     {
       "path": "downloads/final-nine/videos/02_take01_solved_pose.mp4",
       "source": "final_9_video_delivery/videos/02_take01_solved_pose.mp4",
-      "bytes": 13410194,
-      "sha256": "70bedaf973c5b00b6e9d9f1309ce657962cc59ae53f6863c4a59581b09440e22"
+      "bytes": 13236499,
+      "sha256": "98d1ac23b4e2eac80f2d0b691e55c45ffb78e69b96c703d962d621d81d662728"
     },
     {
       "path": "downloads/final-nine/videos/03_take02_mocap.mp4",
       "source": "final_9_video_delivery/videos/03_take02_mocap.mp4",
-      "bytes": 8753867,
-      "sha256": "7a141794217dd773c1a7b4c51d21980210c078047edee0e260013c9acc968093"
+      "bytes": 8476036,
+      "sha256": "274311ffd02b576b1cfc6895947dcd0284ce96af2840beb7b956a930f7111fa0"
     },
     {
       "path": "downloads/final-nine/videos/04_take02_solved_pose.mp4",
       "source": "final_9_video_delivery/videos/04_take02_solved_pose.mp4",
-      "bytes": 14294867,
-      "sha256": "e0b2265fa2df55e084789f9091d286a086965d45796bc639b68e24e99e4dc09d"
+      "bytes": 14049732,
+      "sha256": "9d2ec2d5945862d16c7f2e521806fb337b21d278730dfbfbc2bf78046a89f6a7"
     },
     {
       "path": "downloads/final-nine/videos/05_take03_mocap.mp4",
       "source": "final_9_video_delivery/videos/05_take03_mocap.mp4",
-      "bytes": 8869599,
-      "sha256": "c3d9dc519a99efe56d52047b49120b25ab432efb2f8fdf3c1d96d69aec7c12da"
+      "bytes": 8599565,
+      "sha256": "a7364369e6c9f26c464233c3e1453234692f59f116d372838f52eff6428cd39f"
     },
     {
       "path": "downloads/final-nine/videos/06_take03_solved_pose.mp4",
       "source": "final_9_video_delivery/videos/06_take03_solved_pose.mp4",
-      "bytes": 14465329,
-      "sha256": "0693fdae8606767b435001a23e9c4ba0313a82fd8300804eab441ea78b269fd1"
+      "bytes": 14243894,
+      "sha256": "51eefab1edf0c44fd23992ce6102c073ee4e22b6eccfaab9acbf8e6d13e686a3"
     },
     {
       "path": "downloads/final-nine/videos/07_take007_labeled_mocap_markers.mp4",
       "source": "final_9_video_delivery/videos/07_take007_labeled_mocap_markers.mp4",
-      "bytes": 14135748,
-      "sha256": "a2e1b7f554ef5f3de27f26c80123b53cf98cb93e0c0e15094bb889c4891e56a7"
+      "bytes": 13749378,
+      "sha256": "c630469c26ecbfa532409e41fda37f692238389aa68659ed970b8eb6288c3549"
     },
     {
       "path": "downloads/final-nine/videos/08_take007_aligned_hand_pose.mp4",
       "source": "final_9_video_delivery/videos/08_take007_aligned_hand_pose.mp4",
-      "bytes": 13076239,
-      "sha256": "3490429df32d15c2326296fea26787e1f5d25327de5f073de0908c8afded7fa0"
+      "bytes": 12924520,
+      "sha256": "1a61de3b3988c9171d787e6ef0a14d38bb3d4ed2e603370350e0c113bcbe345b"
     },
     {
       "path": "downloads/final-nine/videos/09_no_glove_world_calibration.mp4",
@@ -504,8 +522,8 @@
     {
       "path": "downloads/gt-calib-evidence-2026-08-31.zip",
       "source": "generated allow-listed evidence bundle (videos excluded)",
-      "bytes": 3296542,
-      "sha256": "7526854d97537d8348af17e16ce0c8ecbadc94e8dd9c733f851ffa61d1519cd5"
+      "bytes": 3305129,
+      "sha256": "63c7bc3a907014815949e7ebeda57b3ef3b3573e34e4955c834bf7eac4f45700"
     },
     {
       "path": "downloads/mocap-root-fusion-profile-take-000.json",
@@ -672,26 +690,26 @@
     {
       "path": "final-nine/app.js",
       "source": "web/public/final-nine/app.js",
-      "bytes": 31742,
-      "sha256": "104cde8d26ba7e8736998f54400c30b8eaf567433fe16ed20bf8654cbef5c27b"
+      "bytes": 55344,
+      "sha256": "ba97d5b82b52c118414941f460395614c5e7cbd677fe6dfd051df5a1560aa52a"
     },
     {
       "path": "final-nine/index.html",
       "source": "web/public/final-nine/index.html",
-      "bytes": 27658,
-      "sha256": "5dccea665f18b53a4321fead1bc559f1cd7f38e9cd46662d02824a933c31e215"
+      "bytes": 29631,
+      "sha256": "9577b1d6c4445a932cf9d240e9393e88ce63efe7bb108f81ef1403242b86c1cb"
     },
     {
       "path": "final-nine/styles.css",
       "source": "web/public/final-nine/styles.css",
-      "bytes": 26653,
-      "sha256": "a0ee3cffd1222b8012760859a1d84da7cddc34dd2bfe966f61f744eceee7ece8"
+      "bytes": 28305,
+      "sha256": "8ecbbac42c4b637c8b012c235e8da7257881d408de53bc6b129dad6e89f0df00"
     },
     {
       "path": "index.html",
       "source": "web/public/index.html",
-      "bytes": 38880,
-      "sha256": "e35242778c4f96825f392cf7983e2990a849dbc9359bebb6c9bf7eed26d8946a"
+      "bytes": 38905,
+      "sha256": "ae122d12819871c480d8e320b74d2c0db87384f8c06ecdb0ebbce83490d72f23"
     },
     {
       "path": "media/take-000-depth-contact.jpg",
@@ -879,10 +897,5 @@
       "bytes": 32625,
       "sha256": "9816b045395f96e789dc0607d45d92309b70093247d48143dbdb1e5057ce3137"
     }
-  ],
-  "deploymentAssembly": {
-    "mode": "tracked_public_plus_tracked_final_delivery",
-    "finalDeliverySchema": "gt_calib.final_nine_video_delivery.v1",
-    "finalDeliveryGeneratedAt": "2026-08-31T17:56:39.102012+00:00"
-  }
+  ]
 }

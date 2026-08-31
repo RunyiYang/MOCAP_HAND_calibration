@@ -5,11 +5,11 @@ in the parent directory.
 
 ## Video inventory
 
-1. Take 01 MOCAP
+1. Take 01 MOCAP from Skeleton_0/1 BVH forward kinematics
 2. Take 01 solved hand pose
-3. Take 02 MOCAP
+3. Take 02 MOCAP from Skeleton_0/1 BVH forward kinematics
 4. Take 02 solved hand pose
-5. Take 03 MOCAP
+5. Take 03 MOCAP from Skeleton_0/1 BVH forward kinematics
 6. Take 03 solved hand pose
 7. Take_007 labeled CMM markers: 10 measured surface points per hand plus a virtual wrist
 8. Take_007 solved hand pose aligned from the corrected CMM palm/root mapping
@@ -20,6 +20,10 @@ All media are H.264/yuv420p, 960x540, 30 fps, fast-start MP4.  See
 
 Important boundaries:
 
+- Videos 1/3/5 use the requested detailed Skeleton_0/1 BVH joint positions.
+  Human.cma supplies only the validated frame-counter/timestamp axis for those
+  renders; its joint-position columns are not used.
+- Applied manual profile `operator_y_minus_44_all_hand_overlays.v1.json` with global XYZ [0.0, -44.0, 0.0] mm. Applied video IDs: take01-mocap, take01-solved, take02-mocap, take02-solved, take03-mocap, take03-solved, take007-mocap-markers, take007-solved. Excluded video IDs: no-glove-calibration. Every value is interpreted in that video's own MOCAP world; this is an operator-selected display correction, not one shared cross-session extrinsic and not independent GT evidence.
 - Old solved-pose videos are MOCAP-wrist-SE(3)-conditioned visualizations, not
   independent glove wrist 6DoF.
 - The placement photograph maps CMM marker #1..#10 to five fingertip/base pairs.
@@ -33,4 +37,7 @@ Important boundaries:
 - Video 9 uses the matching no-glove 155410 RGB, its own intrinsics, and the
   2026-08-31 CS-400 calibration.  It is not dynamic hand GT.
 - `calibration-workbench/` contains clean RGB and binary 3D trajectories for the
-  browser XYZ tool.  Exported manual offsets are operator calibration, not GT.
+  browser XYZ tool.  The browser can select all nine videos, stores a per-video
+  XYZ residual, and exposes side-specific residuals only for Take_007 videos
+  7/8.  Its `gt_calib.final_nine_manual_xyz.v1` export can be passed back to the
+  UV build.  Exported manual offsets are operator calibration, not GT.

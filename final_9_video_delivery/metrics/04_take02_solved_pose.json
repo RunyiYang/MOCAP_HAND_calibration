@@ -26,6 +26,26 @@
     "absolute_6dof_metrics": null,
     "absolute_6dof_unavailable_reason": "glove wrist translation and orientation are not evaluated because synchronized mocap wrist SE(3) is copied into the fused articulation"
   },
+  "display_correction": {
+    "type": "operator_world_xyz_translation",
+    "coordinate_system": "mocap_world_mm",
+    "axis_order": "xyz",
+    "units": "mm",
+    "operator_world_translation_xyz_mm": [
+      0.0,
+      -44.0,
+      0.0
+    ],
+    "active": true,
+    "applied_after_mocap_interpolation": true,
+    "moves_mocap_overlay": true,
+    "moves_mocap_wrist_anchored_solved_pose": true,
+    "display_only": true,
+    "is_ground_truth": false,
+    "is_independent_accuracy_evidence": false,
+    "metric_effect": "Root-normalized articulation residuals are invariant to this shared world translation and therefore do not validate the display correction.",
+    "claim_boundary": "Operator-controlled visualization alignment only; this does not update the delivered camera calibration or establish ground truth."
+  },
   "inputs": {
     "rgb_mp4": "project://同步整理_20260829_三段/02_210955_Take_001/视频/RGB.mp4",
     "rgb_bag": "project://同步整理_20260829_三段/02_210955_Take_001/原始BAG与内参/camera_1_rgb_depth.bag",
@@ -193,7 +213,7 @@
         "method": "fixed canonical rotation and uniform scale in mocap wrist-local frame; non-thumb MCP only",
         "source_segment": "01_210814_Take_000",
         "target_segment_used_in_fit": false,
-        "wrist_translation": "copied from synchronized mocap each frame",
+        "wrist_translation": "copied from synchronized mocap each frame after the explicit operator display translation",
         "wrist_orientation": "copied from synchronized mocap Human root GlobalQ each frame",
         "glove_pose_source": "root-relative local keypoints articulated by synchronized mocap wrist GlobalQ",
         "per_frame_rotation_refit": false,
@@ -247,14 +267,14 @@
         "count": 21184,
         "min": 0.28266352615629137,
         "mean": 22.998233213241438,
-        "median": 11.485224983698693,
+        "median": 11.485224983698696,
         "p95": 86.05870597424789,
         "max": 120.83268221710914
       },
       "root_normalized_frame_mpjpe_mm": {
         "aggregation": "mean_of_16_non_thumb_joint_epe_per_frame",
         "count": 1324,
-        "min": 7.132652517430099,
+        "min": 7.132652517430097,
         "mean": 22.99823321324143,
         "median": 14.603707642244487,
         "p95": 49.048042859301475,
@@ -297,7 +317,7 @@
         "method": "fixed canonical rotation and uniform scale in mocap wrist-local frame; non-thumb MCP only",
         "source_segment": "01_210814_Take_000",
         "target_segment_used_in_fit": false,
-        "wrist_translation": "copied from synchronized mocap each frame",
+        "wrist_translation": "copied from synchronized mocap each frame after the explicit operator display translation",
         "wrist_orientation": "copied from synchronized mocap Human root GlobalQ each frame",
         "glove_pose_source": "root-relative local keypoints articulated by synchronized mocap wrist GlobalQ",
         "per_frame_rotation_refit": false,
@@ -360,7 +380,7 @@
         "count": 1324,
         "min": 7.13726203714149,
         "mean": 23.613685793844827,
-        "median": 13.69395128225633,
+        "median": 13.693951282256329,
         "p95": 52.26004455081469,
         "max": 60.60893532936124
       },
@@ -399,6 +419,7 @@
     "One fixed canonical rotation/scale is used; target finger joints never enter the fit, but target MOCAP wrist GlobalQ conditions every frame.",
     "The canonical scale maps two solver templates and is not a verified anatomical bone-length ratio.",
     "Thumb is drawn but excluded from metrics because glove has 20 points and mocap has 21.",
+    "The operator world XYZ translation is a display-only correction shared by MOCAP and its anchored solved pose; it is not GT, a camera-calibration update, or independent accuracy evidence.",
     "CS-400 calibration is manual visual marker classification plus metric multi-frame depth.",
     "The recorded depth-to-color matrix is used as delivered even though its 3x3 block is slightly non-orthogonal; an official SDK D2C extrinsic or held-out 2D labels are still required for an independent pixel-accuracy claim."
   ],

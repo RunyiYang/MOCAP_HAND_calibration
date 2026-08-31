@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import copy
+import contextlib
+import io
 import json
 from pathlib import Path
 import tempfile
@@ -115,8 +117,17 @@ class DatasetContractTests(unittest.TestCase):
 
     def test_take_000_end_to_end_pose_preparation(self) -> None:
         segment = viz._discover_segment(DATASET, "01")
-        prepared = viz.prepare_take(segment, CALIBRATION)
+        correction_xyz_mm = (3.5, -44.0, 2.0)
+        prepared = viz.prepare_take(
+            segment,
+            CALIBRATION,
+            operator_world_translation_xyz_mm=correction_xyz_mm,
+        )
         self.assertEqual(prepared.mocap_mm.shape, (1815, 2, 21, 3))
+        self.assertEqual(
+            prepared.operator_world_translation_xyz_mm,
+            correction_xyz_mm,
+        )
         self.assertEqual(int(np.count_nonzero(prepared.mocap_valid)), 1748)
         for side in ("left", "right"):
             self.assertEqual(prepared.glove_in_world_mm[side].shape, (1815, 20, 3))
@@ -152,6 +163,36 @@ class DatasetContractTests(unittest.TestCase):
             partial_metrics["synchronization"]["synchronized_rgb_frames"],
             int(np.count_nonzero(prepared.mocap_valid[first:stop])),
         )
+        display_correction = partial_metrics["display_correction"]
+        self.assertEqual(
+            display_correction["type"],
+            viz.OPERATOR_DISPLAY_CORRECTION_TYPE,
+        )
+        self.assertEqual(
+            display_correction["operator_world_translation_xyz_mm"],
+            list(correction_xyz_mm),
+        )
+        self.assertEqual(display_correction["coordinate_system"], "mocap_world_mm")
+        self.assertEqual(display_correction["units"], "mm")
+        self.assertTrue(display_correction["active"])
+        self.assertTrue(display_correction["display_only"])
+        self.assertFalse(display_correction["is_ground_truth"])
+        self.assertFalse(display_correction["is_independent_accuracy_evidence"])
+        self.assertIn("do not validate", display_correction["metric_effect"])
+        correction_header = viz._operator_display_correction_header(prepared)
+        self.assertIn("-44.0", correction_header)
+        self.assertIn("NOT GT", correction_header)
+        # Display correction is deliberately not embedded into the calibration
+        # registration artifact, preserving the existing profile contract.
+        registration_profile = viz.registration_profile_payload(prepared)
+        self.assertEqual(
+            registration_profile["schema"],
+            viz.GLOVE_REGISTRATION_PROFILE_SCHEMA,
+        )
+        self.assertNotIn("display_correction", registration_profile)
+        self.assertNotIn(
+            "operator_world_translation_xyz_mm", registration_profile
+        )
         for side in ("left", "right"):
             self.assertEqual(
                 partial_metrics["sides"][side]["valid_rgb_frames"],
@@ -182,6 +223,80 @@ class DatasetContractTests(unittest.TestCase):
                 & (solved_contact[:, :, 1] > solved_contact[:, :, 2] * 1.3)
             )
             self.assertGreater(int(np.count_nonzero(green)), 300)
+
+    def test_operator_world_translation_moves_anchor_and_fails_closed(self) -> None:
+        mocap = np.arange(2 * 2 * 21 * 3, dtype=np.float64).reshape(2, 2, 21, 3)
+        original = mocap.copy()
+        translation = (12.5, -44.0, 3.0)
+        shifted = viz._apply_operator_world_translation(mocap, translation)
+        np.testing.assert_array_equal(mocap, original)
+        np.testing.assert_allclose(
+            shifted - mocap,
+            np.broadcast_to(np.asarray(translation), mocap.shape),
+            atol=0.0,
+            rtol=0.0,
+        )
+
+        glove = np.arange(2 * 20 * 3, dtype=np.float64).reshape(2, 20, 3)
+        registration = viz.SimilarityRegistration(1.0, np.eye(3), 2, 0.0, 0.0)
+        anchored = viz.apply_registration(glove, mocap[:, 0], registration)
+        shifted_anchored = viz.apply_registration(
+            glove, shifted[:, 0], registration
+        )
+        np.testing.assert_allclose(
+            shifted_anchored - anchored,
+            np.broadcast_to(np.asarray(translation), anchored.shape),
+            atol=0.0,
+            rtol=0.0,
+        )
+
+        invalid_values = (
+            (),
+            (1.0, 2.0),
+            (1.0, 2.0, 3.0, 4.0),
+            (0.0, np.nan, 0.0),
+            (0.0, np.inf, 0.0),
+            "1,2,3",
+        )
+        for value in invalid_values:
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ValueError, "exactly three finite XYZ"):
+                    viz.prepare_take(
+                        Path("must-not-be-read"),
+                        CALIBRATION,
+                        operator_world_translation_xyz_mm=value,
+                    )
+        with self.assertRaisesRegex(ValueError, "end in XYZ"):
+            viz._apply_operator_world_translation(
+                np.zeros((2, 21, 2), dtype=np.float64),
+                (0.0, 0.0, 0.0),
+            )
+
+    def test_operator_world_translation_cli_axes_and_defaults(self) -> None:
+        defaults = viz.parse_args([])
+        self.assertEqual(defaults.operator_world_x_mm, 0.0)
+        self.assertEqual(defaults.operator_world_y_mm, 0.0)
+        self.assertEqual(defaults.operator_world_z_mm, 0.0)
+
+        args = viz.parse_args(
+            [
+                "--operator-world-x-mm",
+                "1.25",
+                "--operator-world-y-mm",
+                "-44",
+                "--operator-world-z-mm",
+                "3.5",
+            ]
+        )
+        self.assertEqual(
+            (args.operator_world_x_mm, args.operator_world_y_mm, args.operator_world_z_mm),
+            (1.25, -44.0, 3.5),
+        )
+        for nonfinite in ("nan", "inf", "-inf"):
+            with self.subTest(nonfinite=nonfinite):
+                with contextlib.redirect_stderr(io.StringIO()):
+                    with self.assertRaises(SystemExit):
+                        viz.parse_args(["--operator-world-y-mm", nonfinite])
 
     def test_interpolation_rejects_large_source_gaps(self) -> None:
         source_times = np.asarray([0.0, 0.01, 0.10, 0.11])

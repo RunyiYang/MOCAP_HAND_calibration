@@ -29,7 +29,7 @@ from __future__ import annotations
 import argparse
 import bz2
 import csv
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 import hashlib
 from io import BytesIO
@@ -50,6 +50,7 @@ except ImportError:  # Reproducible dependency is declared; CLI remains a fallba
     lz4_frame = None
 
 import gt_calib_viz as viz
+import bvh_web_export as bvh_export
 
 
 ALIGNMENT_SCHEMA = "gt_calib.mocap_video_alignment.v2"
@@ -72,6 +73,14 @@ VISUALIZATION_REAR_WRIST_MOUNT_SCALE = 0.8
 MOCAP_WORLD_TRANSLATION_CANDIDATE_PROFILE = (
     "candidate_origin_translation_not_ground_truth"
 )
+MOCAP_POSITION_SOURCE_HUMAN_CMA = "human-cma"
+MOCAP_POSITION_SOURCE_SKELETON_BVH = "skeleton-bvh"
+MOCAP_POSITION_SOURCES = (
+    MOCAP_POSITION_SOURCE_HUMAN_CMA,
+    MOCAP_POSITION_SOURCE_SKELETON_BVH,
+)
+BVH_TO_MOCAP_WORLD_CONTRACT = "[-10*X_bvh, 10*Z_bvh, 10*Y_bvh] mm"
+BVH_CMA_ROOT_TOLERANCE_MM = 1e-3
 
 
 @dataclass(frozen=True)
@@ -94,6 +103,9 @@ class PreparedMocapVideo:
     clock_mapping: viz.ClockMapping
     mocap_path: Path
     mocap: viz.MocapSequence
+    mocap_position_source: str
+    mocap_position_paths: Mapping[str, Path]
+    mocap_position_contract: Mapping[str, Any]
     mocap_mm: np.ndarray
     mocap_world_translation_mm: tuple[float, float, float]
     mocap_valid: np.ndarray
@@ -185,6 +197,181 @@ def _mocap_world_translation_header(
     return f"CANDIDATE origin {' '.join(components)} mm / not GT"
 
 
+def _normalize_mocap_position_source(value: str) -> str:
+    source = str(value)
+    if source not in MOCAP_POSITION_SOURCES:
+        raise ValueError(
+            f"Unsupported MOCAP position source {source!r}; expected one of "
+            f"{MOCAP_POSITION_SOURCES}"
+        )
+    return source
+
+
+def bvh_positions_to_mocap_world_mm(points_bvh_units: np.ndarray) -> np.ndarray:
+    """Invert MovementCap's CMA-world to BVH position conversion.
+
+    The vendor export writes CMA world millimetres as ``[-X, Z, Y] / 10``.
+    Forward-kinematics positions therefore return to the calibrated MOCAP
+    world as ``[-10*X_bvh, 10*Z_bvh, 10*Y_bvh]`` millimetres.
+    """
+
+    points = np.asarray(points_bvh_units, dtype=np.float64)
+    if points.ndim < 1 or points.shape[-1] != 3:
+        raise ValueError("BVH positions must have shape (..., 3)")
+    if np.any(~np.isfinite(points)):
+        raise ValueError("BVH positions must be finite before axis/unit conversion")
+    return np.stack(
+        (-10.0 * points[..., 0], 10.0 * points[..., 2], 10.0 * points[..., 1]),
+        axis=-1,
+    )
+
+
+def _expected_bvh_joint_names(side: str) -> tuple[str, ...]:
+    if side not in {"left", "right"}:
+        raise ValueError(f"Unknown BVH hand side: {side}")
+    hand = "LeftHand" if side == "left" else "RightHand"
+    return (
+        "Hips",
+        *(
+            f"{hand}{finger}{index}"
+            for finger in ("Thumb", "Index", "Middle", "Ring", "Pinky")
+            for index in range(1, 5)
+        ),
+    )
+
+
+def _load_skeleton_bvh_positions(
+    segment: Path,
+    human_cma_path: Path,
+    human_mocap: viz.MocapSequence,
+    take_number: str,
+) -> tuple[np.ndarray, dict[str, Path], dict[str, Any]]:
+    """Load Skeleton_0/1 FK positions on the untouched Human.cma time axis."""
+
+    segment_key = segment.name.split("_", 1)[0]
+    formal = bvh_export.FORMAL_TAKES.get(segment_key)
+    take_name = f"Take_{take_number}"
+    if formal != (segment.name, take_name):
+        raise bvh_export.BvhValidationError(
+            "skeleton-bvh is fail-closed to the formal 01/02/03 take layout; "
+            f"got segment={segment.name!r}, take={take_name!r}"
+        )
+
+    take_dir = segment / "动捕" / take_name
+    paths = {
+        "left": take_dir / f"{take_name}_Skeleton_0.bvh",
+        "right": take_dir / f"{take_name}_Skeleton_1.bvh",
+    }
+    missing = [str(path) for path in paths.values() if not path.is_file()]
+    if missing:
+        raise bvh_export.BvhValidationError(
+            "Required Skeleton BVH input is missing: " + ", ".join(missing)
+        )
+
+    clips = {
+        side: bvh_export.parse_bvh(path) for side, path in paths.items()
+    }
+    for side, clip in clips.items():
+        bvh_export._validate_hand_clip(  # noqa: SLF001 - shared formal contract
+            clip,
+            side=side,
+            segment_key=segment_key,
+        )
+        names = tuple(node.name for node in clip.nodes if not node.is_end_site)
+        expected_names = _expected_bvh_joint_names(side)
+        if names != expected_names:
+            raise bvh_export.BvhValidationError(
+                f"Unexpected {side} Skeleton BVH joint order in {clip.path}: {names}"
+            )
+
+    left = clips["left"]
+    right = clips["right"]
+    if left.frame_count != right.frame_count or not math.isclose(
+        left.frame_time_s,
+        right.frame_time_s,
+        rel_tol=0.0,
+        abs_tol=1e-12,
+    ):
+        raise bvh_export.BvhValidationError(
+            "Skeleton_0/1 BVH frame count or frame time does not match"
+        )
+    cma_rows = len(human_mocap.frame_counters)
+    if left.frame_count != cma_rows + 1:
+        raise bvh_export.BvhValidationError(
+            f"Human.cma has {cma_rows} rows but Skeleton BVH has "
+            f"{left.frame_count} frames; expected exactly one trailing BVH-only frame"
+        )
+
+    root_ordinal_contract = bvh_export.validate_bvh_cma_root_ordinal_contract(
+        left,
+        right,
+        human_cma_path,
+    )
+    # CMA row i maps to raw BVH frame i.  BVH frame 0 is the vendor's all-zero
+    # seed and is explicitly unavailable; BVH frame N-1 has no CMA timestamp.
+    ordinal_indices = np.arange(cma_rows, dtype=np.int64)
+    side_positions: list[np.ndarray] = []
+    for side in ("left", "right"):
+        clip = clips[side]
+        joint_indices = np.asarray(
+            [index for index, node in enumerate(clip.nodes) if not node.is_end_site],
+            dtype=np.int64,
+        )
+        positions_bvh = bvh_export.evaluate_world_positions(
+            clip,
+            ordinal_indices,
+        )[:, joint_indices]
+        side_positions.append(bvh_positions_to_mocap_world_mm(positions_bvh))
+    points_mm = np.stack(side_positions, axis=1)
+    if points_mm.shape != human_mocap.points_mm.shape:
+        raise bvh_export.BvhValidationError(
+            f"Skeleton BVH FK shape {points_mm.shape} does not match "
+            f"Human.cma position shape {human_mocap.points_mm.shape}"
+        )
+
+    root_error_mm = float(
+        np.max(
+            np.abs(
+                points_mm[1:, :, MOCAP_WRIST_INDEX]
+                - human_mocap.points_mm[1:, :, MOCAP_WRIST_INDEX]
+            )
+        )
+    )
+    if root_error_mm > BVH_CMA_ROOT_TOLERANCE_MM:
+        raise bvh_export.BvhValidationError(
+            "Skeleton BVH/CMA all-frame root ordinal check exceeds "
+            f"{BVH_CMA_ROOT_TOLERANCE_MM} mm: {root_error_mm} mm"
+        )
+    points_mm[0] = np.nan
+
+    contract: dict[str, Any] = {
+        "status": "pass",
+        "position_source": MOCAP_POSITION_SOURCE_SKELETON_BVH,
+        "timestamp_and_frame_counter_source": "Human.cma",
+        "human_cma_timestamps_preserved_without_resampling": True,
+        "human_cma_joint_positions_used_as_render_source": False,
+        "human_cma_root_positions_used_for_ordinal_validation_only": True,
+        "bvh_forward_kinematics": "bvh_web_export.evaluate_world_positions",
+        "bvh_source_sha256": {
+            side: clips[side].source_sha256 for side in ("left", "right")
+        },
+        "cma_world_mm_to_bvh_units": "[-X, Z, Y] / 10",
+        "bvh_units_to_mocap_world_mm": BVH_TO_MOCAP_WORLD_CONTRACT,
+        "ordinal_mapping": "raw BVH frame i = Human.cma data-row ordinal i",
+        "cma_row_count": cma_rows,
+        "bvh_source_frame_count": left.frame_count,
+        "bvh_frame_zero_is_all_zero_vendor_seed_and_unavailable": True,
+        "strictly_usable_cma_ordinal_first": 1,
+        "strictly_usable_cma_ordinal_last": cma_rows - 1,
+        "final_bvh_frame_without_cma_timestamp_omitted": True,
+        "joint_order": list(viz.MOCAP_NAMES),
+        "all_usable_root_ordinals_max_abs_error_mm": root_error_mm,
+        "all_usable_root_ordinals_tolerance_mm": BVH_CMA_ROOT_TOLERANCE_MM,
+        "endpoint_root_ordinal_validation": root_ordinal_contract,
+    }
+    return points_mm, paths, contract
+
+
 @dataclass(frozen=True)
 class Mp4FrameSample:
     frame_index: int
@@ -254,11 +441,13 @@ def prepare_mocap_video(
     calibration_path: Path,
     *,
     max_interpolation_gap_ms: float = 25.0,
+    mocap_position_source: str = MOCAP_POSITION_SOURCE_HUMAN_CMA,
     mocap_world_translation_mm: Sequence[float] = (0.0, 0.0, 0.0),
 ) -> PreparedMocapVideo:
     segment = Path(segment_dir)
     if max_interpolation_gap_ms <= 0.0:
         raise ValueError("max_interpolation_gap_ms must be positive")
+    position_source = _normalize_mocap_position_source(mocap_position_source)
     translation = np.asarray(mocap_world_translation_mm, dtype=np.float64)
     if translation.shape != (3,) or np.any(~np.isfinite(translation)):
         raise ValueError(
@@ -284,7 +473,29 @@ def prepare_mocap_video(
     mocap_path = (
         segment / "动捕" / f"Take_{take_number}" / f"Take_{take_number}_Human.cma"
     )
-    mocap = viz.load_mocap_human(mocap_path)
+    human_mocap = viz.load_mocap_human(mocap_path)
+    if position_source == MOCAP_POSITION_SOURCE_HUMAN_CMA:
+        mocap = human_mocap
+        position_paths: dict[str, Path] = {"human_cma": mocap_path}
+        position_contract: dict[str, Any] = {
+            "status": "pass",
+            "position_source": MOCAP_POSITION_SOURCE_HUMAN_CMA,
+            "timestamp_and_frame_counter_source": "Human.cma",
+            "human_cma_timestamps_preserved_without_resampling": True,
+            "human_cma_joint_positions_used_as_render_source": True,
+            "position_unit": "millimetres in MOCAP world",
+            "joint_order": list(viz.MOCAP_NAMES),
+        }
+    else:
+        bvh_points_mm, position_paths, position_contract = (
+            _load_skeleton_bvh_positions(
+                segment,
+                mocap_path,
+                human_mocap,
+                take_number,
+            )
+        )
+        mocap = replace(human_mocap, points_mm=bvh_points_mm)
     max_gap_s = max_interpolation_gap_ms * 1e-3
     interpolation = interpolation_audit(
         mocap.times_s,
@@ -341,6 +552,9 @@ def prepare_mocap_video(
         clock_mapping=clocks,
         mocap_path=mocap_path,
         mocap=mocap,
+        mocap_position_source=position_source,
+        mocap_position_paths=position_paths,
+        mocap_position_contract=position_contract,
         mocap_mm=mocap_mm,
         mocap_world_translation_mm=translation_tuple,
         mocap_valid=mocap_valid,
@@ -1254,6 +1468,12 @@ def _mocap_projected_speed(
         target_times_s,
         max_gap_s=prepared.max_interpolation_gap_ms * 1e-3,
     )
+    translation = np.asarray(
+        prepared.mocap_world_translation_mm,
+        dtype=np.float64,
+    )
+    if np.any(translation != 0.0):
+        points = points + translation.reshape(1, 1, 1, 3)
     pixels, positive = viz.project_world_to_rgb(points, prepared.calibration)
     displacement = np.linalg.norm(np.diff(pixels, axis=0), axis=-1)
     speed = np.median(displacement, axis=(1, 2))
@@ -1537,10 +1757,41 @@ def alignment_metrics(
         "mocap_human": prepared.mocap_path,
         "camera_to_world": prepared.calibration.path,
     }
+    if prepared.mocap_position_source == MOCAP_POSITION_SOURCE_SKELETON_BVH:
+        if set(prepared.mocap_position_paths) != {"left", "right"}:
+            raise ValueError(
+                "skeleton-bvh metrics require exactly left/right source paths"
+            )
+        input_paths.update(
+            {
+                "mocap_skeleton_0_bvh": prepared.mocap_position_paths["left"],
+                "mocap_skeleton_1_bvh": prepared.mocap_position_paths["right"],
+            }
+        )
     inputs = {
         name: {"path": str(path.resolve()), "sha256": _sha256(path)}
         for name, path in input_paths.items()
     }
+    if prepared.mocap_position_source == MOCAP_POSITION_SOURCE_SKELETON_BVH:
+        expected_hashes = prepared.mocap_position_contract.get(
+            "bvh_source_sha256"
+        )
+        if not isinstance(expected_hashes, Mapping) or set(expected_hashes) != {
+            "left",
+            "right",
+        }:
+            raise ValueError(
+                "skeleton-bvh position contract lacks exact left/right source hashes"
+            )
+        for side, input_name in (
+            ("left", "mocap_skeleton_0_bvh"),
+            ("right", "mocap_skeleton_1_bvh"),
+        ):
+            if inputs[input_name]["sha256"] != expected_hashes[side]:
+                raise ValueError(
+                    f"{side} Skeleton BVH changed after FK preparation; refusing "
+                    "to write misleading provenance"
+                )
     artifact_payload: dict[str, Any] = {}
     for name, path in (artifacts or {}).items():
         if Path(path).is_file():
@@ -1604,6 +1855,11 @@ def alignment_metrics(
             )
         ),
         "inputs": inputs,
+        "mocap_position_source": {
+            "selected": prepared.mocap_position_source,
+            "human_cma_supplies_timestamps_and_frame_counters": True,
+            "contract": dict(prepared.mocap_position_contract),
+        },
         "video_frame_contract": {
             "source_mp4_frames": prepared.video.frame_count,
             "source_rgb_bag_messages": len(prepared.rgb_device_s),
@@ -1631,8 +1887,8 @@ def alignment_metrics(
             "mocap_index_key": "FrameCounter",
             "mapping": (
                 "RGB device acquisition timestamp -> remove measured callback latency "
-                "row by row -> CMAvatar acquisition time -> linear 120 Hz position "
-                "interpolation"
+                "row by row -> CMAvatar acquisition time -> linear 120 Hz "
+                f"{prepared.mocap_position_source} position interpolation"
             ),
             "camera_capture_to_thor_poll_latency_ms": callback_latency,
             "clock_model_estimated_uncertainty_ms": float(
@@ -1751,7 +2007,17 @@ def alignment_metrics(
             "The CS-400 spatial calibration uses manual marker identity selection plus multi-frame metric depth.",
             "The delivered depth-to-color 3x3 block is slightly non-orthogonal, so world-to-color is treated as the recorded forward calibration rather than claimed as a pure SE(3).",
             "No independent per-frame 2D hand landmarks are available to measure pixel reprojection error over the full motion.",
-            "Human.cma does not include per-joint visibility, residual, occlusion, or gap-fill quality fields.",
+            (
+                "Human.cma does not include per-joint visibility, residual, "
+                "occlusion, or gap-fill quality fields."
+                if prepared.mocap_position_source
+                == MOCAP_POSITION_SOURCE_HUMAN_CMA
+                else (
+                    "Skeleton BVH supplies FK joint positions but no per-joint "
+                    "visibility, residual, occlusion, or gap-fill quality fields; "
+                    "Human.cma remains the timestamp/frame-counter authority."
+                )
+            ),
         ],
     }
 
@@ -1878,14 +2144,18 @@ def render_mocap_frame(
     translation_header = _mocap_world_translation_header(
         prepared.mocap_world_translation_mm
     )
+    position_label = (
+        "Human.cma"
+        if prepared.mocap_position_source == MOCAP_POSITION_SOURCE_HUMAN_CMA
+        else "Skeleton_0/1 BVH FK"
+    )
+    header = f"VIDEO <-> MOCAP | position={position_label}"
     if translation_header is not None:
-        header = f"VIDEO <-> MOCAP | {translation_header}"
-        if draw_rear_mount_proxy:
-            header += " | rear proxy VIZ-only"
-    elif draw_rear_mount_proxy:
-        header = "VIDEO <-> MOCAP | rear mount proxy = VIZ-only, not GT"
-    else:
-        header = "VIDEO <-> MOCAP | metric reprojection | 21-joint hand poses"
+        header += f" | {translation_header}"
+    elif not draw_rear_mount_proxy:
+        header += " | metric reprojection"
+    if draw_rear_mount_proxy:
+        header += " | rear proxy VIZ-only"
     viz._draw_text(output, header, (14, 23), scale=0.52)
     viz._draw_text(
         output,
@@ -1899,8 +2169,9 @@ def render_mocap_frame(
     viz._draw_text(
         output,
         (
-            f"CMAvatar {prepared.mocap.frame_counters[low]} -> "
-            f"{prepared.mocap.frame_counters[high]} | alpha="
+            f"CMA {prepared.mocap.frame_counters[low]} -> "
+            f"{prepared.mocap.frame_counters[high]} | {prepared.mocap_position_source} "
+            f"ordinal {low}->{high} | alpha="
             f"{audit.alpha[source_frame]:.3f} | nearest dt="
             f"{audit.nearest_delta_s[source_frame] * 1000.0:.2f}ms"
         ),
@@ -2067,11 +2338,16 @@ def _gap_stem_token(max_interpolation_gap_ms: float) -> str:
 def alignment_output_stem(
     segment_name: str,
     max_interpolation_gap_ms: float,
+    mocap_position_source: str = MOCAP_POSITION_SOURCE_HUMAN_CMA,
 ) -> str:
-    return (
+    source = _normalize_mocap_position_source(mocap_position_source)
+    stem = (
         f"{segment_name}_mocap_video_aligned_"
         f"{_gap_stem_token(max_interpolation_gap_ms)}"
     )
+    if source == MOCAP_POSITION_SOURCE_SKELETON_BVH:
+        stem += "_skeleton_bvh"
+    return stem
 
 
 def _existing_alignment_artifacts(
@@ -2116,6 +2392,33 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-width", type=int, default=960)
     parser.add_argument("--snapshot-count", type=int, default=6)
     parser.add_argument("--max-interpolation-gap-ms", type=float, default=25.0)
+    parser.add_argument(
+        "--mocap-position-source",
+        choices=MOCAP_POSITION_SOURCES,
+        default=MOCAP_POSITION_SOURCE_HUMAN_CMA,
+        help=(
+            "3D position source: Human.cma joint positions, or Skeleton_0/1 BVH "
+            "forward kinematics on the preserved Human.cma timestamp axis."
+        ),
+    )
+    parser.add_argument(
+        "--mocap-world-x-offset-mm",
+        type=float,
+        default=0.0,
+        help=(
+            "Candidate translation of all interpolated MOCAP joints along world X; "
+            "default 0. Non-zero values are visualization candidates, not GT."
+        ),
+    )
+    parser.add_argument(
+        "--mocap-world-y-offset-mm",
+        type=float,
+        default=0.0,
+        help=(
+            "Candidate translation of all interpolated MOCAP joints along world Y; "
+            "default 0. Non-zero values are visualization candidates, not GT."
+        ),
+    )
     parser.add_argument(
         "--mocap-world-z-offset-mm",
         type=float,
@@ -2165,9 +2468,10 @@ def main() -> None:
             segment,
             calibration,
             max_interpolation_gap_ms=args.max_interpolation_gap_ms,
+            mocap_position_source=args.mocap_position_source,
             mocap_world_translation_mm=(
-                0.0,
-                0.0,
+                args.mocap_world_x_offset_mm,
+                args.mocap_world_y_offset_mm,
                 args.mocap_world_z_offset_mm,
             ),
         )
@@ -2175,6 +2479,7 @@ def main() -> None:
         stem = alignment_output_stem(
             segment.name,
             args.max_interpolation_gap_ms,
+            args.mocap_position_source,
         )
         if args.analyze_only:
             mapping_path = write_frame_mapping(

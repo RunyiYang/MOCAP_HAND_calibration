@@ -68,19 +68,19 @@
       <section class="workbench-shell" id="manual-calibration" aria-labelledby="workbench-title">
         <header class="workbench-heading">
           <div>
-            <p class="eyebrow">TAKE_007 · MANUAL CALIBRATION</p>
-            <h2 id="workbench-title">在原始 RGB 上，手动对齐世界 XYZ</h2>
+            <p class="eyebrow">FINAL NINE · MANUAL XYZ ANNOTATION</p>
+            <h2 id="workbench-title">逐视频检查并标注各自世界 XYZ</h2>
           </div>
-          <p>蓝/粉是反光片 MOCAP，绿/黄是手套解算。所有 XYZ 数值单位均为毫米，调整先在世界坐标中相加，再经过完整相机外参与 OpenCV 畸变投影。</p>
+          <p>选择第 01–06 / 09 段时显示对应的正式已烘焙 MP4；第 07 / 08 段切回 clean RGB 与对应 3D layer 实时重投影。XYZ 单位均为毫米，并分别解释在每段自己的 mocap-world 中。</p>
         </header>
 
         <div class="workbench-grid">
-          <article class="alignment-viewer" aria-label="Take 007 对齐预览">
+          <article class="alignment-viewer" aria-label="九视频 XYZ 标注预览">
             <div class="alignment-stage">
-              <canvas id="alignment-canvas" width="960" height="540" role="img" aria-label="Take 007 RGB 视频、MOCAP 与 solved pose 叠加画面"></canvas>
+              <canvas id="alignment-canvas" width="960" height="540" role="img" aria-label="当前正式视频或 Take 007 实时重投影画面"></canvas>
               <div class="alignment-loading" id="alignment-loading" role="status" aria-live="polite">
                 <span class="spinner" aria-hidden="true"></span>
-                <span>正在读取 Take_007 标定数据…</span>
+                <span>正在读取九视频标注数据…</span>
               </div>
               <div class="alignment-legend" aria-label="标定图层颜色">
                 <span><i class="left-mocap"></i>左 MOCAP</span>
@@ -90,7 +90,7 @@
               </div>
             </div>
 
-            <div class="alignment-transport" aria-label="Take 007 帧控制">
+            <div class="alignment-transport" aria-label="当前标注视频帧控制">
               <button id="alignment-play" type="button" disabled>播放</button>
               <button id="alignment-prev" type="button" disabled aria-label="上一帧">−1 帧</button>
               <input id="alignment-frame" type="range" min="0" max="0" value="0" step="1" disabled aria-label="当前视频帧">
@@ -102,24 +102,42 @@
           <aside class="xyz-panel" aria-labelledby="xyz-title">
             <header>
               <div>
-                <p class="control-kicker">WORLD TRANSLATION</p>
-                <h3 id="xyz-title">手动 XYZ</h3>
+                <p class="control-kicker">PER-VIDEO MOCAP-WORLD OVERRIDE</p>
+                <h3 id="xyz-title">九视频手动 XYZ</h3>
               </div>
               <span class="unit-badge">WORLD · mm</span>
             </header>
 
+            <div class="annotation-target">
+              <label for="annotation-video">标注目标</label>
+              <select id="annotation-video" disabled aria-describedby="annotation-mode">
+                <option value="">正在读取 9 视频 manifest…</option>
+              </select>
+              <p id="annotation-mode" class="annotation-mode" data-mode="loading" role="status" aria-live="polite">等待 manifest 后启用。</p>
+            </div>
+
             <fieldset class="xyz-fieldset">
-              <legend>双手全局平移</legend>
+              <legend>全部可应用视频的全局 operator override</legend>
               <div class="axis-grid">
                 <label class="axis-x">X<input id="global-x" data-scope="global" data-axis="x" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
-                <label class="axis-y">Y<input id="global-y" data-scope="global" data-axis="y" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                <label class="axis-y">Y<input id="global-y" data-scope="global" data-axis="y" type="number" value="-44" step="0.5" inputmode="decimal"><span>mm</span></label>
                 <label class="axis-z">Z<input id="global-z" data-scope="global" data-axis="z" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+              </div>
+              <p class="global-policy">交付内已应用 profile 的基线为 Y = −44 mm。相同数值分别在每段视频自己的 <code>mocap-world</code> 中应用，不代表跨采集共享物理外参；第 09 段无 MOCAP，始终排除。</p>
+            </fieldset>
+
+            <fieldset class="xyz-fieldset video-xyz-fieldset" id="video-xyz-fieldset" disabled>
+              <legend>当前视频 XYZ residual</legend>
+              <div class="axis-grid">
+                <label class="axis-x">X<input id="video-x" data-scope="video" data-axis="x" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                <label class="axis-y">Y<input id="video-y" data-scope="video" data-axis="y" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
+                <label class="axis-z">Z<input id="video-z" data-scope="video" data-axis="z" type="number" value="0" step="0.5" inputmode="decimal"><span>mm</span></label>
               </div>
             </fieldset>
 
             <div class="switch-stack">
-              <label class="switch-row"><span><strong>两手联动</strong><small>修改任一 residual 时同步另一只手</small></span><input id="link-hands" type="checkbox" checked><i aria-hidden="true"></i></label>
-              <label class="switch-row"><span><strong>启用左右 residual</strong><small>在 global XYZ 之后追加单手微调</small></span><input id="enable-residual" type="checkbox"><i aria-hidden="true"></i></label>
+              <label class="switch-row"><span><strong>两手联动</strong><small>仅第 07 / 08 段：修改任一 residual 时同步另一只手</small></span><input id="link-hands" type="checkbox" checked disabled><i aria-hidden="true"></i></label>
+              <label class="switch-row"><span><strong>启用左右 residual</strong><small>仅第 07 / 08 段，在 global + video XYZ 后追加单手微调</small></span><input id="enable-residual" type="checkbox" disabled><i aria-hidden="true"></i></label>
             </div>
 
             <div class="residual-controls" id="residual-controls" aria-disabled="true">
@@ -147,27 +165,27 @@
             </div>
 
             <div class="rear-offset-note">
-              <span>DEFAULT HAND-LOCAL REAR OFFSET</span>
+              <span>TAKE_007 HAND-LOCAL REAR OFFSET</span>
               <strong id="rear-offset-value">20 mm</strong>
-              <p>掌根汇聚点已沿 hand-local 后向移动 20 mm；上面的 XYZ 是额外的 world-frame 平移。</p>
+              <p>仅用于第 07 / 08 段实时重投影：掌根汇聚点已沿 hand-local 后向移动 20 mm。</p>
             </div>
 
             <dl class="effective-offsets">
-              <div><dt>左手有效 XYZ</dt><dd id="effective-left">0.0, 0.0, 0.0 mm</dd></div>
-              <div><dt>右手有效 XYZ</dt><dd id="effective-right">0.0, 0.0, 0.0 mm</dd></div>
+              <div><dt>当前视频左手有效 XYZ</dt><dd id="effective-left">0.0, -44.0, 0.0 mm</dd></div>
+              <div><dt>当前视频右手有效 XYZ</dt><dd id="effective-right">0.0, -44.0, 0.0 mm</dd></div>
             </dl>
 
             <div class="xyz-actions">
-              <button id="alignment-reset" class="reset" type="button">恢复 0 / 0 / 0</button>
-              <button id="alignment-export" class="export" type="button">导出标定 JSON</button>
+              <button id="alignment-reset" class="reset" type="button">恢复已应用 profile 基线</button>
+              <button id="alignment-export" class="export" type="button" disabled>导出九视频 JSON</button>
             </div>
-            <p class="save-state" id="alignment-save-state" role="status" aria-live="polite">参数会自动保存在当前浏览器。</p>
+            <p class="save-state" id="alignment-save-state" role="status" aria-live="polite">九段参数会自动保存在当前浏览器；草稿严格绑定视频、workbench 与 applied profile 的 SHA。</p>
           </aside>
         </div>
 
         <details class="schema-details">
           <summary>数据与变换约定</summary>
-          <p><code>take007_alignment.json</code> 索引两个 little-endian Float32 文件；MOCAP 为 <code>[frame, 2, 11, 3]</code>（synthetic root + 10 markers），solved 为 <code>[frame, 2, 20, 3]</code>。计算顺序固定为 <code>world point + global XYZ + side residual → world_to_color → OpenCV distortion → RGB pixel</code>。</p>
+          <p><code>take007_alignment.json</code> 索引两个 little-endian Float32 文件；MOCAP 为 <code>[frame, 2, 11, 3]</code>（synthetic root + 10 markers），solved 为 <code>[frame, 2, 20, 3]</code>。第 07 / 08 段计算顺序为 <code>world point + global XYZ + per-video XYZ + side residual → world_to_color → OpenCV distortion → RGB pixel</code>。第 01–06 段只能记录各自 mocap-world 下的 operator override，需离线重渲染；第 09 段无 MOCAP，导出时固定 excluded。</p>
         </details>
       </section>
 
@@ -187,7 +205,7 @@
         <section class="take-group" data-pair="take01" aria-labelledby="take01-title">
           <header class="group-heading">
             <div><p class="group-index">01 / 05</p><h3 id="take01-title">Take 01</h3></div>
-            <p>同一 RGB 区间 · 1748 帧 · 左右并排检查 MOCAP 与解算手势</p>
+            <p>同一 RGB 区间 · 1747 帧 · 左右并排检查 MOCAP 与解算手势</p>
             <div class="pair-controls" aria-label="Take 01 播放控制">
               <button type="button" data-sync-play="take01">同步播放</button>
               <button type="button" data-sync-reset="take01">归零</button>
@@ -203,8 +221,8 @@
               </div>
               <div class="card-body">
                 <div class="card-title"><h4>MOCAP 动作</h4><span>视频 01</span></div>
-                <p>交付的双手 21-joint 骨架；rear wrist point 只用于显示，属于 VIZ-only proxy，不是新增 GT joint。</p>
-                <div class="asset-meta"><span data-field="frames">1748 frames</span><span data-field="duration">58.27 s</span><span data-field="bytes">—</span></div>
+                <p>Skeleton_0 / Skeleton_1 BVH 正向运动学得到双手各 21 joints；Human.cma 仅提供帧号与时间戳，不提供手部位置。</p>
+                <div class="asset-meta"><span data-field="frames">1747 frames</span><span data-field="duration">58.23 s</span><span data-field="bytes">—</span></div>
                 <div class="card-links"><a data-download href="/downloads/final-nine/videos/01_take01_mocap.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/01_take01_mocap.json">Metrics</a><code data-field="sha">SHA —</code></div>
               </div>
             </article>
@@ -219,7 +237,7 @@
               <div class="card-body">
                 <div class="card-title"><h4>我们的手部解算</h4><span>视频 02</span></div>
                 <p>绿色 root-local 手指姿态，以同步 MOCAP wrist SE(3) 定位；这是条件组合，不是独立 glove 6DoF GT。</p>
-                <div class="asset-meta"><span data-field="frames">1748 frames</span><span data-field="duration">58.27 s</span><span data-field="bytes">—</span></div>
+                <div class="asset-meta"><span data-field="frames">1747 frames</span><span data-field="duration">58.23 s</span><span data-field="bytes">—</span></div>
                 <div class="card-links"><a data-download href="/downloads/final-nine/videos/02_take01_solved_pose.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/02_take01_solved_pose.json">Metrics</a><code data-field="sha">SHA —</code></div>
               </div>
             </article>
@@ -245,7 +263,7 @@
               </div>
               <div class="card-body">
                 <div class="card-title"><h4>MOCAP 动作</h4><span>视频 03</span></div>
-                <p>按 RGB 曝光时刻插值的双手骨架；后腕显示点不改变原始 21 joints，也不参与精度结论。</p>
+                <p>Skeleton_0 / Skeleton_1 BVH 正向运动学得到双手各 21 joints，并按 Human.cma 的帧号与时间戳匹配 RGB。</p>
                 <div class="asset-meta"><span data-field="frames">1805 frames</span><span data-field="duration">60.17 s</span><span data-field="bytes">—</span></div>
                 <div class="card-links"><a data-download href="/downloads/final-nine/videos/03_take02_mocap.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/03_take02_mocap.json">Metrics</a><code data-field="sha">SHA —</code></div>
               </div>
@@ -271,7 +289,7 @@
         <section class="take-group" data-pair="take03" aria-labelledby="take03-title">
           <header class="group-heading">
             <div><p class="group-index">03 / 05</p><h3 id="take03-title">Take 03</h3></div>
-            <p>同一 RGB 区间 · 1800 帧 · 压力场景下的并排回看</p>
+            <p>同一 RGB 区间 · 1799 帧 · 压力场景下的并排回看</p>
             <div class="pair-controls" aria-label="Take 03 播放控制">
               <button type="button" data-sync-play="take03">同步播放</button>
               <button type="button" data-sync-reset="take03">归零</button>
@@ -287,8 +305,8 @@
               </div>
               <div class="card-body">
                 <div class="card-title"><h4>MOCAP 动作</h4><span>视频 05</span></div>
-                <p>原始 Skeleton_0 / Skeleton_1 动作投影；白心 rear wrist proxy 只帮助定位手背黑色模块。</p>
-                <div class="asset-meta"><span data-field="frames">1800 frames</span><span data-field="duration">60.00 s</span><span data-field="bytes">—</span></div>
+                <p>Skeleton_0 / Skeleton_1 BVH 正向运动学得到双手各 21 joints；Human.cma 只用于时序，不作为关节点位置源。</p>
+                <div class="asset-meta"><span data-field="frames">1799 frames</span><span data-field="duration">59.97 s</span><span data-field="bytes">—</span></div>
                 <div class="card-links"><a data-download href="/downloads/final-nine/videos/05_take03_mocap.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/05_take03_mocap.json">Metrics</a><code data-field="sha">SHA —</code></div>
               </div>
             </article>
@@ -303,7 +321,7 @@
               <div class="card-body">
                 <div class="card-title"><h4>我们的手部解算</h4><span>视频 06</span></div>
                 <p>只显示解算 articulation 与其 MOCAP wrist anchor；未把同帧视觉贴合包装成独立 GT。</p>
-                <div class="asset-meta"><span data-field="frames">1800 frames</span><span data-field="duration">60.00 s</span><span data-field="bytes">—</span></div>
+                <div class="asset-meta"><span data-field="frames">1799 frames</span><span data-field="duration">59.97 s</span><span data-field="bytes">—</span></div>
                 <div class="card-links"><a data-download href="/downloads/final-nine/videos/06_take03_solved_pose.mp4" download>下载 MP4</a><a data-metrics href="/downloads/final-nine/metrics/06_take03_solved_pose.json">Metrics</a><code data-field="sha">SHA —</code></div>
               </div>
             </article>

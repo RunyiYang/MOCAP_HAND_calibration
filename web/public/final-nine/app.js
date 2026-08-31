@@ -3,12 +3,22 @@
 const DELIVERY_ROOT = "/downloads/final-nine";
 const EXPECTED_SCHEMA = "gt_calib.final_nine_video_delivery.v1";
 const cards = Array.from(document.querySelectorAll("[data-video-id]"));
+const SHA256_PATTERN = /^[0-9a-f]{64}$/;
+let deliveryManifest = null;
 
 function safeRelativePath(value) {
   if (typeof value !== "string" || !value || value.startsWith("/") || value.includes("..") || value.includes(":")) {
     throw new Error(`不安全的 manifest 路径: ${String(value)}`);
   }
   return `${DELIVERY_ROOT}/${value}`;
+}
+
+function cacheBustedPath(path, sha256) {
+  if (typeof sha256 !== "string" || !SHA256_PATTERN.test(sha256)) {
+    throw new Error(`资源缺少有效 SHA-256: ${String(sha256)}`);
+  }
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}sha256=${sha256}`;
 }
 
 function formatBytes(bytes) {
@@ -43,8 +53,8 @@ function hydrateCard(card, entry) {
   const source = video?.querySelector("source");
   const download = card.querySelector("[data-download]");
   const metrics = card.querySelector("[data-metrics]");
-  const videoPath = safeRelativePath(`videos/${entry.filename}`);
-  const posterPath = safeRelativePath(entry.poster);
+  const videoPath = cacheBustedPath(safeRelativePath(`videos/${entry.filename}`), entry.sha256);
+  const posterPath = cacheBustedPath(safeRelativePath(entry.poster), entry.poster_sha256);
 
   if (video) video.poster = posterPath;
   if (source && source.getAttribute("src") !== videoPath) {
@@ -52,7 +62,7 @@ function hydrateCard(card, entry) {
     video?.load();
   }
   if (download) download.href = videoPath;
-  if (metrics) metrics.href = safeRelativePath(entry.metrics);
+  if (metrics) metrics.href = cacheBustedPath(safeRelativePath(entry.metrics), entry.metrics_sha256);
 
   const frames = card.querySelector('[data-field="frames"]');
   const duration = card.querySelector('[data-field="duration"]');
@@ -73,19 +83,41 @@ function validateManifest(manifest) {
   if (manifest?.video_count !== 9 || !Array.isArray(manifest?.videos) || manifest.videos.length !== 9) {
     throw new Error("manifest 必须恰好包含 9 段视频");
   }
-  const manifestIds = new Set(manifest.videos.map((entry) => entry.id));
+  const ordered = manifest.videos.slice().sort((left, right) => Number(left.order) - Number(right.order));
+  const orders = ordered.map((entry) => entry.order);
+  if (orders.some((order, index) => !Number.isInteger(order) || order !== index + 1)) {
+    throw new Error("manifest video order 必须严格为 1–9");
+  }
+  for (const entry of ordered) {
+    if (typeof entry.id !== "string" || !entry.id || typeof entry.filename !== "string" || !entry.filename.endsWith(".mp4") || entry.filename.includes("/")) {
+      throw new Error("manifest video id/filename 无效");
+    }
+    if (!SHA256_PATTERN.test(entry.sha256 ?? "")) throw new Error(`manifest video SHA 无效: ${entry.id}`);
+    if (!Number.isInteger(entry.frame_count) || entry.frame_count <= 0 || !Number.isFinite(Number(entry.fps)) || Number(entry.fps) <= 0) {
+      throw new Error(`manifest video timing 无效: ${entry.id}`);
+    }
+    if (!Number.isInteger(entry.width) || entry.width <= 0 || !Number.isInteger(entry.height) || entry.height <= 0) {
+      throw new Error(`manifest video dimensions 无效: ${entry.id}`);
+    }
+    if (typeof entry.poster !== "string" || !SHA256_PATTERN.test(entry.poster_sha256 ?? "") || typeof entry.metrics !== "string" || !SHA256_PATTERN.test(entry.metrics_sha256 ?? "")) {
+      throw new Error(`manifest poster/metrics provenance 无效: ${entry.id}`);
+    }
+  }
+  const manifestIds = new Set(ordered.map((entry) => entry.id));
   const authoredIds = new Set(cards.map((card) => card.dataset.videoId));
   if (manifestIds.size !== 9 || authoredIds.size !== 9 || [...authoredIds].some((id) => !manifestIds.has(id))) {
     throw new Error("页面卡片与 manifest 视频 ID 不一致");
   }
+  manifest.videos = ordered;
+  return manifest;
 }
 
 async function loadManifest() {
   try {
     const response = await fetch(`${DELIVERY_ROOT}/manifest.json`, { cache: "no-store" });
     if (!response.ok) throw new Error(`manifest HTTP ${response.status}`);
-    const manifest = await response.json();
-    validateManifest(manifest);
+    const manifest = validateManifest(await response.json());
+    deliveryManifest = manifest;
     const byId = new Map(manifest.videos.map((entry) => [entry.id, entry]));
     for (const card of cards) hydrateCard(card, byId.get(card.dataset.videoId));
 
@@ -96,8 +128,10 @@ async function loadManifest() {
     if (videos) videos.textContent = String(manifest.video_count);
     if (duration) duration.textContent = formatDuration(totalDuration);
     setManifestState("verified", `manifest 已验证 · 9/9 · ${formatBytes(totalBytes)}`);
+    return manifest;
   } catch (error) {
     setManifestState("failed", `manifest 未加载 · ${error.message}`);
+    return null;
   }
 }
 
@@ -136,15 +170,18 @@ function wirePairControls() {
 }
 
 wirePairControls();
-loadManifest();
+const manifestPromise = loadManifest();
 
 const WORKBENCH_ROOT = `${DELIVERY_ROOT}/calibration-workbench`;
-const WORKBENCH_INDEX = `${WORKBENCH_ROOT}/take007_alignment.json`;
 const WORKBENCH_SCHEMA = "gt_calib.manual_xyz_workbench.v1";
-const ADJUSTMENT_SCHEMA = "gt_calib.manual_xyz_profile.v1";
-const WORKBENCH_STORAGE_KEY = "gt_calib.take007.manual_xyz.v1";
+const STATE_SCHEMA = "gt_calib.final_nine_manual_xyz_state.v3";
+const EXPORT_SCHEMA = "gt_calib.final_nine_manual_xyz.v1";
+const WORKBENCH_STORAGE_KEY = "gt_calib.final_nine.manual_xyz.v3";
 const HAND_NAMES = ["left", "right"];
 const AXES = ["x", "y", "z"];
+const LIVE_REPROJECTION_VIDEO_IDS = new Set(["take007-mocap-markers", "take007-solved"]);
+const EXCLUDED_VIDEO_IDS = new Set(["no-glove-calibration"]);
+const LAYER_VIDEO_IDS = { mocap: "take007-mocap-markers", solved: "take007-solved" };
 
 const workbenchElements = {
   canvas: document.querySelector("#alignment-canvas"),
@@ -154,6 +191,9 @@ const workbenchElements = {
   next: document.querySelector("#alignment-next"),
   frame: document.querySelector("#alignment-frame"),
   time: document.querySelector("#alignment-time"),
+  videoSelector: document.querySelector("#annotation-video"),
+  annotationMode: document.querySelector("#annotation-mode"),
+  videoXyzFieldset: document.querySelector("#video-xyz-fieldset"),
   linkHands: document.querySelector("#link-hands"),
   enableResidual: document.querySelector("#enable-residual"),
   residualControls: document.querySelector("#residual-controls"),
@@ -176,15 +216,48 @@ function zeroVector() {
   return { x: 0, y: 0, z: 0 };
 }
 
-function defaultWorkbenchAdjustment() {
+function defaultGlobalVector() {
+  return { x: 0, y: -44, z: 0 };
+}
+
+function manifestVideoIds(manifest) {
+  return Array.isArray(manifest?.videos) ? manifest.videos.map((entry) => entry.id) : [];
+}
+
+function manifestVideoFingerprints(manifest) {
+  return Array.isArray(manifest?.videos)
+    ? manifest.videos.map((entry) => `${entry.order}:${entry.id}:${entry.filename}:${entry.sha256}`)
+    : [];
+}
+
+function supportsSideResidual(videoId) {
+  return LIVE_REPROJECTION_VIDEO_IDS.has(videoId);
+}
+
+function translationApplies(videoId) {
+  return !EXCLUDED_VIDEO_IDS.has(videoId);
+}
+
+function defaultVideoAdjustment(videoId) {
   return {
-    global: zeroVector(),
-    left: zeroVector(),
-    right: zeroVector(),
+    xyz: zeroVector(),
     residualEnabled: false,
     linkHands: true,
+    left: zeroVector(),
+    right: zeroVector(),
+    liveReprojectionAvailable: supportsSideResidual(videoId),
+  };
+}
+
+function defaultWorkbenchAdjustment(manifest = null) {
+  const videoIds = manifestVideoIds(manifest);
+  const preferredVideoId = videoIds.includes("take007-mocap-markers") ? "take007-mocap-markers" : (videoIds[0] ?? null);
+  return {
+    global: defaultGlobalVector(),
+    selectedVideoId: preferredVideoId,
+    videos: Object.fromEntries(videoIds.map((videoId) => [videoId, defaultVideoAdjustment(videoId)])),
     showMocap: true,
-    showSolved: true,
+    showSolved: false,
   };
 }
 
@@ -192,7 +265,12 @@ const workbench = {
   metadata: null,
   camera: null,
   layers: {},
-  adjustment: defaultWorkbenchAdjustment(),
+  adjustment: defaultWorkbenchAdjustment(null),
+  baselineAdjustment: defaultWorkbenchAdjustment(null),
+  draftBinding: null,
+  appliedProfile: null,
+  deliveryManifest: null,
+  indexPath: null,
   ready: false,
   videoReady: false,
   frameCallbackPending: false,
@@ -203,31 +281,84 @@ function finiteNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
-function sanitizeVector(value) {
-  return Object.fromEntries(AXES.map((axis) => [axis, finiteNumber(value?.[axis])]));
+function sanitizeVector(value, fallback = zeroVector()) {
+  return Object.fromEntries(AXES.map((axis) => [axis, finiteNumber(value?.[axis], fallback[axis])]));
 }
 
-function sanitizeAdjustment(value) {
-  const defaults = defaultWorkbenchAdjustment();
+function sanitizeVideoAdjustment(value, videoId, defaults = defaultVideoAdjustment(videoId)) {
+  if (!supportsSideResidual(videoId)) return defaults;
   return {
-    global: sanitizeVector(value?.global),
-    left: sanitizeVector(value?.left),
-    right: sanitizeVector(value?.right),
+    xyz: sanitizeVector(value?.xyz, defaults.xyz),
     residualEnabled: typeof value?.residualEnabled === "boolean" ? value.residualEnabled : defaults.residualEnabled,
     linkHands: typeof value?.linkHands === "boolean" ? value.linkHands : defaults.linkHands,
+    left: sanitizeVector(value?.left, defaults.left),
+    right: sanitizeVector(value?.right, defaults.right),
+    liveReprojectionAvailable: true,
+  };
+}
+
+function sanitizeManifestVideoAdjustment(value, videoId, defaults = defaultVideoAdjustment(videoId)) {
+  if (!translationApplies(videoId)) return defaultVideoAdjustment(videoId);
+  if (supportsSideResidual(videoId)) {
+    return {
+      ...sanitizeVideoAdjustment(value, videoId, defaults),
+      xyz: sanitizeVector(value?.xyz, defaults.xyz),
+    };
+  }
+  return {
+    ...defaultVideoAdjustment(videoId),
+    xyz: sanitizeVector(value?.xyz, defaults.xyz),
+  };
+}
+
+function sanitizeAdjustment(value, manifest, defaults = defaultWorkbenchAdjustment(manifest)) {
+  const videoIds = manifestVideoIds(manifest);
+  const selectedVideoId = videoIds.includes(value?.selectedVideoId) ? value.selectedVideoId : defaults.selectedVideoId;
+  return {
+    global: sanitizeVector(value?.global, defaults.global),
+    selectedVideoId,
+    videos: Object.fromEntries(videoIds.map((videoId) => [
+      videoId,
+      sanitizeManifestVideoAdjustment(value?.videos?.[videoId], videoId, defaults.videos?.[videoId] ?? defaultVideoAdjustment(videoId)),
+    ])),
     showMocap: typeof value?.showMocap === "boolean" ? value.showMocap : defaults.showMocap,
     showSolved: typeof value?.showSolved === "boolean" ? value.showSolved : defaults.showSolved,
   };
 }
 
-function loadSavedAdjustment() {
+function sameOrderedStrings(left, right) {
+  return Array.isArray(left) && left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function buildDraftBinding(manifest, descriptor) {
+  const profileDescriptor = descriptor?.applied_manual_profile;
+  if (!SHA256_PATTERN.test(descriptor?.sha256 ?? "") || !SHA256_PATTERN.test(profileDescriptor?.sha256 ?? "")) {
+    throw new Error("manifest 标定资源缺少有效 SHA-256");
+  }
+  return {
+    manifest_video_fingerprints: manifestVideoFingerprints(manifest),
+    workbench_metadata_sha256: descriptor.sha256,
+    applied_profile_sha256: profileDescriptor.sha256,
+  };
+}
+
+function exactDraftBindingMatches(value, expected) {
+  return sameOrderedStrings(value?.manifest_video_fingerprints, expected.manifest_video_fingerprints)
+    && value?.workbench_metadata_sha256 === expected.workbench_metadata_sha256
+    && value?.applied_profile_sha256 === expected.applied_profile_sha256;
+}
+
+function loadSavedAdjustment(manifest, baseline, binding) {
   try {
     const saved = localStorage.getItem(WORKBENCH_STORAGE_KEY);
-    if (!saved) return defaultWorkbenchAdjustment();
+    if (!saved) return sanitizeAdjustment(baseline, manifest, baseline);
     const parsed = JSON.parse(saved);
-    return sanitizeAdjustment(parsed?.adjustment ?? parsed);
+    if (parsed?.schema !== STATE_SCHEMA || !exactDraftBindingMatches(parsed?.binding, binding)) {
+      return sanitizeAdjustment(baseline, manifest, baseline);
+    }
+    return sanitizeAdjustment(parsed.adjustment, manifest, baseline);
   } catch (_) {
-    return defaultWorkbenchAdjustment();
+    return sanitizeAdjustment(baseline, manifest, baseline);
   }
 }
 
@@ -240,23 +371,93 @@ function setSaveState(message, kind = "") {
 }
 
 function saveAdjustment() {
+  if (!workbench.deliveryManifest || !workbench.draftBinding) return;
   try {
     localStorage.setItem(WORKBENCH_STORAGE_KEY, JSON.stringify({
-      schema: ADJUSTMENT_SCHEMA,
+      schema: STATE_SCHEMA,
+      binding: workbench.draftBinding,
       adjustment: workbench.adjustment,
-      updated_at: new Date().toISOString(),
+      updated_at_utc: new Date().toISOString(),
     }));
-    setSaveState("已自动保存到当前浏览器。", "saved");
+    setSaveState("九段 XYZ 已自动保存到当前浏览器。", "saved");
   } catch (_) {
-    setSaveState("浏览器禁止 localStorage；请使用“导出标定 JSON”保存。", "error");
+    setSaveState("浏览器禁止 localStorage；请使用“导出九视频 JSON”保存。", "error");
   }
 }
 
-function workbenchAssetPath(path) {
+function workbenchAssetPath(path, sha256) {
   if (typeof path !== "string" || !path || path.startsWith("/") || path.includes("..") || path.includes(":") || path.includes("\\")) {
     throw new Error(`不安全的标定资源路径: ${String(path)}`);
   }
-  return `${WORKBENCH_ROOT}/${path.replace(/^\.\//, "")}`;
+  return cacheBustedPath(`${WORKBENCH_ROOT}/${path.replace(/^\.\//, "")}`, sha256);
+}
+
+function appliedProfileVector(value, label) {
+  if (!Array.isArray(value) || value.length !== 3 || value.some((item) => typeof item !== "number" || !Number.isFinite(item))) {
+    throw new Error(`${label} 必须是长度为 3 的有限数值数组`);
+  }
+  return Object.fromEntries(AXES.map((axis, index) => [axis, Object.is(value[index], -0) ? 0 : value[index]]));
+}
+
+function objectVectorIsZero(vector) {
+  return AXES.every((axis) => vector[axis] === 0);
+}
+
+function objectVectorsMatch(left, right) {
+  return AXES.every((axis) => left[axis] === right[axis]);
+}
+
+function validateAppliedManualProfile(profile, manifest) {
+  if (profile?.schema !== EXPORT_SCHEMA) throw new Error(`applied profile schema 不匹配: ${profile?.schema ?? "missing"}`);
+  if (!sameOrderedStrings(profile.axis_order, AXES) || profile.units !== "mm" || profile.coordinate_frame !== "per_video_mocap_world") {
+    throw new Error("applied profile 坐标系、单位或轴序不匹配");
+  }
+  if (!Array.isArray(profile.video_annotations) || profile.video_annotations.length !== 9 || manifest.videos.length !== 9) {
+    throw new Error("applied profile 必须恰好包含 9 条视频标注");
+  }
+
+  const adjustment = defaultWorkbenchAdjustment(manifest);
+  adjustment.global = appliedProfileVector(profile.global_world_xyz_mm, "applied profile global_world_xyz_mm");
+  for (let index = 0; index < manifest.videos.length; index += 1) {
+    const source = manifest.videos[index];
+    const row = profile.video_annotations[index];
+    if (!row || row.order !== source.order || row.video_id !== source.id || row.filename !== source.filename) {
+      throw new Error(`applied profile 第 ${index + 1} 条未绑定当前 manifest 的 order/id/filename`);
+    }
+    if (!SHA256_PATTERN.test(row.video_sha256 ?? "")) throw new Error(`applied profile video SHA 无效: ${source.id}`);
+    const shouldApply = translationApplies(source.id);
+    if (row.apply_translation !== shouldApply) throw new Error(`applied profile apply_translation 错误: ${source.id}`);
+
+    const perVideo = appliedProfileVector(row.per_video_world_xyz_mm, `${source.id}.per_video_world_xyz_mm`);
+    const left = appliedProfileVector(row.left_residual_world_xyz_mm, `${source.id}.left_residual_world_xyz_mm`);
+    const right = appliedProfileVector(row.right_residual_world_xyz_mm, `${source.id}.right_residual_world_xyz_mm`);
+    const sideAllowed = supportsSideResidual(source.id);
+    if (!sideAllowed && (!objectVectorIsZero(left) || !objectVectorIsZero(right))) {
+      throw new Error(`applied profile 仅允许 Take_007 使用左右 residual: ${source.id}`);
+    }
+    if (!shouldApply && !objectVectorIsZero(perVideo)) throw new Error("第 09 段无 MOCAP，applied profile 必须保持零 translation");
+
+    adjustment.videos[source.id] = {
+      xyz: shouldApply ? perVideo : zeroVector(),
+      residualEnabled: sideAllowed && (!objectVectorIsZero(left) || !objectVectorIsZero(right)),
+      linkHands: sideAllowed && objectVectorsMatch(left, right),
+      left: sideAllowed ? left : zeroVector(),
+      right: sideAllowed ? right : zeroVector(),
+      liveReprojectionAvailable: sideAllowed,
+    };
+  }
+  return { profile, adjustment };
+}
+
+async function loadAppliedManualProfile(manifest, descriptor) {
+  const profileDescriptor = descriptor?.applied_manual_profile;
+  if (profileDescriptor?.schema !== EXPORT_SCHEMA || typeof profileDescriptor.path !== "string" || !SHA256_PATTERN.test(profileDescriptor.sha256 ?? "")) {
+    throw new Error("manifest 缺少有效 calibration_workbench.applied_manual_profile");
+  }
+  const profilePath = safeRelativePath(profileDescriptor.path);
+  const response = await fetch(cacheBustedPath(profilePath, profileDescriptor.sha256), { cache: "no-store" });
+  if (!response.ok) throw new Error(`applied_manual_profile.json HTTP ${response.status}`);
+  return validateAppliedManualProfile(await response.json(), manifest);
 }
 
 function flattenMatrix(value, rows, columns, label) {
@@ -308,7 +509,7 @@ function validateWorkbenchMetadata(metadata) {
     frame_count: frameCount,
   };
   if (video.fps <= 0) throw new Error("video.fps 必须大于 0");
-  workbenchAssetPath(video.path);
+  workbenchAssetPath(video.path, video.sha256);
 
   const camera = {
     sourceWidth: positiveInteger(metadata.camera?.source_width ?? metadata.video?.source_width, "camera/video.source_width"),
@@ -344,7 +545,7 @@ function float32LittleEndian(buffer) {
 }
 
 async function loadBinaryLayer(layer, name) {
-  const response = await fetch(workbenchAssetPath(layer.path), { cache: "no-store" });
+  const response = await fetch(workbenchAssetPath(layer.path, layer.sha256), { cache: "no-store" });
   if (!response.ok) throw new Error(`${name} HTTP ${response.status}`);
   const buffer = await response.arrayBuffer();
   const expectedValues = layer.shape.reduce((product, size) => product * size, 1);
@@ -390,16 +591,39 @@ function paintEmptyCanvas(message = "等待 Take_007 数据") {
   context.fillText(message, canvas.width / 2, canvas.height / 2);
 }
 
+function selectedVideoEntry() {
+  return workbench.deliveryManifest?.videos.find((entry) => entry.id === workbench.adjustment.selectedVideoId) ?? null;
+}
+
+function selectedVideoAdjustment() {
+  return workbench.adjustment.videos?.[workbench.adjustment.selectedVideoId] ?? null;
+}
+
+function activePreviewTiming() {
+  const entry = selectedVideoEntry();
+  if (!entry) return { frame_count: 1, fps: 30, width: 960, height: 540 };
+  if (supportsSideResidual(entry.id) && workbench.metadata) return workbench.metadata.video;
+  return {
+    frame_count: positiveInteger(entry.frame_count, `${entry.id}.frame_count`),
+    fps: finiteNumber(entry.fps, 30),
+    width: positiveInteger(entry.width ?? 960, `${entry.id}.width`),
+    height: positiveInteger(entry.height ?? 540, `${entry.id}.height`),
+  };
+}
+
 function currentFrameIndex() {
-  const frameCount = workbench.metadata?.video.frame_count ?? 1;
-  const fps = workbench.metadata?.video.fps ?? 30;
+  const timing = activePreviewTiming();
+  const frameCount = timing.frame_count;
+  const fps = timing.fps;
   return Math.max(0, Math.min(frameCount - 1, Math.round(finiteNumber(sourceVideo.currentTime) * fps)));
 }
 
-function effectiveOffset(handName) {
+function effectiveOffset(videoId, handName) {
+  if (!translationApplies(videoId)) return null;
   const global = workbench.adjustment.global;
-  const residual = workbench.adjustment.residualEnabled ? workbench.adjustment[handName] : zeroVector();
-  return AXES.map((axis) => global[axis] + residual[axis]);
+  const video = workbench.adjustment.videos?.[videoId] ?? defaultVideoAdjustment(videoId);
+  const sideResidual = supportsSideResidual(videoId) && video.residualEnabled ? video[handName] : zeroVector();
+  return AXES.map((axis) => global[axis] + video.xyz[axis] + sideResidual[axis]);
 }
 
 function layerPoint(layer, frame, hand, joint) {
@@ -453,10 +677,12 @@ function drawProjectedLayer(context, name, frame) {
   if (!layer) return;
   const isMocap = name === "mocap";
   const jointCount = layer.shape[2];
+  const videoId = LAYER_VIDEO_IDS[name];
 
   for (let hand = 0; hand < 2; hand += 1) {
     const color = LAYER_COLORS[name][hand];
-    const offset = effectiveOffset(HAND_NAMES[hand]);
+    const offset = effectiveOffset(videoId, HAND_NAMES[hand]);
+    if (!offset) continue;
     const projected = Array.from({ length: jointCount }, (_, joint) => projectWorldPoint(layerPoint(layer, frame, hand, joint), offset));
 
     context.save();
@@ -510,12 +736,46 @@ function drawProjectedLayer(context, name, frame) {
 }
 
 function updateTransport(frame) {
+  const timing = activePreviewTiming();
   if (workbenchElements.frame) workbenchElements.frame.value = String(frame);
-  if (workbenchElements.time && workbench.metadata) {
-    const fps = workbench.metadata.video.fps;
-    workbenchElements.time.textContent = `${frame} / ${workbench.metadata.video.frame_count - 1} · ${(frame / fps).toFixed(3)} s`;
+  if (workbenchElements.time) {
+    workbenchElements.time.textContent = `${frame} / ${timing.frame_count - 1} · ${(frame / timing.fps).toFixed(3)} s`;
   }
   if (workbenchElements.play) workbenchElements.play.textContent = sourceVideo.paused ? "播放" : "暂停";
+}
+
+function switchSelectedPreview() {
+  const entry = selectedVideoEntry();
+  if (!entry) return;
+  if (supportsSideResidual(entry.id) && !workbench.metadata) {
+    setWorkbenchLoading("", "正在读取 Take_007 实时重投影资源…");
+    return;
+  }
+
+  sourceVideo.pause();
+  workbench.videoReady = false;
+  if (workbenchElements.play) workbenchElements.play.disabled = true;
+  const timing = activePreviewTiming();
+  if (workbenchElements.canvas) {
+    workbenchElements.canvas.width = timing.width;
+    workbenchElements.canvas.height = timing.height;
+  }
+  if (workbenchElements.frame) {
+    workbenchElements.frame.max = String(timing.frame_count - 1);
+    workbenchElements.frame.value = "0";
+    workbenchElements.frame.disabled = false;
+  }
+  if (workbenchElements.previous) workbenchElements.previous.disabled = false;
+  if (workbenchElements.next) workbenchElements.next.disabled = false;
+
+  const source = supportsSideResidual(entry.id)
+    ? workbenchAssetPath(workbench.metadata.video.path, workbench.metadata.video.sha256)
+    : cacheBustedPath(safeRelativePath(`videos/${entry.filename}`), entry.sha256);
+  const previewLabel = supportsSideResidual(entry.id) ? "clean RGB + 实时 3D 重投影" : "正式已烘焙 MP4";
+  setWorkbenchLoading("", `正在载入 ${String(entry.order).padStart(2, "0")} · ${entry.id} · ${previewLabel}…`);
+  sourceVideo.src = source;
+  sourceVideo.load();
+  updateTransport(0);
 }
 
 function drawAlignmentFrame() {
@@ -530,19 +790,23 @@ function drawAlignmentFrame() {
     context.fillRect(0, 0, canvas.width, canvas.height);
   }
   const frame = currentFrameIndex();
-  if (workbench.adjustment.showSolved) drawProjectedLayer(context, "solved", frame);
-  if (workbench.adjustment.showMocap) drawProjectedLayer(context, "mocap", frame);
+  const selectedId = workbench.adjustment.selectedVideoId;
+  if (supportsSideResidual(selectedId)) {
+    if (workbench.adjustment.showSolved) drawProjectedLayer(context, "solved", frame);
+    if (workbench.adjustment.showMocap) drawProjectedLayer(context, "mocap", frame);
+  }
 
   context.save();
   context.fillStyle = "rgba(2, 9, 16, 0.72)";
-  context.fillRect(canvas.width - 204, 12, 192, 42);
+  context.fillRect(canvas.width - 304, 12, 292, 42);
   context.fillStyle = "#d5dfeb";
   context.font = "700 10px ui-monospace, monospace";
   context.textAlign = "left";
   const global = workbench.adjustment.global;
-  context.fillText(`FRAME ${frame} · WORLD Δ`, canvas.width - 195, 28);
-  context.fillStyle = "#42d9ee";
-  context.fillText(`X ${global.x.toFixed(1)}  Y ${global.y.toFixed(1)}  Z ${global.z.toFixed(1)} mm`, canvas.width - 195, 44);
+  const previewMode = supportsSideResidual(selectedId) ? "LIVE REPROJECT" : (translationApplies(selectedId) ? "BAKED · RECORD ONLY" : "NO MOCAP · EXCLUDED");
+  context.fillText(`FRAME ${frame} · ${previewMode}`, canvas.width - 295, 28);
+  context.fillStyle = translationApplies(selectedId) ? "#42d9ee" : "#ff8ea5";
+  context.fillText(`GLOBAL X ${global.x.toFixed(1)}  Y ${global.y.toFixed(1)}  Z ${global.z.toFixed(1)} mm`, canvas.width - 295, 44);
   context.restore();
   updateTransport(frame);
 }
@@ -560,39 +824,222 @@ function scheduleAlignmentFrames() {
 }
 
 function seekAlignmentFrame(frame) {
-  if (!workbench.metadata) return;
-  const clamped = Math.max(0, Math.min(workbench.metadata.video.frame_count - 1, Math.round(frame)));
-  sourceVideo.currentTime = clamped / workbench.metadata.video.fps;
+  const timing = activePreviewTiming();
+  const clamped = Math.max(0, Math.min(timing.frame_count - 1, Math.round(frame)));
+  sourceVideo.currentTime = clamped / timing.fps;
   updateTransport(clamped);
   if (sourceVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) drawAlignmentFrame();
 }
 
 function formatOffset(values) {
+  if (values === null) return "N/A · no MOCAP";
   return `${values.map((value) => value.toFixed(1)).join(", ")} mm`;
 }
 
+function vectorForScope(scope) {
+  if (scope === "global") return workbench.adjustment.global;
+  const selected = selectedVideoAdjustment();
+  if (!selected) return null;
+  if (scope === "video") return selected.xyz;
+  if (scope === "left" || scope === "right") return selected[scope];
+  return null;
+}
+
+function populateVideoSelector(manifest) {
+  const selector = workbenchElements.videoSelector;
+  if (!selector) return;
+  selector.replaceChildren(...manifest.videos.map((entry) => {
+    const option = document.createElement("option");
+    option.value = entry.id;
+    const suffix = EXCLUDED_VIDEO_IDS.has(entry.id) ? " · 无 MOCAP / excluded" : (supportsSideResidual(entry.id) ? " · live reprojection" : " · offline rerender");
+    option.textContent = `${String(entry.order).padStart(2, "0")} · ${entry.id}${suffix}`;
+    return option;
+  }));
+  selector.disabled = false;
+}
+
+function updateAnnotationMode(videoId) {
+  const element = workbenchElements.annotationMode;
+  if (!element) return;
+  if (EXCLUDED_VIDEO_IDS.has(videoId)) {
+    element.dataset.mode = "excluded";
+    element.textContent = "第 09 段没有 MOCAP 手部数据：保留在九条导出中，但 apply_translation=false，effective=null。";
+  } else if (LIVE_REPROJECTION_VIDEO_IDS.has(videoId)) {
+    element.dataset.mode = "live";
+    element.textContent = "第 07 / 08 段使用 clean RGB 与对应 3D layer 实时重投影；可启用左右手 residual。";
+  } else {
+    element.dataset.mode = "record";
+    element.textContent = "参数记录模式：下方预览是正式已烘焙 MP4，XYZ 属于本视频自己的 mocap-world，需离线重渲染后才能看到变化。";
+  }
+}
+
 function refreshAdjustmentUI() {
+  const selectedId = workbench.adjustment.selectedVideoId;
+  const selected = selectedVideoAdjustment();
+  const applicable = translationApplies(selectedId);
+  const sideAllowed = supportsSideResidual(selectedId);
   for (const input of document.querySelectorAll("#manual-calibration [data-scope][data-axis]")) {
-    const value = workbench.adjustment[input.dataset.scope]?.[input.dataset.axis];
+    const value = vectorForScope(input.dataset.scope)?.[input.dataset.axis];
     if (Number.isFinite(value) && document.activeElement !== input) input.value = String(value);
   }
-  if (workbenchElements.linkHands) workbenchElements.linkHands.checked = workbench.adjustment.linkHands;
-  if (workbenchElements.enableResidual) workbenchElements.enableResidual.checked = workbench.adjustment.residualEnabled;
+  if (workbenchElements.videoSelector && selectedId) workbenchElements.videoSelector.value = selectedId;
+  if (workbenchElements.videoXyzFieldset) workbenchElements.videoXyzFieldset.disabled = !applicable;
+  if (workbenchElements.linkHands) {
+    workbenchElements.linkHands.checked = sideAllowed && Boolean(selected?.linkHands);
+    workbenchElements.linkHands.disabled = !sideAllowed;
+  }
+  if (workbenchElements.enableResidual) {
+    workbenchElements.enableResidual.checked = sideAllowed && Boolean(selected?.residualEnabled);
+    workbenchElements.enableResidual.disabled = !sideAllowed;
+  }
   if (workbenchElements.showMocap) workbenchElements.showMocap.checked = workbench.adjustment.showMocap;
   if (workbenchElements.showSolved) workbenchElements.showSolved.checked = workbench.adjustment.showSolved;
+  if (workbenchElements.showMocap) workbenchElements.showMocap.disabled = !sideAllowed;
+  if (workbenchElements.showSolved) workbenchElements.showSolved.disabled = !sideAllowed;
   if (workbenchElements.residualControls) {
-    workbenchElements.residualControls.classList.toggle("enabled", workbench.adjustment.residualEnabled);
-    workbenchElements.residualControls.setAttribute("aria-disabled", String(!workbench.adjustment.residualEnabled));
-    for (const fieldset of workbenchElements.residualControls.querySelectorAll("fieldset")) fieldset.disabled = !workbench.adjustment.residualEnabled;
+    const residualEnabled = sideAllowed && Boolean(selected?.residualEnabled);
+    workbenchElements.residualControls.classList.toggle("enabled", residualEnabled);
+    workbenchElements.residualControls.setAttribute("aria-disabled", String(!residualEnabled));
+    for (const fieldset of workbenchElements.residualControls.querySelectorAll("fieldset")) fieldset.disabled = !residualEnabled;
   }
-  if (workbenchElements.effectiveLeft) workbenchElements.effectiveLeft.textContent = formatOffset(effectiveOffset("left"));
-  if (workbenchElements.effectiveRight) workbenchElements.effectiveRight.textContent = formatOffset(effectiveOffset("right"));
+  if (workbenchElements.effectiveLeft) workbenchElements.effectiveLeft.textContent = formatOffset(effectiveOffset(selectedId, "left"));
+  if (workbenchElements.effectiveRight) workbenchElements.effectiveRight.textContent = formatOffset(effectiveOffset(selectedId, "right"));
+  if (workbenchElements.export) workbenchElements.export.disabled = !workbench.deliveryManifest;
+  updateAnnotationMode(selectedId);
+  for (const card of cards) {
+    const selectedCard = card.dataset.videoId === selectedId;
+    card.classList.toggle("annotation-selected", selectedCard);
+    if (selectedCard) card.setAttribute("aria-current", "true");
+    else card.removeAttribute("aria-current");
+  }
 }
 
 function applyAdjustmentChange() {
   refreshAdjustmentUI();
   saveAdjustment();
   drawAlignmentFrame();
+}
+
+function strictVectorArray(vector, label) {
+  const values = AXES.map((axis) => Number(vector?.[axis]));
+  if (values.length !== 3 || values.some((value) => !Number.isFinite(value))) throw new Error(`${label} 必须是有限 XYZ`);
+  return values.map((value) => Object.is(value, -0) ? 0 : value);
+}
+
+function assertArrayVector(value, label) {
+  if (!Array.isArray(value) || value.length !== 3 || value.some((item) => typeof item !== "number" || !Number.isFinite(item))) {
+    throw new Error(`${label} 必须是长度为 3 的有限数值数组`);
+  }
+}
+
+function addVectors(...vectors) {
+  return AXES.map((_, index) => vectors.reduce((sum, vector) => sum + vector[index], 0));
+}
+
+function zeroArray() {
+  return [0, 0, 0];
+}
+
+function sameVector(left, right) {
+  return Array.isArray(left) && Array.isArray(right) && left.length === 3 && right.length === 3 && left.every((value, index) => value === right[index]);
+}
+
+function buildExportPayload() {
+  const manifest = workbench.deliveryManifest;
+  if (!manifest) throw new Error("manifest 尚未验证");
+  const global = strictVectorArray(workbench.adjustment.global, "global_world_xyz_mm");
+  const videoAnnotations = manifest.videos.map((entry) => {
+    const adjustment = workbench.adjustment.videos?.[entry.id];
+    if (!adjustment) throw new Error(`缺少视频标注状态: ${entry.id}`);
+    const applyTranslation = translationApplies(entry.id);
+    const liveReprojection = supportsSideResidual(entry.id);
+    const perVideo = applyTranslation ? strictVectorArray(adjustment.xyz, `${entry.id}.per_video_world_xyz_mm`) : zeroArray();
+    const residualEnabled = liveReprojection && Boolean(adjustment.residualEnabled);
+    const leftResidual = residualEnabled ? strictVectorArray(adjustment.left, `${entry.id}.left_residual_world_xyz_mm`) : zeroArray();
+    const rightResidual = residualEnabled ? strictVectorArray(adjustment.right, `${entry.id}.right_residual_world_xyz_mm`) : zeroArray();
+    const base = applyTranslation ? addVectors(global, perVideo) : null;
+    return {
+      order: entry.order,
+      video_id: entry.id,
+      filename: entry.filename,
+      video_sha256: entry.sha256,
+      apply_translation: applyTranslation,
+      exclusion_reason: applyTranslation ? null : "no_mocap_hand_pose",
+      live_reprojection_available: liveReprojection,
+      per_video_world_xyz_mm: perVideo,
+      side_residual_enabled: residualEnabled,
+      linked_hands: liveReprojection ? Boolean(adjustment.linkHands) : false,
+      left_residual_world_xyz_mm: leftResidual,
+      right_residual_world_xyz_mm: rightResidual,
+      effective_left_world_xyz_mm: applyTranslation ? addVectors(base, residualEnabled ? leftResidual : zeroArray()) : null,
+      effective_right_world_xyz_mm: applyTranslation ? addVectors(base, residualEnabled ? rightResidual : zeroArray()) : null,
+    };
+  });
+  return {
+    schema: EXPORT_SCHEMA,
+    created_at_utc: new Date().toISOString(),
+    coordinate_frame: "per_video_mocap_world",
+    coordinate_frame_semantics: "The same global operator override is copied independently into each applicable video's own mocap-world; it is not a shared physical extrinsic.",
+    axis_order: AXES.slice(),
+    units: "mm",
+    global_world_xyz_mm: global,
+    default_global_world_xyz_mm: [0, -44, 0],
+    source_manifest: {
+      path: `${DELIVERY_ROOT}/manifest.json`,
+      schema: manifest.schema,
+      generated_at_utc: manifest.generated_at_utc ?? null,
+    },
+    video_annotations: videoAnnotations,
+    transform_order: "p_video_mocap_world + global_translation + per_video_translation + optional_side_residual",
+  };
+}
+
+function validateExportPayload(payload, manifest) {
+  if (payload?.schema !== EXPORT_SCHEMA) throw new Error("导出 schema 不匹配");
+  if (payload.coordinate_frame !== "per_video_mocap_world" || payload.units !== "mm" || !sameOrderedStrings(payload.axis_order, AXES)) {
+    throw new Error("导出坐标系/单位/轴序不匹配");
+  }
+  if (payload.source_manifest?.schema !== manifest?.schema || payload.source_manifest?.generated_at_utc !== (manifest?.generated_at_utc ?? null)) {
+    throw new Error("导出未绑定当前 manifest");
+  }
+  assertArrayVector(payload.global_world_xyz_mm, "global_world_xyz_mm");
+  if (!Array.isArray(payload.video_annotations) || payload.video_annotations.length !== 9 || manifest?.videos?.length !== 9) {
+    throw new Error("导出必须恰好包含 9 条视频标注");
+  }
+  const exportedIds = new Set();
+  for (let index = 0; index < manifest.videos.length; index += 1) {
+    const source = manifest.videos[index];
+    const item = payload.video_annotations[index];
+    if (!item || item.order !== index + 1 || item.order !== source.order || item.video_id !== source.id || item.filename !== source.filename || item.video_sha256 !== source.sha256) {
+      throw new Error(`第 ${index + 1} 条标注未严格绑定 manifest`);
+    }
+    if (exportedIds.has(item.video_id)) throw new Error(`导出含重复视频 ID: ${item.video_id}`);
+    exportedIds.add(item.video_id);
+    assertArrayVector(item.per_video_world_xyz_mm, `${item.video_id}.per_video_world_xyz_mm`);
+    assertArrayVector(item.left_residual_world_xyz_mm, `${item.video_id}.left_residual_world_xyz_mm`);
+    assertArrayVector(item.right_residual_world_xyz_mm, `${item.video_id}.right_residual_world_xyz_mm`);
+    const shouldApply = !EXCLUDED_VIDEO_IDS.has(item.video_id);
+    const shouldReproject = LIVE_REPROJECTION_VIDEO_IDS.has(item.video_id);
+    if (item.apply_translation !== shouldApply || item.live_reprojection_available !== shouldReproject) throw new Error(`${item.video_id} apply/live 标志错误`);
+    if (!shouldReproject && (item.side_residual_enabled || item.linked_hands || !sameVector(item.left_residual_world_xyz_mm, zeroArray()) || !sameVector(item.right_residual_world_xyz_mm, zeroArray()))) {
+      throw new Error(`${item.video_id} 不允许左右手 residual`);
+    }
+    if (!shouldApply) {
+      if (item.exclusion_reason !== "no_mocap_hand_pose" || item.effective_left_world_xyz_mm !== null || item.effective_right_world_xyz_mm !== null || !sameVector(item.per_video_world_xyz_mm, zeroArray())) {
+        throw new Error(`${item.video_id} 必须 excluded 且 effective=null`);
+      }
+      continue;
+    }
+    assertArrayVector(item.effective_left_world_xyz_mm, `${item.video_id}.effective_left_world_xyz_mm`);
+    assertArrayVector(item.effective_right_world_xyz_mm, `${item.video_id}.effective_right_world_xyz_mm`);
+    const base = addVectors(payload.global_world_xyz_mm, item.per_video_world_xyz_mm);
+    const expectedLeft = addVectors(base, item.side_residual_enabled ? item.left_residual_world_xyz_mm : zeroArray());
+    const expectedRight = addVectors(base, item.side_residual_enabled ? item.right_residual_world_xyz_mm : zeroArray());
+    if (!sameVector(item.effective_left_world_xyz_mm, expectedLeft) || !sameVector(item.effective_right_world_xyz_mm, expectedRight)) {
+      throw new Error(`${item.video_id} effective XYZ 与变换顺序不一致`);
+    }
+  }
+  if (exportedIds.size !== 9) throw new Error("导出视频 ID 必须唯一且恰好为 9 个");
 }
 
 function wireAdjustmentControls() {
@@ -602,10 +1049,13 @@ function wireAdjustmentControls() {
       if (!Number.isFinite(value)) return;
       const scope = input.dataset.scope;
       const axis = input.dataset.axis;
-      workbench.adjustment[scope][axis] = value;
-      if (scope !== "global" && workbench.adjustment.linkHands) {
+      const target = vectorForScope(scope);
+      const selected = selectedVideoAdjustment();
+      if (!target || (scope === "video" && !translationApplies(workbench.adjustment.selectedVideoId)) || ((scope === "left" || scope === "right") && !supportsSideResidual(workbench.adjustment.selectedVideoId))) return;
+      target[axis] = value;
+      if ((scope === "left" || scope === "right") && selected?.linkHands) {
         const otherScope = scope === "left" ? "right" : "left";
-        workbench.adjustment[otherScope][axis] = value;
+        selected[otherScope][axis] = value;
       }
       applyAdjustmentChange();
     });
@@ -613,12 +1063,16 @@ function wireAdjustmentControls() {
   }
 
   workbenchElements.linkHands?.addEventListener("change", () => {
-    workbench.adjustment.linkHands = workbenchElements.linkHands.checked;
-    if (workbench.adjustment.linkHands) workbench.adjustment.right = { ...workbench.adjustment.left };
+    const selected = selectedVideoAdjustment();
+    if (!selected || !supportsSideResidual(workbench.adjustment.selectedVideoId)) return;
+    selected.linkHands = workbenchElements.linkHands.checked;
+    if (selected.linkHands) selected.right = { ...selected.left };
     applyAdjustmentChange();
   });
   workbenchElements.enableResidual?.addEventListener("change", () => {
-    workbench.adjustment.residualEnabled = workbenchElements.enableResidual.checked;
+    const selected = selectedVideoAdjustment();
+    if (!selected || !supportsSideResidual(workbench.adjustment.selectedVideoId)) return;
+    selected.residualEnabled = workbenchElements.enableResidual.checked;
     applyAdjustmentChange();
   });
   workbenchElements.showMocap?.addEventListener("change", () => {
@@ -630,49 +1084,47 @@ function wireAdjustmentControls() {
     applyAdjustmentChange();
   });
 
-  workbenchElements.reset?.addEventListener("click", () => {
-    workbench.adjustment = defaultWorkbenchAdjustment();
+  workbenchElements.videoSelector?.addEventListener("change", () => {
+    const videoId = workbenchElements.videoSelector.value;
+    if (!manifestVideoIds(workbench.deliveryManifest).includes(videoId)) return;
+    workbench.adjustment.selectedVideoId = videoId;
+    if (videoId === "take007-mocap-markers") {
+      workbench.adjustment.showMocap = true;
+      workbench.adjustment.showSolved = false;
+    } else if (videoId === "take007-solved") {
+      workbench.adjustment.showMocap = false;
+      workbench.adjustment.showSolved = true;
+    }
     applyAdjustmentChange();
+    switchSelectedPreview();
+  });
+
+  workbenchElements.reset?.addEventListener("click", () => {
+    workbench.adjustment = sanitizeAdjustment(
+      workbench.baselineAdjustment,
+      workbench.deliveryManifest,
+      workbench.baselineAdjustment,
+    );
+    applyAdjustmentChange();
+    setSaveState("已恢复 manifest 指向的 applied profile 基线。", "saved");
+    switchSelectedPreview();
   });
 
   workbenchElements.export?.addEventListener("click", () => {
-    const left = effectiveOffset("left");
-    const right = effectiveOffset("right");
-    const payload = {
-      schema: ADJUSTMENT_SCHEMA,
-      created_at: new Date().toISOString(),
-      source_recording: workbench.metadata?.source_recording ?? "camera_glove_recording_20260831_161912",
-      source_take: workbench.metadata?.source_take ?? "Take_007",
-      coordinate_system: "mocap_world_mm",
-      units: "mm",
-      global_world_xyz_mm: AXES.map((axis) => workbench.adjustment.global[axis]),
-      left_world_xyz_mm: AXES.map((axis) => workbench.adjustment.residualEnabled ? workbench.adjustment.left[axis] : 0),
-      right_world_xyz_mm: AXES.map((axis) => workbench.adjustment.residualEnabled ? workbench.adjustment.right[axis] : 0),
-      rear_offset_mm: workbench.metadata?.rear_offset_mm ?? 20,
-      source: {
-        alignment_index: WORKBENCH_INDEX,
-        alignment_schema: workbench.metadata?.schema ?? WORKBENCH_SCHEMA,
-        video: workbench.metadata?.video.path ?? "take007_clean_rgb.mp4",
-        preview_frame_index: currentFrameIndex(),
-      },
-      coordinate_frame: "world",
-      residual_enabled: workbench.adjustment.residualEnabled,
-      linked_hands: workbench.adjustment.linkHands,
-      side_residual_translation_mm: {
-        left: AXES.map((axis) => workbench.adjustment.left[axis]),
-        right: AXES.map((axis) => workbench.adjustment.right[axis]),
-      },
-      effective_translation_mm: { left, right },
-      transform_order: "p_world + global_translation + side_residual -> world_to_color -> opencv_distortion -> rgb_pixel",
-    };
-    const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "take007_manual_xyz_calibration.json";
-    anchor.click();
-    setTimeout(() => URL.revokeObjectURL(url), 0);
-    setSaveState("标定 JSON 已导出。", "saved");
+    try {
+      const payload = buildExportPayload();
+      validateExportPayload(payload, workbench.deliveryManifest);
+      const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "final_nine_manual_xyz_annotations.json";
+      anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+      setSaveState("严格九视频 XYZ JSON 已导出。", "saved");
+    } catch (error) {
+      setSaveState(`导出失败：${error.message}`, "error");
+    }
   });
 }
 
@@ -714,40 +1166,48 @@ function wireAlignmentTransport() {
   sourceVideo.addEventListener("loadeddata", () => {
     workbench.videoReady = true;
     if (workbenchElements.play) workbenchElements.play.disabled = false;
-    setWorkbenchLoading("ready", `已载入 ${workbench.metadata?.video.frame_count ?? 0} 帧`);
+    const entry = selectedVideoEntry();
+    const timing = activePreviewTiming();
+    const mode = supportsSideResidual(entry?.id) ? "clean RGB + live layer" : "正式已烘焙 MP4";
+    setWorkbenchLoading("ready", `已载入 ${String(entry?.order ?? "?").padStart(2, "0")} · ${timing.frame_count} 帧 · ${mode}`);
     drawAlignmentFrame();
   });
   sourceVideo.addEventListener("error", () => {
     const code = sourceVideo.error?.code ?? "unknown";
-    setWorkbenchLoading("failed", `Take_007 clean RGB 无法读取（media error ${code}）`);
+    setWorkbenchLoading("failed", `${selectedVideoEntry()?.id ?? "当前视频"} 无法读取（media error ${code}）`);
   });
 }
 
 async function initAlignmentWorkbench() {
   if (!workbenchElements.canvas) return;
-  paintEmptyCanvas();
-  workbench.adjustment = loadSavedAdjustment();
-  refreshAdjustmentUI();
+  paintEmptyCanvas("等待九视频 manifest");
   wireAdjustmentControls();
   wireAlignmentTransport();
 
   try {
-    const response = await fetch(WORKBENCH_INDEX, { cache: "no-store" });
+    const manifest = await manifestPromise;
+    if (!manifest) throw new Error("九视频 manifest 未通过验证");
+    workbench.deliveryManifest = manifest;
+
+    const descriptor = manifest.calibration_workbench;
+    if (!descriptor || typeof descriptor.path !== "string" || !SHA256_PATTERN.test(descriptor.sha256 ?? "")) throw new Error("manifest 缺少有效 calibration_workbench");
+    workbench.draftBinding = buildDraftBinding(manifest, descriptor);
+    workbench.indexPath = safeRelativePath(descriptor.path);
+    const [response, appliedProfile] = await Promise.all([
+      fetch(cacheBustedPath(workbench.indexPath, descriptor.sha256), { cache: "no-store" }),
+      loadAppliedManualProfile(manifest, descriptor),
+    ]);
     if (!response.ok) throw new Error(`take007_alignment.json HTTP ${response.status}`);
+    workbench.appliedProfile = appliedProfile.profile;
+    workbench.baselineAdjustment = appliedProfile.adjustment;
+    workbench.adjustment = loadSavedAdjustment(manifest, workbench.baselineAdjustment, workbench.draftBinding);
+    populateVideoSelector(manifest);
+    refreshAdjustmentUI();
+
     const metadata = validateWorkbenchMetadata(await response.json());
     workbench.metadata = metadata;
     workbench.camera = metadata.normalizedCamera;
-    if (workbenchElements.canvas) {
-      workbenchElements.canvas.width = metadata.video.width;
-      workbenchElements.canvas.height = metadata.video.height;
-    }
     if (workbenchElements.rearOffset) workbenchElements.rearOffset.textContent = `${metadata.rear_offset_mm.toFixed(0)} mm`;
-    if (workbenchElements.frame) {
-      workbenchElements.frame.max = String(metadata.video.frame_count - 1);
-      workbenchElements.frame.disabled = false;
-    }
-    if (workbenchElements.previous) workbenchElements.previous.disabled = false;
-    if (workbenchElements.next) workbenchElements.next.disabled = false;
     setWorkbenchLoading("", "正在读取 MOCAP / solved Float32…");
     const [mocap, solved] = await Promise.all([
       loadBinaryLayer(metadata.layers.mocap, "take007_mocap.f32"),
@@ -756,12 +1216,11 @@ async function initAlignmentWorkbench() {
     workbench.layers = { mocap, solved };
     workbench.ready = true;
     paintEmptyCanvas("视频缓冲中…");
-    sourceVideo.src = workbenchAssetPath(metadata.video.path);
-    sourceVideo.load();
-    updateTransport(0);
+    switchSelectedPreview();
   } catch (error) {
-    setWorkbenchLoading("failed", `Take_007 标定台未就绪：${error.message}`);
-    paintEmptyCanvas("Take_007 标定资源不可用");
+    workbench.ready = Boolean(workbench.deliveryManifest);
+    setWorkbenchLoading("failed", `标定台未完整就绪：${error.message}`);
+    paintEmptyCanvas("标定资源不可用；可切换到已烘焙视频检查");
   }
 }
 

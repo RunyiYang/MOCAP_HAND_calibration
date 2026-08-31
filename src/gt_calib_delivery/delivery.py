@@ -12,6 +12,9 @@ import sys
 import tarfile
 from typing import Any
 
+import numpy as np
+
+from .manual_profiles import FinalNineManualProfile, load_final_nine_profile
 from .new_capture import CALIBRATION_MEMBER, render_new_three, sha256_file
 
 
@@ -22,36 +25,24 @@ class OldTake:
     segment_name: str
     source_first: int
     frame_count: int
-    mocap_video: str
-    mocap_poster: str
-    mocap_metrics: str
-    frame_map: str
     solved_suffix: str
 
 
 OLD_TAKES = (
     OldTake(
-        1, "01", "01_210814_Take_000", 60, 1748,
-        "final_9_video_delivery/videos/01_take01_mocap.mp4",
-        "final_9_video_delivery/posters/01_take01_mocap.jpg",
-        "final_9_video_delivery/metrics/01_take01_mocap.json",
-        "final_9_video_delivery/frame_maps/take01_rgb_to_mocap.csv",
+        # BVH ordinal zero is a vendor seed/dummy pose.  Take_000's first
+        # otherwise-synchronized RGB row touches that seed, so the formal
+        # BVH-backed pair begins one frame later than the former Human.cma pair.
+        1, "01", "01_210814_Take_000", 61, 1747,
         "calibration_fit",
     ),
     OldTake(
         2, "02", "02_210955_Take_001", 0, 1805,
-        "final_9_video_delivery/videos/03_take02_mocap.mp4",
-        "final_9_video_delivery/posters/03_take02_mocap.jpg",
-        "final_9_video_delivery/metrics/03_take02_mocap.json",
-        "final_9_video_delivery/frame_maps/take02_rgb_to_mocap.csv",
         "holdout_from_Take_000",
     ),
     OldTake(
-        3, "03", "03_211139_Take_002", 3, 1800,
-        "final_9_video_delivery/videos/05_take03_mocap.mp4",
-        "final_9_video_delivery/posters/05_take03_mocap.jpg",
-        "final_9_video_delivery/metrics/05_take03_mocap.json",
-        "final_9_video_delivery/frame_maps/take03_rgb_to_mocap.csv",
+        # Same seed exclusion as Take_000.
+        3, "03", "03_211139_Take_002", 4, 1799,
         "holdout_from_Take_000",
     ),
 )
@@ -105,12 +96,22 @@ def _portable_json_value(value: Any, project_root: Path) -> Any:
 
 
 def normalize_delivery_provenance(project_root: Path, destination: Path) -> list[Path]:
-    """Replace machine-local project paths in delivery JSON with project URIs."""
+    """Replace machine-local project paths in delivery JSON with project URIs.
+
+    The copied manual profile is deliberately excluded: it is an immutable
+    operator input whose exact SHA-256 is part of the delivery contract.
+    """
 
     project_root = Path(project_root).resolve()
     destination = Path(destination).resolve()
     changed: list[Path] = []
-    for path in sorted((destination / "metrics").glob("*.json")):
+    json_paths = list((destination / "metrics").glob("*.json"))
+    json_paths.extend(
+        path
+        for path in (destination / "calibration-workbench").glob("*.json")
+        if path.name != "applied_manual_profile.json"
+    )
+    for path in sorted(json_paths):
         payload = json.loads(path.read_text(encoding="utf-8"))
         portable = _portable_json_value(payload, project_root)
         if portable == payload:
@@ -163,13 +164,25 @@ def inspect_inputs(project_root: Path) -> dict[str, Any]:
     root = Path(project_root)
     missing: list[str] = []
     for take in OLD_TAKES:
+        take_number = take.segment_name.split("Take_", 1)[1]
         for relative in (
-            take.mocap_video, take.mocap_poster, take.mocap_metrics, take.frame_map,
+            f"同步整理_20260829_三段/{take.segment_name}/视频/RGB.mp4",
+            f"同步整理_20260829_三段/{take.segment_name}/原始BAG与内参/camera_1_rgb_depth.bag",
+            f"同步整理_20260829_三段/{take.segment_name}/同步校验/camera_cmavatar_alignment.csv",
+            f"同步整理_20260829_三段/{take.segment_name}/同步校验/common_interval_sync_report.json",
+            f"同步整理_20260829_三段/{take.segment_name}/动捕/Take_{take_number}/Take_{take_number}_Human.cma",
+            f"同步整理_20260829_三段/{take.segment_name}/动捕/Take_{take_number}/Take_{take_number}_Skeleton_0.bvh",
+            f"同步整理_20260829_三段/{take.segment_name}/动捕/Take_{take_number}/Take_{take_number}_Skeleton_1.bvh",
+            f"同步整理_20260829_三段/{take.segment_name}/手套解算/solved/primary/left_hand_keypoints.csv",
+            f"同步整理_20260829_三段/{take.segment_name}/手套解算/solved/primary/right_hand_keypoints.csv",
         ):
             if not (root / relative).is_file():
                 missing.append(relative)
     required = (
         "gt_calib_viz.py",
+        "mocap_video_overlay.py",
+        "bvh_web_export.py",
+        "同步整理_20260829_三段/movementcap_worldcalib_pointcloud_package_20260830/movementcap_ruler_worldcalib/results/manual_final/camera_to_world.json",
         "outputs/mocap_root_fusion_review/01_210814_Take_000_mocap_root_fusion_registration_profile.json",
         "movementcap_20260831_worldcalib_tabletop_final.tar.gz",
         "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/RGB.mp4",
@@ -199,7 +212,48 @@ def inspect_inputs(project_root: Path) -> dict[str, Any]:
     }
 
 
-def _render_old_solved(project_root: Path, take: OldTake, staging: Path) -> tuple[Path, Path, Path]:
+def _render_old_mocap(
+    project_root: Path,
+    take: OldTake,
+    staging: Path,
+    translation_xyz_mm: np.ndarray,
+) -> tuple[Path, Path, Path, Path]:
+    scratch = staging / "_render_scratch" / take.segment_key / "mocap"
+    scratch.mkdir(parents=True, exist_ok=True)
+    x_mm, y_mm, z_mm = (float(value) for value in translation_xyz_mm)
+    command = [
+        sys.executable,
+        str(project_root / "mocap_video_overlay.py"),
+        "--dataset-root", str(project_root / "同步整理_20260829_三段"),
+        "--segment", take.segment_key,
+        "--output-dir", str(scratch),
+        "--output-width", "960",
+        "--snapshot-count", "6",
+        "--frame-content-samples", "0",
+        "--mocap-position-source", "skeleton-bvh",
+        "--mocap-world-x-offset-mm", str(x_mm),
+        "--mocap-world-y-offset-mm", str(y_mm),
+        "--mocap-world-z-offset-mm", str(z_mm),
+    ]
+    _run(command)
+    stem = f"{take.segment_name}_mocap_video_aligned_strict25_skeleton_bvh"
+    video = scratch / f"{stem}_h264.mp4"
+    poster = scratch / f"{stem}.contact.jpg"
+    metrics = scratch / f"{stem}.metrics.json"
+    frame_map = scratch / f"{stem}.alignment.csv"
+    if not all(path.is_file() for path in (video, poster, metrics, frame_map)):
+        raise FileNotFoundError(
+            f"Skeleton BVH MOCAP render is incomplete for {take.segment_name}"
+        )
+    return video, poster, metrics, frame_map
+
+
+def _render_old_solved(
+    project_root: Path,
+    take: OldTake,
+    staging: Path,
+    translation_xyz_mm: np.ndarray,
+) -> tuple[Path, Path, Path]:
     scratch = staging / "_render_scratch" / take.segment_key
     scratch.mkdir(parents=True, exist_ok=True)
     profile = (
@@ -219,6 +273,9 @@ def _render_old_solved(project_root: Path, take: OldTake, staging: Path) -> tupl
         "--start-frame", str(take.source_first),
         "--max-frames", str(take.frame_count),
         "--snapshot-count", "6",
+        "--operator-world-x-mm", str(float(translation_xyz_mm[0])),
+        "--operator-world-y-mm", str(float(translation_xyz_mm[1])),
+        "--operator-world-z-mm", str(float(translation_xyz_mm[2])),
     ]
     _run(command)
     stem = f"{take.segment_name}_solved_hand_pose_{take.solved_suffix}"
@@ -289,7 +346,7 @@ def _delivery_video_specs() -> list[dict[str, Any]]:
                 "id": f"{base}-mocap",
                 "group": base,
                 "label": f"Take {take.number:02d} · MOCAP",
-                "variant": "mocap_21_joint_plus_rear_wrist_proxy",
+                "variant": "skeleton_0_1_bvh_fk_21_joint",
                 "filename": f"{number:02d}_take{take.number:02d}_mocap.mp4",
                 "expected_frames": take.frame_count,
                 "source_rgb_first": take.source_first,
@@ -297,7 +354,7 @@ def _delivery_video_specs() -> list[dict[str, Any]]:
                 "poster": f"posters/{number:02d}_take{take.number:02d}_mocap.jpg",
                 "metrics": f"metrics/{number:02d}_take{take.number:02d}_mocap.json",
                 "frame_map": f"frame_maps/take{take.number:02d}_rgb_to_mocap.csv",
-                "semantics": "delivered 2x21 MOCAP skeleton; rear wrist point is VIZ-only proxy",
+                "semantics": "latest requested Skeleton_0/1 BVH forward kinematics, 21 joints per hand; Human.cma is used only for its validated 120 Hz timestamp axis",
             }
         )
         number += 1
@@ -371,7 +428,32 @@ def _delivery_video_specs() -> list[dict[str, Any]]:
     return specs
 
 
-def _write_readme(destination: Path) -> None:
+def _write_readme(destination: Path, profile: FinalNineManualProfile) -> None:
+    if profile.source_path is None:
+        profile_note = (
+            "- No manual profile was supplied; all operator XYZ translations are zero. "
+            "Video 9 remains excluded because it has no hand MOCAP."
+        )
+    else:
+        applied = [
+            video_id
+            for video_id, annotation in profile.annotations.items()
+            if annotation.apply_translation
+        ]
+        excluded = [
+            video_id
+            for video_id, annotation in profile.annotations.items()
+            if not annotation.apply_translation
+        ]
+        profile_note = (
+            f"- Applied manual profile `{profile.source_path.name}` with global XYZ "
+            f"{profile.global_world_xyz_mm.tolist()} mm. Applied video IDs: "
+            f"{', '.join(applied)}. Excluded video IDs: {', '.join(excluded)}. "
+            "Every value is interpreted in that video's own MOCAP world; this is "
+            "an operator-selected display correction, not one shared cross-session "
+            "extrinsic and not independent GT evidence."
+        )
+
     text = """# Final nine-video delivery
 
 This folder is the reviewed, browser-ready delivery generated by the UV project
@@ -379,11 +461,11 @@ in the parent directory.
 
 ## Video inventory
 
-1. Take 01 MOCAP
+1. Take 01 MOCAP from Skeleton_0/1 BVH forward kinematics
 2. Take 01 solved hand pose
-3. Take 02 MOCAP
+3. Take 02 MOCAP from Skeleton_0/1 BVH forward kinematics
 4. Take 02 solved hand pose
-5. Take 03 MOCAP
+5. Take 03 MOCAP from Skeleton_0/1 BVH forward kinematics
 6. Take 03 solved hand pose
 7. Take_007 labeled CMM markers: 10 measured surface points per hand plus a virtual wrist
 8. Take_007 solved hand pose aligned from the corrected CMM palm/root mapping
@@ -394,6 +476,10 @@ All media are H.264/yuv420p, 960x540, 30 fps, fast-start MP4.  See
 
 Important boundaries:
 
+- Videos 1/3/5 use the requested detailed Skeleton_0/1 BVH joint positions.
+  Human.cma supplies only the validated frame-counter/timestamp axis for those
+  renders; its joint-position columns are not used.
+{profile_note}
 - Old solved-pose videos are MOCAP-wrist-SE(3)-conditioned visualizations, not
   independent glove wrist 6DoF.
 - The placement photograph maps CMM marker #1..#10 to five fingertip/base pairs.
@@ -407,8 +493,11 @@ Important boundaries:
 - Video 9 uses the matching no-glove 155410 RGB, its own intrinsics, and the
   2026-08-31 CS-400 calibration.  It is not dynamic hand GT.
 - `calibration-workbench/` contains clean RGB and binary 3D trajectories for the
-  browser XYZ tool.  Exported manual offsets are operator calibration, not GT.
-"""
+  browser XYZ tool.  The browser can select all nine videos, stores a per-video
+  XYZ residual, and exposes side-specific residuals only for Take_007 videos
+  7/8.  Its `gt_calib.final_nine_manual_xyz.v1` export can be passed back to the
+  UV build.  Exported manual offsets are operator calibration, not GT.
+""".format(profile_note=profile_note)
     (destination / "README.md").write_text(text, encoding="utf-8")
 
 
@@ -431,6 +520,42 @@ def write_checksums(destination: Path) -> Path:
     return output
 
 
+def _delivery_artifact(
+    destination: Path,
+    relative: Any,
+    *,
+    label: str,
+) -> Path:
+    """Resolve one manifest artifact without allowing package escape/symlinks."""
+
+    destination = Path(destination).resolve()
+    if (
+        not isinstance(relative, str)
+        or not relative
+        or ":" in relative
+        or "\\" in relative
+    ):
+        raise ValueError(f"{label} path must be a non-empty relative string")
+    relative_path = Path(relative)
+    if relative_path.is_absolute() or ".." in relative_path.parts:
+        raise ValueError(f"{label} path escapes the delivery: {relative!r}")
+    candidate = destination / relative_path
+    current = destination
+    for part in relative_path.parts:
+        current = current / part
+        if current.is_symlink():
+            raise ValueError(f"{label} path contains a symlink: {relative!r}")
+    try:
+        artifact = candidate.resolve(strict=True)
+    except FileNotFoundError as exc:
+        raise FileNotFoundError(f"{label} is missing: {relative}") from exc
+    if not artifact.is_relative_to(destination):
+        raise ValueError(f"{label} path escapes the delivery: {relative!r}")
+    if not artifact.is_file():
+        raise FileNotFoundError(f"{label} is not a regular file: {relative}")
+    return artifact
+
+
 def build_delivery(
     project_root: Path,
     destination: Path,
@@ -450,26 +575,43 @@ def build_delivery(
     for name in ("videos", "posters", "metrics", "frame_maps", "calibration"):
         (staging / name).mkdir(parents=True, exist_ok=True)
 
+    profile = load_final_nine_profile(manual_profile)
+
+    def translation(video_id: str) -> np.ndarray:
+        value = profile.effective_world_xyz_mm(video_id)
+        return (
+            np.zeros(3, dtype=np.float64)
+            if value is None
+            else np.asarray(value, dtype=np.float64)
+        )
+
     for take in OLD_TAKES:
         mocap_order = (take.number - 1) * 2 + 1
         solved_order = mocap_order + 1
+        mocap_id = f"take{take.number:02d}-mocap"
+        solved_id = f"take{take.number:02d}-solved"
+        mocap_render, mocap_poster, mocap_metrics, frame_map = _render_old_mocap(
+            project_root, take, staging, translation(mocap_id)
+        )
         _remux_faststart(
-            project_root / take.mocap_video,
+            mocap_render,
             staging / "videos" / f"{mocap_order:02d}_take{take.number:02d}_mocap.mp4",
         )
         _copy_file(
-            project_root / take.mocap_poster,
+            mocap_poster,
             staging / "posters" / f"{mocap_order:02d}_take{take.number:02d}_mocap.jpg",
         )
         _copy_file(
-            project_root / take.mocap_metrics,
+            mocap_metrics,
             staging / "metrics" / f"{mocap_order:02d}_take{take.number:02d}_mocap.json",
         )
         _copy_file(
-            project_root / take.frame_map,
+            frame_map,
             staging / "frame_maps" / f"take{take.number:02d}_rgb_to_mocap.csv",
         )
-        rendered, poster, metrics = _render_old_solved(project_root, take, staging)
+        rendered, poster, metrics = _render_old_solved(
+            project_root, take, staging, translation(solved_id)
+        )
         _transcode_h264(
             rendered,
             staging / "videos" / f"{solved_order:02d}_take{take.number:02d}_solved_pose.mp4",
@@ -492,7 +634,7 @@ def build_delivery(
     _extract_calibration(
         project_root, staging / "calibration" / "camera_to_world.json"
     )
-    _write_readme(staging)
+    _write_readme(staging, profile)
 
     specs = _delivery_video_specs()
     videos = []
@@ -564,10 +706,7 @@ def build_delivery(
                 ),
             },
             "applied_manual_profile": (
-                {
-                    "path": "calibration-workbench/applied_manual_profile.json",
-                    "sha256": sha256_file(applied_profile),
-                }
+                profile.provenance()
                 if applied_profile.is_file()
                 else None
             ),
@@ -597,21 +736,44 @@ def validate_delivery(destination: Path, *, full_decode: bool = False) -> dict[s
         raise FileNotFoundError(manifest_path)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     failures: list[str] = []
+
+    def checked_artifact(relative: Any, label: str) -> Path | None:
+        try:
+            return _delivery_artifact(destination, relative, label=label)
+        except (FileNotFoundError, ValueError) as exc:
+            failures.append(str(exc))
+            return None
+
+    manifest_videos = manifest.get("videos")
+    if not isinstance(manifest_videos, list):
+        failures.append("manifest videos must be a list")
+        manifest_videos = []
+    if manifest.get("schema") != "gt_calib.final_nine_video_delivery.v1":
+        failures.append("manifest schema mismatch")
+    if manifest.get("video_count") != 9 or len(manifest_videos) != 9:
+        failures.append("manifest must declare and contain exactly 9 videos")
     videos = sorted((destination / "videos").glob("*.mp4"))
     if len(videos) != 9:
         failures.append(f"expected exactly 9 MP4 files, found {len(videos)}")
-    expected_names = {item["filename"] for item in manifest.get("videos", [])}
+    expected_names = {
+        item.get("filename")
+        for item in manifest_videos
+        if isinstance(item, dict) and isinstance(item.get("filename"), str)
+    }
     actual_names = {path.name for path in videos}
     if expected_names != actual_names:
         failures.append("manifest/video filename set mismatch")
     probes: dict[str, dict[str, Any]] = {}
-    for item in manifest.get("videos", []):
-        path = destination / "videos" / item["filename"]
-        if path.is_symlink():
-            failures.append(f"symlink is forbidden: {path.name}")
+    for item in manifest_videos:
+        if not isinstance(item, dict):
+            failures.append("manifest video entry must be an object")
             continue
-        if not path.is_file():
-            failures.append(f"missing video: {path.name}")
+        filename = item.get("filename")
+        if not isinstance(filename, str):
+            failures.append("manifest video filename must be a string")
+            continue
+        path = checked_artifact(f"videos/{filename}", f"video {filename}")
+        if path is None:
             continue
         probe = _probe_video(path)
         probes[path.name] = probe
@@ -641,14 +803,10 @@ def validate_delivery(destination: Path, *, full_decode: bool = False) -> dict[s
                         f"{path.name}: {hash_key} must be null when {path_key} is null"
                     )
                 continue
-            artifact = destination / str(relative)
-            if artifact.is_symlink():
-                failures.append(f"symlink is forbidden: {relative}")
-            elif not artifact.is_file():
-                failures.append(f"missing {path_key}: {relative}")
-            elif not isinstance(expected_hash, str):
+            artifact = checked_artifact(relative, f"{path.name} {path_key}")
+            if not isinstance(expected_hash, str):
                 failures.append(f"missing {hash_key}: {relative}")
-            elif sha256_file(artifact) != expected_hash:
+            elif artifact is not None and sha256_file(artifact) != expected_hash:
                 failures.append(f"{relative}: SHA256 mismatch")
         if full_decode:
             result = subprocess.run(
@@ -662,11 +820,29 @@ def validate_delivery(destination: Path, *, full_decode: bool = False) -> dict[s
             if result.returncode != 0 or result.stderr.strip():
                 failures.append(f"{path.name}: full decode failed: {result.stderr.strip()}")
     for first, second in ((1, 2), (3, 4), (5, 6), (7, 8)):
-        a = next((item for item in manifest["videos"] if item["order"] == first), None)
-        b = next((item for item in manifest["videos"] if item["order"] == second), None)
-        if a and b and probes.get(a["filename"], {}).get("frame_count") != probes.get(b["filename"], {}).get("frame_count"):
+        a = next(
+            (
+                item
+                for item in manifest_videos
+                if isinstance(item, dict) and item.get("order") == first
+            ),
+            None,
+        )
+        b = next(
+            (
+                item
+                for item in manifest_videos
+                if isinstance(item, dict) and item.get("order") == second
+            ),
+            None,
+        )
+        if a and b and probes.get(a.get("filename"), {}).get("frame_count") != probes.get(b.get("filename"), {}).get("frame_count"):
             failures.append(f"pair {first}/{second} frame counts differ")
     workbench = manifest.get("calibration_workbench", {})
+    if not isinstance(workbench, dict):
+        failures.append("calibration_workbench must be an object")
+        workbench = {}
+    workbench_artifacts: dict[str, Path] = {}
     for label, entry in (
         ("metadata", workbench),
         ("clean_rgb", workbench.get("clean_rgb", {})),
@@ -678,11 +854,55 @@ def validate_delivery(destination: Path, *, full_decode: bool = False) -> dict[s
         if not isinstance(relative, str) or not isinstance(expected_hash, str):
             failures.append(f"calibration workbench {label} manifest entry is incomplete")
             continue
-        artifact = destination / relative
-        if not artifact.is_file() or artifact.is_symlink():
-            failures.append(f"calibration workbench {label} is missing or a symlink")
-        elif sha256_file(artifact) != expected_hash:
+        artifact = checked_artifact(relative, f"calibration workbench {label}")
+        if artifact is None:
+            continue
+        workbench_artifacts[label] = artifact
+        if sha256_file(artifact) != expected_hash:
             failures.append(f"calibration workbench {label} SHA256 mismatch")
+
+    metadata_path = workbench_artifacts.get("metadata")
+    if metadata_path is not None:
+        try:
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            failures.append(f"calibration workbench metadata is invalid JSON: {exc}")
+            metadata = None
+        if isinstance(metadata, dict):
+            metadata_parent = Path(str(workbench.get("path"))).parent
+            metadata_entries = (
+                ("clean_rgb", metadata.get("video")),
+                (
+                    "mocap_trajectory",
+                    metadata.get("layers", {}).get("mocap")
+                    if isinstance(metadata.get("layers"), dict)
+                    else None,
+                ),
+                (
+                    "solved_trajectory",
+                    metadata.get("layers", {}).get("solved")
+                    if isinstance(metadata.get("layers"), dict)
+                    else None,
+                ),
+            )
+            for label, inner in metadata_entries:
+                if not isinstance(inner, dict):
+                    failures.append(f"calibration workbench metadata {label} entry is incomplete")
+                    continue
+                inner_path = inner.get("path")
+                inner_hash = inner.get("sha256")
+                if not isinstance(inner_path, str) or not isinstance(inner_hash, str):
+                    failures.append(f"calibration workbench metadata {label} entry is incomplete")
+                    continue
+                artifact = checked_artifact(
+                    (metadata_parent / inner_path).as_posix(),
+                    f"calibration workbench metadata {label}",
+                )
+                outer_artifact = workbench_artifacts.get(label)
+                if artifact is not None and outer_artifact is not None and artifact != outer_artifact:
+                    failures.append(f"calibration workbench metadata {label} path disagrees with manifest")
+                if artifact is not None and sha256_file(artifact) != inner_hash:
+                    failures.append(f"calibration workbench metadata {label} SHA256 mismatch")
     profile = workbench.get("applied_manual_profile")
     if profile is not None:
         if not isinstance(profile, dict):
@@ -690,13 +910,14 @@ def validate_delivery(destination: Path, *, full_decode: bool = False) -> dict[s
         else:
             relative = profile.get("path")
             expected_hash = profile.get("sha256")
-            artifact = destination / str(relative)
             if not isinstance(relative, str) or not isinstance(expected_hash, str):
                 failures.append("calibration workbench applied_manual_profile entry is incomplete")
-            elif not artifact.is_file() or artifact.is_symlink():
-                failures.append("calibration workbench applied_manual_profile is missing or a symlink")
-            elif sha256_file(artifact) != expected_hash:
-                failures.append("calibration workbench applied_manual_profile SHA256 mismatch")
+            else:
+                artifact = checked_artifact(
+                    relative, "calibration workbench applied_manual_profile"
+                )
+                if artifact is not None and sha256_file(artifact) != expected_hash:
+                    failures.append("calibration workbench applied_manual_profile SHA256 mismatch")
     return {
         "schema": "gt_calib.delivery_validation.v1",
         "status": "pass" if not failures else "fail",
@@ -710,14 +931,39 @@ def validate_delivery(destination: Path, *, full_decode: bool = False) -> dict[s
 def refresh_auxiliary_hashes(destination: Path) -> Path:
     """Refresh reviewed non-video artifact hashes after an approved repair.
 
-    Video hashes are intentionally left untouched so this helper cannot mask a
-    changed MP4.  It is used when a poster or metrics file is regenerated after
-    visual QA, then normal validation checks the resulting complete manifest.
+    Video and applied-profile hashes are intentionally immutable here.  A
+    changed profile requires a rebuild because it is a render input.  Binary
+    workbench hashes are refreshed in both the manifest and its metadata JSON
+    so browsers cannot retain stale cache keys.
     """
 
     destination = Path(destination).resolve()
     manifest_path = destination / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    workbench = manifest.get("calibration_workbench")
+    if workbench is not None and not isinstance(workbench, dict):
+        raise ValueError("Invalid calibration-workbench manifest entry")
+
+    # Fail before writing anything if the immutable render profile changed.
+    if isinstance(workbench, dict):
+        profile = workbench.get("applied_manual_profile")
+        if profile is not None:
+            if not isinstance(profile, dict):
+                raise ValueError("Invalid applied_manual_profile manifest entry")
+            profile_path = _delivery_artifact(
+                destination,
+                profile.get("path"),
+                label="calibration workbench applied_manual_profile",
+            )
+            expected_profile_hash = profile.get("sha256")
+            if not isinstance(expected_profile_hash, str):
+                raise ValueError("Applied manual profile SHA256 is missing")
+            if sha256_file(profile_path) != expected_profile_hash:
+                raise ValueError(
+                    "Applied manual profile changed; rebuild all rendered videos "
+                    "instead of refreshing auxiliary hashes"
+                )
+
     for item in manifest.get("videos", []):
         for path_key, hash_key in (
             ("poster", "poster_sha256"),
@@ -728,10 +974,60 @@ def refresh_auxiliary_hashes(destination: Path) -> Path:
             if relative is None:
                 item[hash_key] = None
                 continue
-            artifact = destination / str(relative)
-            if artifact.is_symlink() or not artifact.is_file():
-                raise FileNotFoundError(f"Invalid delivery artifact: {artifact}")
+            artifact = _delivery_artifact(
+                destination,
+                relative,
+                label=f"video auxiliary artifact {path_key}",
+            )
             item[hash_key] = sha256_file(artifact)
+
+    if isinstance(workbench, dict):
+        metadata_path = _delivery_artifact(
+            destination,
+            workbench.get("path"),
+            label="calibration workbench metadata",
+        )
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        if not isinstance(metadata, dict):
+            raise ValueError("Calibration-workbench metadata must be an object")
+        layers = metadata.get("layers")
+        if not isinstance(layers, dict):
+            raise ValueError("Calibration-workbench metadata layers are missing")
+        metadata_parent = Path(str(workbench.get("path"))).parent
+        mapped_entries = (
+            ("clean_rgb", metadata.get("video")),
+            ("mocap_trajectory", layers.get("mocap")),
+            ("solved_trajectory", layers.get("solved")),
+        )
+        for label, inner in mapped_entries:
+            outer = workbench.get(label)
+            if not isinstance(outer, dict) or not isinstance(inner, dict):
+                raise ValueError(f"Invalid calibration-workbench {label} entry")
+            outer_path = _delivery_artifact(
+                destination,
+                outer.get("path"),
+                label=f"calibration workbench {label}",
+            )
+            inner_relative = inner.get("path")
+            inner_path = _delivery_artifact(
+                destination,
+                (metadata_parent / str(inner_relative)).as_posix()
+                if isinstance(inner_relative, str)
+                else inner_relative,
+                label=f"calibration workbench metadata {label}",
+            )
+            if inner_path != outer_path:
+                raise ValueError(
+                    f"Calibration-workbench metadata {label} path disagrees with manifest"
+                )
+            digest = sha256_file(outer_path)
+            outer["sha256"] = digest
+            inner["sha256"] = digest
+        metadata_path.write_text(
+            json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        workbench["sha256"] = sha256_file(metadata_path)
     manifest["auxiliary_hashes_refreshed_at_utc"] = datetime.now(timezone.utc).isoformat()
     manifest_path.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",

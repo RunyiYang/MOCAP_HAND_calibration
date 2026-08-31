@@ -1,0 +1,118 @@
+{
+  "schema": "gt_calib.final_nine_manual_xyz.v1",
+  "created_at_utc": "2026-08-31T19:55:00Z",
+  "axis_order": [
+    "x",
+    "y",
+    "z"
+  ],
+  "units": "mm",
+  "coordinate_frame": "per_video_mocap_world",
+  "global_world_xyz_mm": [
+    0.0,
+    -44.0,
+    0.0
+  ],
+  "source_manifest": {
+    "schema": "gt_calib.final_nine_video_delivery.v1",
+    "path": "final_9_video_delivery/manifest.json",
+    "sha256": "0d59fe1b41b3a981d47dfc942b6111e900db0a5594c14a0a8b830094ebaba6e6"
+  },
+  "evidence": {
+    "method": "operator annotation in browser XYZ workbench",
+    "instruction": "apply Y=-44.0 mm to all hand-overlay videos",
+    "claim_boundary": "display correction in each video's own MOCAP world; not a shared cross-session extrinsic or independent GT accuracy"
+  },
+  "video_annotations": [
+    {
+      "order": 1,
+      "video_id": "take01-mocap",
+      "filename": "01_take01_mocap.mp4",
+      "video_sha256": "431a0b8849311de98e60e6dc5ee679763ab4f5955c5cf25509142ccbfededf1b",
+      "apply_translation": true,
+      "per_video_world_xyz_mm": [0.0, 0.0, 0.0],
+      "left_residual_world_xyz_mm": [0.0, 0.0, 0.0],
+      "right_residual_world_xyz_mm": [0.0, 0.0, 0.0]
+    },
+    {
+      "order": 2,
+      "video_id": "take01-solved",
+      "filename": "02_take01_solved_pose.mp4",
+      "video_sha256": "70bedaf973c5b00b6e9d9f1309ce657962cc59ae53f6863c4a59581b09440e22",
+      "apply_translation": true,
+      "per_video_world_xyz_mm": [0.0, 0.0, 0.0],
+      "left_residual_world_xyz_mm": [0.0, 0.0, 0.0],
+      "right_residual_world_xyz_mm": [0.0, 0.0, 0.0]
+    },
+    {
+      "order": 3,
+      "video_id": "take02-mocap",
+      "filename": "03_take02_mocap.mp4",
+      "video_sha256": "7a141794217dd773c1a7b4c51d21980210c078047edee0e260013c9acc968093",
+      "apply_translation": true,
+      "per_video_world_xyz_mm": [0.0, 0.0, 0.0],
+      "left_residual_world_xyz_mm": [0.0, 0.0, 0.0],
+      "right_residual_world_xyz_mm": [0.0, 0.0, 0.0]
+    },
+    {
+      "order": 4,
+      "video_id": "take02-solved",
+      "filename": "04_take02_solved_pose.mp4",
+      "video_sha256": "e0b2265fa2df55e084789f9091d286a086965d45796bc639b68e24e99e4dc09d",
+      "apply_translation": true,
+      "per_video_world_xyz_mm": [0.0, 0.0, 0.0],
+      "left_residual_world_xyz_mm": [0.0, 0.0, 0.0],
+      "right_residual_world_xyz_mm": [0.0, 0.0, 0.0]
+    },
+    {
+      "order": 5,
+      "video_id": "take03-mocap",
+      "filename": "05_take03_mocap.mp4",
+      "video_sha256": "c3d9dc519a99efe56d52047b49120b25ab432efb2f8fdf3c1d96d69aec7c12da",
+      "apply_translation": true,
+      "per_video_world_xyz_mm": [0.0, 0.0, 0.0],
+      "left_residual_world_xyz_mm": [0.0, 0.0, 0.0],
+      "right_residual_world_xyz_mm": [0.0, 0.0, 0.0]
+    },
+    {
+      "order": 6,
+      "video_id": "take03-solved",
+      "filename": "06_take03_solved_pose.mp4",
+      "video_sha256": "0693fdae8606767b435001a23e9c4ba0313a82fd8300804eab441ea78b269fd1",
+      "apply_translation": true,
+      "per_video_world_xyz_mm": [0.0, 0.0, 0.0],
+      "left_residual_world_xyz_mm": [0.0, 0.0, 0.0],
+      "right_residual_world_xyz_mm": [0.0, 0.0, 0.0]
+    },
+    {
+      "order": 7,
+      "video_id": "take007-mocap-markers",
+      "filename": "07_take007_labeled_mocap_markers.mp4",
+      "video_sha256": "a2e1b7f554ef5f3de27f26c80123b53cf98cb93e0c0e15094bb889c4891e56a7",
+      "apply_translation": true,
+      "per_video_world_xyz_mm": [0.0, 0.0, 0.0],
+      "left_residual_world_xyz_mm": [0.0, 0.0, 0.0],
+      "right_residual_world_xyz_mm": [0.0, 0.0, 0.0]
+    },
+    {
+      "order": 8,
+      "video_id": "take007-solved",
+      "filename": "08_take007_aligned_hand_pose.mp4",
+      "video_sha256": "3490429df32d15c2326296fea26787e1f5d25327de5f073de0908c8afded7fa0",
+      "apply_translation": true,
+      "per_video_world_xyz_mm": [0.0, 0.0, 0.0],
+      "left_residual_world_xyz_mm": [0.0, 0.0, 0.0],
+      "right_residual_world_xyz_mm": [0.0, 0.0, 0.0]
+    },
+    {
+      "order": 9,
+      "video_id": "no-glove-calibration",
+      "filename": "09_no_glove_world_calibration.mp4",
+      "video_sha256": "27c2185b2d5978546ce1da5e6aa719b5db83e462ead79112efa85e481107f22e",
+      "apply_translation": false,
+      "per_video_world_xyz_mm": [0.0, 0.0, 0.0],
+      "left_residual_world_xyz_mm": [0.0, 0.0, 0.0],
+      "right_residual_world_xyz_mm": [0.0, 0.0, 0.0]
+    }
+  ]
+}

@@ -154,6 +154,9 @@ MOCAP_ROOT_QUATERNION_SEMANTICS = (
 MOCAP_ROOT_CANONICAL_ROTATION_FIELD = (
     "rotation_mocap_root_local_from_glove_local"
 )
+OPERATOR_DISPLAY_CORRECTION_TYPE = "operator_world_xyz_translation"
+OPERATOR_DISPLAY_CORRECTION_COORDINATE_SYSTEM = "mocap_world_mm"
+ZERO_OPERATOR_WORLD_TRANSLATION_XYZ_MM = (0.0, 0.0, 0.0)
 
 
 @dataclass(frozen=True)
@@ -293,6 +296,10 @@ class PreparedTake:
     mocap_frame_counters: np.ndarray
     mocap_timestamp_fit: Mapping[str, Any]
     mocap_mm: np.ndarray
+    # Operator-controlled translation applied after MOCAP interpolation.  It
+    # moves both the displayed MOCAP skeleton and every pose anchored to its
+    # wrist.  This is a display correction, not a calibration or GT update.
+    operator_world_translation_xyz_mm: tuple[float, float, float]
     mocap_valid: np.ndarray
     mocap_wrist_rotations: np.ndarray
     glove_world_mm: Mapping[str, np.ndarray]
@@ -1466,6 +1473,54 @@ def _default_calibration(dataset_root: Path) -> Path:
     return matches[0]
 
 
+def _validate_operator_world_translation_xyz_mm(
+    value: Sequence[float],
+) -> tuple[float, float, float]:
+    """Return one finite MOCAP-world XYZ display translation.
+
+    The shape and finiteness checks are intentionally repeated at the Python
+    API boundary rather than relying only on argparse.  Delivery builders call
+    :func:`prepare_take` directly, so malformed or non-finite values must fail
+    closed there as well.
+    """
+
+    if isinstance(value, (str, bytes)):
+        raise ValueError(
+            "operator_world_translation_xyz_mm must contain exactly three "
+            "finite XYZ values"
+        )
+    try:
+        values = np.asarray(value, dtype=np.float64)
+    except (TypeError, ValueError) as error:
+        raise ValueError(
+            "operator_world_translation_xyz_mm must contain exactly three "
+            "finite XYZ values"
+        ) from error
+    if values.shape != (3,) or not np.all(np.isfinite(values)):
+        raise ValueError(
+            "operator_world_translation_xyz_mm must contain exactly three "
+            "finite XYZ values"
+        )
+    # Canonicalize signed zero so the metrics JSON and frame header have a
+    # stable, review-friendly representation.
+    return tuple(float(item) if item != 0.0 else 0.0 for item in values)
+
+
+def _apply_operator_world_translation(
+    mocap_mm: np.ndarray,
+    translation_xyz_mm: Sequence[float],
+) -> np.ndarray:
+    """Apply the operator display translation without mutating source data."""
+
+    translation = _validate_operator_world_translation_xyz_mm(translation_xyz_mm)
+    points = np.asarray(mocap_mm, dtype=np.float64)
+    if points.ndim < 1 or points.shape[-1] != 3:
+        raise ValueError(
+            f"MOCAP points must end in XYZ coordinates, got shape {points.shape}"
+        )
+    return points + np.asarray(translation, dtype=np.float64)
+
+
 def prepare_take(
     segment_dir: Path,
     calibration_path: Path,
@@ -1474,8 +1529,14 @@ def prepare_take(
     registration_source_segment: str | None = None,
     max_interpolation_gap_ms: float = 25.0,
     pose_mode: str = POSE_MODE_GLOVE_WRIST,
+    operator_world_translation_xyz_mm: Sequence[float] = (
+        ZERO_OPERATOR_WORLD_TRANSLATION_XYZ_MM
+    ),
 ) -> PreparedTake:
     segment = Path(segment_dir)
+    operator_translation = _validate_operator_world_translation_xyz_mm(
+        operator_world_translation_xyz_mm
+    )
     if pose_mode not in POSE_MODES:
         raise ValueError(f"Unsupported pose mode: {pose_mode}")
     if max_interpolation_gap_ms <= 0.0:
@@ -1513,6 +1574,10 @@ def prepare_take(
         cmavatar_s,
         max_gap_s=max_gap_s,
     )
+    # Apply only after time interpolation so this remains a single explicit
+    # world-space display translation.  All downstream wrist anchoring then
+    # consumes the same shifted MOCAP points and moves the solved pose with it.
+    mocap_mm = _apply_operator_world_translation(mocap_mm, operator_translation)
     mocap_wrist_quaternions, mocap_rotation_valid = interpolate_quaternions(
         mocap.times_s,
         mocap.wrist_quaternions_wxyz,
@@ -1602,6 +1667,7 @@ def prepare_take(
         mocap_frame_counters=mocap.frame_counters,
         mocap_timestamp_fit=mocap.timestamp_fit,
         mocap_mm=mocap_mm,
+        operator_world_translation_xyz_mm=operator_translation,
         mocap_valid=mocap_valid,
         mocap_wrist_rotations=mocap_wrist_rotations,
         glove_world_mm=glove_world,
@@ -1721,6 +1787,46 @@ def _frame_difference_mm(
     return float(np.median(common)), float(np.median(tips))
 
 
+def _operator_display_correction_payload(prepared: PreparedTake) -> dict[str, Any]:
+    translation = _validate_operator_world_translation_xyz_mm(
+        prepared.operator_world_translation_xyz_mm
+    )
+    active = any(value != 0.0 for value in translation)
+    return {
+        "type": OPERATOR_DISPLAY_CORRECTION_TYPE,
+        "coordinate_system": OPERATOR_DISPLAY_CORRECTION_COORDINATE_SYSTEM,
+        "axis_order": "xyz",
+        "units": "mm",
+        "operator_world_translation_xyz_mm": list(translation),
+        "active": active,
+        "applied_after_mocap_interpolation": True,
+        "moves_mocap_overlay": True,
+        "moves_mocap_wrist_anchored_solved_pose": True,
+        "display_only": True,
+        "is_ground_truth": False,
+        "is_independent_accuracy_evidence": False,
+        "metric_effect": (
+            "Root-normalized articulation residuals are invariant to this shared "
+            "world translation and therefore do not validate the display correction."
+        ),
+        "claim_boundary": (
+            "Operator-controlled visualization alignment only; this does not update "
+            "the delivered camera calibration or establish ground truth."
+        ),
+    }
+
+
+def _operator_display_correction_header(prepared: PreparedTake) -> str:
+    payload = _operator_display_correction_payload(prepared)
+    x_mm, y_mm, z_mm = payload["operator_world_translation_xyz_mm"]
+    state = "ACTIVE" if payload["active"] else "ZERO"
+    return (
+        f"OPERATOR DISPLAY XYZ ({state}) | MOCAP-world "
+        f"[{x_mm:+.1f}, {y_mm:+.1f}, {z_mm:+.1f}] mm | "
+        "moves MOCAP + anchored solved | NOT GT"
+    )
+
+
 def render_frame(
     prepared: PreparedTake,
     frame_index: int,
@@ -1801,7 +1907,7 @@ def render_frame(
                 )
 
     overlay = output.copy()
-    cv2.rectangle(overlay, (0, 0), (output.shape[1], 78), (0, 0, 0), -1)
+    cv2.rectangle(overlay, (0, 0), (output.shape[1], 100), (0, 0, 0), -1)
     cv2.addWeighted(overlay, 0.58, output, 0.42, 0.0, output)
     elapsed = prepared.rgb_device_s[frame_index] - prepared.rgb_device_s[0]
     _draw_text(
@@ -1859,6 +1965,16 @@ def render_frame(
             _draw_text(
                 output, details, (16, 73), scale=0.48, color=(225, 225, 225)
             )
+    correction_active = any(
+        value != 0.0 for value in prepared.operator_world_translation_xyz_mm
+    )
+    _draw_text(
+        output,
+        _operator_display_correction_header(prepared),
+        (16, 94),
+        scale=0.44,
+        color=(80, 190, 255) if correction_active else (205, 205, 205),
+    )
     return output
 
 
@@ -1995,7 +2111,10 @@ def comparison_metrics(
                 ),
                 "source_segment": prepared.registration_source_segment,
                 "target_segment_used_in_fit": prepared.registration_fitted_on_target,
-                "wrist_translation": "copied from synchronized mocap each frame",
+                "wrist_translation": (
+                    "copied from synchronized mocap each frame after the explicit "
+                    "operator display translation"
+                ),
                 "wrist_orientation": (
                     "copied from synchronized mocap Human root GlobalQ each frame"
                     if root_fusion
@@ -2127,6 +2246,7 @@ def comparison_metrics(
                 )
             ),
         },
+        "display_correction": _operator_display_correction_payload(prepared),
         "inputs": {
             "rgb_mp4": str(prepared.video.path),
             "rgb_bag": str(
@@ -2224,6 +2344,11 @@ def comparison_metrics(
                 else "The fitted scale is a registration gain under orientation mismatch, not a pure anatomical bone-length ratio."
             ),
             "Thumb is drawn but excluded from metrics because glove has 20 points and mocap has 21.",
+            (
+                "The operator world XYZ translation is a display-only correction shared "
+                "by MOCAP and its anchored solved pose; it is not GT, a camera-calibration "
+                "update, or independent accuracy evidence."
+            ),
             "CS-400 calibration is manual visual marker classification plus metric multi-frame depth.",
             "The recorded depth-to-color matrix is used as delivered even though its 3x3 block is slightly non-orthogonal; an official SDK D2C extrinsic or held-out 2D labels are still required for an independent pixel-accuracy claim.",
         ],
@@ -2336,7 +2461,17 @@ def render_take(
     return output, metrics_path, contact_path
 
 
-def parse_args() -> argparse.Namespace:
+def _finite_cli_float(value: str) -> float:
+    try:
+        parsed = float(value)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(f"expected a finite number, got {value!r}") from error
+    if not np.isfinite(parsed):
+        raise argparse.ArgumentTypeError(f"expected a finite number, got {value!r}")
+    return parsed
+
+
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     project_root = Path(__file__).resolve().parent
     default_dataset = project_root / "同步整理_20260829_三段"
     parser = argparse.ArgumentParser(
@@ -2387,6 +2522,32 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--start-frame", type=int, default=0)
     parser.add_argument("--max-frames", type=int)
     parser.add_argument("--snapshot-count", type=int, default=6)
+    display_group = parser.add_argument_group(
+        "operator display correction",
+        description=(
+            "Optional MOCAP-world translation in millimetres, applied after MOCAP "
+            "interpolation to both MOCAP and the wrist-anchored solved pose. This is "
+            "display-only and does not create or modify ground truth."
+        ),
+    )
+    display_group.add_argument(
+        "--operator-world-x-mm",
+        type=_finite_cli_float,
+        default=0.0,
+        help="Operator display translation along MOCAP-world X (default: 0).",
+    )
+    display_group.add_argument(
+        "--operator-world-y-mm",
+        type=_finite_cli_float,
+        default=0.0,
+        help="Operator display translation along MOCAP-world Y (default: 0).",
+    )
+    display_group.add_argument(
+        "--operator-world-z-mm",
+        type=_finite_cli_float,
+        default=0.0,
+        help="Operator display translation along MOCAP-world Z (default: 0).",
+    )
     parser.add_argument(
         "--max-interpolation-gap-ms",
         type=float,
@@ -2400,7 +2561,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Write metrics JSON without rendering video.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def main() -> None:
@@ -2445,6 +2606,11 @@ def main() -> None:
             else 25.0
         )
     )
+    operator_world_translation_xyz_mm = (
+        args.operator_world_x_mm,
+        args.operator_world_y_mm,
+        args.operator_world_z_mm,
+    )
     if args.registration_segment is not None:
         source_segment = _discover_segment(dataset_root, args.registration_segment)
         print(f"Fitting registration on {source_segment.name}", flush=True)
@@ -2453,6 +2619,7 @@ def main() -> None:
             calibration,
             max_interpolation_gap_ms=max_interpolation_gap_ms,
             pose_mode=pose_mode,
+            operator_world_translation_xyz_mm=operator_world_translation_xyz_mm,
         )
         registration_source_segment = source_segment.name
         fixed_registrations = source_prepared.registrations
@@ -2481,6 +2648,7 @@ def main() -> None:
                 registration_source_segment=registration_source_segment,
                 max_interpolation_gap_ms=max_interpolation_gap_ms,
                 pose_mode=pose_mode,
+                operator_world_translation_xyz_mm=operator_world_translation_xyz_mm,
             )
         if fixed_registrations is None:
             protocol_suffix = "same_take_fit"

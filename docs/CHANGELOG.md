@@ -2,7 +2,50 @@
 
 ## 2026-08-31
 
-### Final Take_007 revision
+### Final-nine BVH source and operator XYZ revision
+
+- 修正旧 final video 01/03/05 的 position source：先前版本误用
+  `Human.cma` joint positions；当前 builder 强制使用 Skeleton_0/1 BVH forward
+  kinematics，每手 21 joints。`Human.cma` 只保留已验证的 120 Hz timestamp /
+  `FrameCounter` 轴，不再提供这三段的最终显示位置。
+- Final-nine builder 不再复用旧 MOCAP MP4，而是重新渲染 BVH-FK video
+  01/03/05；video 02/04/06 仍是 MOCAP-wrist-SE(3)-conditioned solved pose。
+- BVH ordinal 0 是 vendor seed，formal final interval 相应改为 Take01 RGB
+  61..1807 / 1747 帧、Take02 0..1804 / 1805 帧、Take03 4..1802 / 1799 帧；
+  Take01/03 不再沿用旧 1748/1800 帧合同。
+- 新增审核 profile
+  `calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json`：
+  `Y=-44 mm` 应用于 video 01-08，video 09 无手套 calibration evidence 强制
+  excluded。数值在每段自己的 MOCAP world 中分别应用，不是跨 session shared
+  extrinsic。
+- 新增 `gt_calib.final_nine_manual_xyz.v1` fail-closed loader：要求 canonical
+  9-video order/ID/filename、finite XYZ、video 01-08 apply、video 09 exclude；
+  left/right residual 只允许 Take_007 video 07/08。旧
+  `gt_calib.manual_xyz_profile.v1` 继续兼容，但保持 Take_007-only scope。
+- 网页 manual XYZ workbench 现在可选择九段、保存每段 XYZ，默认 global
+  `[0,-44,0] mm`；只有 video 07/08 提供左右 residual 与 live reprojection，
+  video 01-06 需导出 JSON 后离线重渲染，video 09 为 read-only/excluded。
+- 网页不再把 `Y=-44` 当隐式源码状态，而是读取 manifest 指向并带 SHA 的
+  applied profile 作为初始化/恢复基线；local draft 升级为 v3，严格绑定九段
+  video fingerprints、workbench SHA 与 profile SHA，避免新包复用旧标注。
+- `refresh-aux-hashes` 不再刷新 immutable applied-profile SHA；profile 变化必须
+  完整重建。同时刷新 workbench binary 时同步 metadata 内层与 manifest 外层
+  SHA，并拒绝 symlink、absolute/`..` package escape。
+- Final-nine profile vector/order/legacy rear offset 改为严格 JSON 数值类型校验，
+  numeric strings、boolean vectors 与 `order=true/1.0` 均 fail closed。
+- 旧 raw/solved renderer 的非零 translation 会写入 metrics 和视频 header，明确
+  标记 operator display correction / not GT；root-normalized residual 不被用来
+  验证该共享平移。
+- 完整复现入口改为
+  `uv run gt-calib-delivery build --destination rebuilt_9_video_delivery --manual-profile calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json`，
+  随后必须对新 destination 执行 9/9 full decode。当前新包已完成该验收：41
+  files / 122,158,302 bytes，40 checksum entries，validation `failures=[]`；
+  Take_007 CMM source SHA-256 同时固化到 video 07/08 metrics 与 workbench。
+- 本轮全量回归 `155 passed in 107.14s`。
+- 新增 `FINAL_NINE_MANUAL_XYZ_V1.md`。Operator XYZ 是显示修正，不更新已交付
+  camera/world calibration，也不构成 independent GT、6DoF 或 accuracy evidence。
+
+### Final Take_007 revision (superseded baseline before BVH/Y=-44 rebuild)
 
 - 最终九视频的新增动作从 `161610 / Take_006` 改为 `161912 / Take_007`；
   video 07/08 现在各为 1981 帧，source RGB frame 1981 因无 reconstructed
@@ -36,7 +79,7 @@
   `coordinate_system=mocap_world_mm`、`units=mm` 和三个 finite XYZ vector 做
   fail-closed 校验，并固定 `rear_offset_mm=20`。应用的 JSON 会原样复制到
   package、写入 SHA-256 并纳入 delivery validation；默认包显式记录 `null`。
-- Take_007 正式九视频包已验证：40 files / 118.38 MiB，9/9 H.264 full decode，
+- 当时的 Take_007 九视频 baseline 已验证：40 files / 118.38 MiB，9/9 H.264 full decode，
   manifest/validation pass、`failures=[]`，39 项 SHA-256，全量测试 114 项
   通过（记录基线 `114 passed in 99.08s`）。
 - 新增 `TAKE007_CMM_ALIGNMENT_V1.md`，并修订数据集说明、日报、根 README 与

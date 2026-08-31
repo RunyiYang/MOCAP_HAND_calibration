@@ -43,7 +43,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     render_new.add_argument(
         "--manual-profile",
         type=Path,
-        help="Apply a gt_calib.manual_xyz_profile.v1 exported by the browser workbench.",
+        help=(
+            "Apply a browser-exported manual XYZ profile. The final-nine schema "
+            "uses the Take_007 entries for videos 07/08; the legacy Take_007-only "
+            "schema remains supported."
+        ),
     )
 
     build = subparsers.add_parser("build", help="Build the complete nine-video folder.")
@@ -53,7 +57,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     build.add_argument(
         "--manual-profile",
         type=Path,
-        help="Apply a browser-exported XYZ profile to Take_007 videos 07/08.",
+        help=(
+            "Apply a gt_calib.final_nine_manual_xyz.v1 browser export to videos "
+            "01-08 in their respective MOCAP worlds (video 09 is excluded), or "
+            "a legacy Take_007-only profile."
+        ),
     )
 
     validate = subparsers.add_parser("validate", help="Validate the delivery manifest and media.")
@@ -151,9 +159,13 @@ def main(argv: list[str] | None = None) -> int:
         print(output)
         return 0
     if args.command == "normalize-provenance":
-        changed = normalize_delivery_provenance(
-            root, args.destination.expanduser().resolve()
-        )
+        destination = args.destination.expanduser().resolve()
+        changed = normalize_delivery_provenance(root, destination)
+        if changed:
+            # Keep the package valid at command completion.  This refreshes
+            # only reviewed auxiliary artifacts; immutable video/profile
+            # hashes remain protected by refresh_auxiliary_hashes().
+            refresh_auxiliary_hashes(destination)
         changed.extend(normalize_registration_profile(root))
         print(json.dumps([str(path) for path in changed], ensure_ascii=False, indent=2))
         return 0

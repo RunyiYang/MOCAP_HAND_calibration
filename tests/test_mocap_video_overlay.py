@@ -162,10 +162,45 @@ class FrameIdentityUnitTests(unittest.TestCase):
         self.assertTrue(
             overlay.alignment_output_stem("Take", 50.0).endswith("_gap50")
         )
+        self.assertTrue(
+            overlay.alignment_output_stem(
+                "Take",
+                25.0,
+                overlay.MOCAP_POSITION_SOURCE_SKELETON_BVH,
+            ).endswith("_strict25_skeleton_bvh")
+        )
+        with self.assertRaisesRegex(ValueError, "Unsupported MOCAP position source"):
+            overlay.alignment_output_stem("Take", 25.0, "automatic")
+
+    def test_bvh_axis_and_unit_inverse_is_explicit_and_fail_closed(self) -> None:
+        bvh = np.asarray(
+            [
+                [-1.2, 3.4, 5.6],
+                [7.8, -9.0, 1.1],
+            ],
+            dtype=np.float64,
+        )
+        world = overlay.bvh_positions_to_mocap_world_mm(bvh)
+        np.testing.assert_allclose(
+            world,
+            [[12.0, 56.0, 34.0], [-78.0, 11.0, -90.0]],
+        )
+        with self.assertRaisesRegex(ValueError, r"shape \(\.\.\., 3\)"):
+            overlay.bvh_positions_to_mocap_world_mm(np.zeros((4, 2)))
+        with self.assertRaisesRegex(ValueError, "must be finite"):
+            overlay.bvh_positions_to_mocap_world_mm(
+                np.asarray([[0.0, np.nan, 0.0]])
+            )
 
     def test_candidate_origin_and_rear_proxy_cli_defaults_are_explicit(self) -> None:
         with mock.patch("sys.argv", ["mocap_video_overlay.py"]):
             defaults = overlay.parse_args()
+        self.assertEqual(
+            defaults.mocap_position_source,
+            overlay.MOCAP_POSITION_SOURCE_HUMAN_CMA,
+        )
+        self.assertEqual(defaults.mocap_world_x_offset_mm, 0.0)
+        self.assertEqual(defaults.mocap_world_y_offset_mm, 0.0)
         self.assertEqual(defaults.mocap_world_z_offset_mm, 0.0)
         self.assertFalse(defaults.draw_rear_mount_proxy)
 
@@ -173,14 +208,40 @@ class FrameIdentityUnitTests(unittest.TestCase):
             "sys.argv",
             [
                 "mocap_video_overlay.py",
+                "--mocap-position-source",
+                "skeleton-bvh",
+                "--mocap-world-x-offset-mm",
+                "12",
+                "--mocap-world-y-offset-mm",
+                "-4.5",
                 "--mocap-world-z-offset-mm",
                 "37",
                 "--draw-rear-mount-proxy",
             ],
         ):
             candidate = overlay.parse_args()
+        self.assertEqual(
+            candidate.mocap_position_source,
+            overlay.MOCAP_POSITION_SOURCE_SKELETON_BVH,
+        )
+        self.assertEqual(candidate.mocap_world_x_offset_mm, 12.0)
+        self.assertEqual(candidate.mocap_world_y_offset_mm, -4.5)
         self.assertEqual(candidate.mocap_world_z_offset_mm, 37.0)
         self.assertTrue(candidate.draw_rear_mount_proxy)
+        self.assertEqual(
+            overlay._mocap_world_translation_header((12.0, -4.5, 37.0)),
+            "CANDIDATE origin +X12 -Y4.5 +Z37 mm / not GT",
+        )
+
+        with mock.patch(
+            "sys.argv",
+            [
+                "mocap_video_overlay.py",
+                "--mocap-position-source",
+                "automatic",
+            ],
+        ), self.assertRaises(SystemExit):
+            overlay.parse_args()
 
     def test_analyze_only_discovers_existing_render_artifacts(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -205,6 +266,72 @@ class FrameIdentityUnitTests(unittest.TestCase):
                     "h264_delivery_video",
                 },
             )
+
+    def test_main_analyze_only_calls_existing_artifacts_with_three_arguments(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output_dir = root / "output"
+            segment = root / "01_210814_Take_000"
+            prepared = mock.Mock()
+            args = mock.Mock(
+                dataset_root=root,
+                calibration=root / "calibration.json",
+                output_dir=output_dir,
+                segment=["01"],
+                max_interpolation_gap_ms=25.0,
+                mocap_position_source="human-cma",
+                mocap_world_x_offset_mm=0.0,
+                mocap_world_y_offset_mm=0.0,
+                mocap_world_z_offset_mm=0.0,
+                analyze_only=True,
+                frame_content_samples=31,
+                draw_rear_mount_proxy=False,
+            )
+            mapping_path = output_dir / "mapping.csv"
+            with (
+                mock.patch.object(overlay, "parse_args", return_value=args),
+                mock.patch.object(
+                    overlay.viz,
+                    "_discover_segment",
+                    return_value=segment,
+                ),
+                mock.patch.object(
+                    overlay,
+                    "prepare_mocap_video",
+                    return_value=prepared,
+                ),
+                mock.patch.object(
+                    overlay,
+                    "synchronized_interval",
+                    return_value=(0, 1),
+                ),
+                mock.patch.object(
+                    overlay,
+                    "write_frame_mapping",
+                    return_value=mapping_path,
+                ),
+                mock.patch.object(
+                    overlay,
+                    "_existing_alignment_artifacts",
+                    autospec=True,
+                    return_value={},
+                ) as existing,
+                mock.patch.object(
+                    overlay,
+                    "alignment_metrics",
+                    return_value={},
+                ),
+            ):
+                overlay.main()
+
+            stem = overlay.alignment_output_stem(
+                segment.name,
+                25.0,
+                "human-cma",
+            )
+            existing.assert_called_once_with(output_dir.resolve(), stem, mapping_path)
 
     def test_content_comparator_accepts_same_index_and_rejects_off_by_one(self) -> None:
         correct = {
@@ -310,6 +437,22 @@ class MocapVideoDatasetTests(unittest.TestCase):
             CALIBRATION,
             mocap_world_translation_mm=(0.0, 0.0, 37.0),
         )
+        cls.prepared_02_xyz = overlay.prepare_mocap_video(
+            segment_02,
+            CALIBRATION,
+            mocap_world_translation_mm=(12.0, -4.5, 37.0),
+        )
+        cls.prepared_bvh = {
+            key: overlay.prepare_mocap_video(
+                viz._discover_segment(DATASET, key),
+                CALIBRATION,
+                mocap_position_source=(
+                    overlay.MOCAP_POSITION_SOURCE_SKELETON_BVH
+                ),
+            )
+            for key in ("01", "02", "03")
+        }
+        cls.prepared_02_bvh = cls.prepared_bvh["02"]
 
     def test_zero_world_translation_is_backward_compatible(self) -> None:
         implicit = self.prepared["02"]
@@ -325,10 +468,184 @@ class MocapVideoDatasetTests(unittest.TestCase):
             )
         )
 
+    def test_skeleton_bvh_fk_uses_cma_ordinals_and_cma_timebase(self) -> None:
+        human = self.prepared["02"]
+        bvh = self.prepared_02_bvh
+        self.assertEqual(
+            bvh.mocap_position_source,
+            overlay.MOCAP_POSITION_SOURCE_SKELETON_BVH,
+        )
+        self.assertEqual(set(bvh.mocap_position_paths), {"left", "right"})
+        self.assertTrue(
+            bvh.mocap_position_paths["left"].name.endswith("Skeleton_0.bvh")
+        )
+        self.assertTrue(
+            bvh.mocap_position_paths["right"].name.endswith("Skeleton_1.bvh")
+        )
+        np.testing.assert_array_equal(bvh.mocap.times_s, human.mocap.times_s)
+        np.testing.assert_array_equal(
+            bvh.mocap.frame_counters,
+            human.mocap.frame_counters,
+        )
+        np.testing.assert_array_equal(
+            bvh.mocap.display_times_s,
+            human.mocap.display_times_s,
+        )
+        self.assertTrue(np.all(np.isnan(bvh.mocap.points_mm[0])))
+        self.assertTrue(np.all(np.isfinite(bvh.mocap.points_mm[1:])))
+
+        contract = bvh.mocap_position_contract
+        self.assertEqual(contract["status"], "pass")
+        self.assertEqual(
+            contract["bvh_forward_kinematics"],
+            "bvh_web_export.evaluate_world_positions",
+        )
+        self.assertEqual(
+            contract["cma_world_mm_to_bvh_units"],
+            "[-X, Z, Y] / 10",
+        )
+        self.assertEqual(
+            contract["bvh_units_to_mocap_world_mm"],
+            overlay.BVH_TO_MOCAP_WORLD_CONTRACT,
+        )
+        self.assertTrue(
+            contract["human_cma_timestamps_preserved_without_resampling"]
+        )
+        self.assertFalse(
+            contract["human_cma_joint_positions_used_as_render_source"]
+        )
+        self.assertTrue(
+            contract["human_cma_root_positions_used_for_ordinal_validation_only"]
+        )
+        self.assertLessEqual(
+            contract["all_usable_root_ordinals_max_abs_error_mm"],
+            overlay.BVH_CMA_ROOT_TOLERANCE_MM,
+        )
+        self.assertEqual(
+            contract["cma_row_count"],
+            len(human.mocap.frame_counters),
+        )
+        self.assertEqual(
+            contract["bvh_source_frame_count"],
+            len(human.mocap.frame_counters) + 1,
+        )
+        # FK is intentionally the detailed position source, not an alias of
+        # the Human.cma joint-position columns.
+        finger_delta_mm = np.linalg.norm(
+            bvh.mocap.points_mm[1:, :, 1:]
+            - human.mocap.points_mm[1:, :, 1:],
+            axis=-1,
+        )
+        self.assertGreater(float(np.median(finger_delta_mm)), 0.05)
+        self.assertEqual(
+            overlay.synchronized_interval(bvh.mocap_valid),
+            overlay.synchronized_interval(human.mocap_valid),
+        )
+
+    def test_every_formal_take_has_a_strict_skeleton_bvh_interval(self) -> None:
+        expected = {
+            # The first otherwise-synchronized RGB frame in Take_000/002
+            # brackets CMA ordinal zero.  That ordinal is the BVH vendor seed,
+            # so skeleton-bvh correctly trims one additional RGB frame.
+            "01": (61, 1808, 1747),
+            "02": (0, 1805, 1805),
+            "03": (4, 1803, 1799),
+        }
+        for key, (first, stop, count) in expected.items():
+            with self.subTest(take=key):
+                prepared = self.prepared_bvh[key]
+                actual = overlay.synchronized_interval(prepared.mocap_valid)
+                self.assertEqual(actual, (first, stop))
+                self.assertEqual(stop - first, count)
+                self.assertEqual(
+                    prepared.mocap_position_contract["status"],
+                    "pass",
+                )
+                self.assertTrue(
+                    prepared.mocap_position_contract[
+                        "human_cma_timestamps_preserved_without_resampling"
+                    ]
+                )
+
+    def test_skeleton_bvh_metrics_include_both_hashed_sources_and_contract(
+        self,
+    ) -> None:
+        prepared = self.prepared_02_bvh
+        first, stop = overlay.synchronized_interval(prepared.mocap_valid)
+        result = overlay.alignment_metrics(
+            prepared,
+            first,
+            stop,
+            frame_content_validation={
+                "full_frame_content_comparison": False,
+                "acceptance": {"pass": True},
+            },
+            motion_validation={"acceptance": {"pass": True}},
+        )
+        source = result["mocap_position_source"]
+        self.assertEqual(source["selected"], "skeleton-bvh")
+        self.assertTrue(source["human_cma_supplies_timestamps_and_frame_counters"])
+        self.assertEqual(source["contract"], prepared.mocap_position_contract)
+        for key, side in (
+            ("mocap_skeleton_0_bvh", "left"),
+            ("mocap_skeleton_1_bvh", "right"),
+        ):
+            item = result["inputs"][key]
+            self.assertEqual(
+                Path(item["path"]),
+                prepared.mocap_position_paths[side].resolve(),
+            )
+            self.assertEqual(
+                item["sha256"],
+                overlay._sha256(prepared.mocap_position_paths[side]),
+            )
+
+    def test_skeleton_bvh_parser_and_ordinal_failures_propagate(self) -> None:
+        segment = viz._discover_segment(DATASET, "02")
+        with mock.patch.object(
+            overlay.bvh_export,
+            "parse_bvh",
+            side_effect=overlay.bvh_export.BvhValidationError("malformed BVH"),
+        ), self.assertRaisesRegex(
+            overlay.bvh_export.BvhValidationError,
+            "malformed BVH",
+        ):
+            overlay.prepare_mocap_video(
+                segment,
+                CALIBRATION,
+                mocap_position_source="skeleton-bvh",
+            )
+
+        with mock.patch.object(
+            overlay.bvh_export,
+            "validate_bvh_cma_root_ordinal_contract",
+            side_effect=overlay.bvh_export.BvhValidationError(
+                "ordinal mismatch"
+            ),
+        ), self.assertRaisesRegex(
+            overlay.bvh_export.BvhValidationError,
+            "ordinal mismatch",
+        ):
+            overlay.prepare_mocap_video(
+                segment,
+                CALIBRATION,
+                mocap_position_source="skeleton-bvh",
+            )
+
+        with self.assertRaisesRegex(ValueError, "Unsupported MOCAP position source"):
+            overlay.prepare_mocap_video(
+                segment,
+                CALIBRATION,
+                mocap_position_source="automatic",
+            )
+
     def test_world_translation_preserves_time_and_all_bone_lengths(self) -> None:
         baseline = self.prepared["02"]
-        translated = self.prepared_02_z37
-        self.assertEqual(translated.mocap_world_translation_mm, (0.0, 0.0, 37.0))
+        translated = self.prepared_02_xyz
+        self.assertEqual(
+            translated.mocap_world_translation_mm,
+            (12.0, -4.5, 37.0),
+        )
         np.testing.assert_array_equal(baseline.rgb_device_s, translated.rgb_device_s)
         np.testing.assert_array_equal(baseline.cmavatar_s, translated.cmavatar_s)
         np.testing.assert_array_equal(baseline.mocap_valid, translated.mocap_valid)
@@ -346,7 +663,7 @@ class MocapVideoDatasetTests(unittest.TestCase):
         )
 
         valid = baseline.mocap_valid
-        expected_translation = np.asarray([0.0, 0.0, 37.0])
+        expected_translation = np.asarray([12.0, -4.5, 37.0])
         observed_translation = (
             translated.mocap_mm[valid] - baseline.mocap_mm[valid]
         )
@@ -510,7 +827,7 @@ class MocapVideoDatasetTests(unittest.TestCase):
         self.assertEqual(translation["translation_xyz_mm"], [0.0, 0.0, 0.0])
         self.assertFalse(translation["ground_truth_claimed"])
 
-        candidate = self.prepared_02_z37
+        candidate = self.prepared_02_xyz
         candidate_first, candidate_stop = overlay.synchronized_interval(
             candidate.mocap_valid
         )
@@ -533,7 +850,7 @@ class MocapVideoDatasetTests(unittest.TestCase):
             overlay.MOCAP_WORLD_TRANSLATION_CANDIDATE_PROFILE,
         )
         self.assertEqual(
-            candidate_translation["translation_xyz_mm"], [0.0, 0.0, 37.0]
+            candidate_translation["translation_xyz_mm"], [12.0, -4.5, 37.0]
         )
         self.assertFalse(candidate_translation["changes_joint_relative_geometry"])
         self.assertFalse(candidate_translation["ground_truth_claimed"])

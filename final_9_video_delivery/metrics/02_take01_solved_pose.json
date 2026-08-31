@@ -4,10 +4,10 @@
   "segment": "01_210814_Take_000",
   "evaluation_scope": {
     "statistics_scope": "selected_source_frame_interval",
-    "source_frame_first": 60,
+    "source_frame_first": 61,
     "source_frame_stop_exclusive": 1808,
     "source_frame_last_inclusive": 1807,
-    "evaluated_rgb_frames": 1748,
+    "evaluated_rgb_frames": 1747,
     "source_take_total_rgb_frames": 1815,
     "covers_full_source_take": false
   },
@@ -25,6 +25,26 @@
     "absolute_wrist_translation_evaluable": false,
     "absolute_6dof_metrics": null,
     "absolute_6dof_unavailable_reason": "glove wrist translation and orientation are not evaluated because synchronized mocap wrist SE(3) is copied into the fused articulation"
+  },
+  "display_correction": {
+    "type": "operator_world_xyz_translation",
+    "coordinate_system": "mocap_world_mm",
+    "axis_order": "xyz",
+    "units": "mm",
+    "operator_world_translation_xyz_mm": [
+      0.0,
+      -44.0,
+      0.0
+    ],
+    "active": true,
+    "applied_after_mocap_interpolation": true,
+    "moves_mocap_overlay": true,
+    "moves_mocap_wrist_anchored_solved_pose": true,
+    "display_only": true,
+    "is_ground_truth": false,
+    "is_independent_accuracy_evidence": false,
+    "metric_effect": "Root-normalized articulation residuals are invariant to this shared world translation and therefore do not validate the display correction.",
+    "claim_boundary": "Operator-controlled visualization alignment only; this does not update the delivered camera calibration or establish ground truth."
   },
   "inputs": {
     "rgb_mp4": "project://同步整理_20260829_三段/01_210814_Take_000/视频/RGB.mp4",
@@ -78,27 +98,27 @@
       "max": 303.01326700000004
     },
     "nearest_mocap_sample_delta_ms": {
-      "count": 1748,
+      "count": 1747,
       "min": 0.0002384185791015625,
-      "mean": 2.0840135264451227,
-      "median": 2.090573310852051,
-      "p95": 3.9602041244506836,
+      "mean": 2.084664637931907,
+      "median": 2.0928382873535156,
+      "p95": 3.9602279663085938,
       "max": 4.163265228271484
     },
     "exposure_to_nearest_mocap_sample_absolute_error_ms": {
-      "count": 1748,
+      "count": 1747,
       "min": 0.0002384185791015625,
-      "mean": 2.0840135264451227,
-      "median": 2.090573310852051,
-      "p95": 3.9602041244506836,
+      "mean": 2.084664637931907,
+      "median": 2.0928382873535156,
+      "p95": 3.9602279663085938,
       "max": 4.163265228271484
     },
     "camera_to_mocap_absolute_error_ms": {
-      "count": 1748,
+      "count": 1747,
       "min": 0.0002384185791015625,
-      "mean": 2.0840135264451227,
-      "median": 2.090573310852051,
-      "p95": 3.9602041244506836,
+      "mean": 2.084664637931907,
+      "median": 2.0928382873535156,
+      "p95": 3.9602279663085938,
       "max": 4.163265228271484
     },
     "deprecated_metric_aliases": {
@@ -112,14 +132,14 @@
       }
     },
     "mocap_bracketing_source_span_ms": {
-      "count": 1748,
+      "count": 1747,
       "min": 8.331775665283203,
-      "mean": 8.333153528261512,
+      "mean": 8.333153771071279,
       "median": 8.332967758178711,
       "p95": 8.333921432495117,
       "max": 8.333921432495117
     },
-    "synchronized_rgb_frames": 1748,
+    "synchronized_rgb_frames": 1747,
     "max_interpolation_gap_ms": 25.0,
     "large_interpolation_gaps_are_rejected": true,
     "gap_definition": "time span between the two bracketing source samples",
@@ -186,14 +206,14 @@
   "sides": {
     "left": {
       "valid_rgb_frames": 1275,
-      "synchronized_mocap_rgb_frames": 1748,
-      "frames_rejected_by_glove_interpolation_or_finite_gate": 473,
-      "retained_fraction_of_synchronized_mocap_frames": 0.7294050343249427,
+      "synchronized_mocap_rgb_frames": 1747,
+      "frames_rejected_by_glove_interpolation_or_finite_gate": 472,
+      "retained_fraction_of_synchronized_mocap_frames": 0.7298225529479107,
       "registration": {
         "method": "fixed canonical rotation and uniform scale in mocap wrist-local frame; non-thumb MCP only",
         "source_segment": "01_210814_Take_000",
         "target_segment_used_in_fit": true,
-        "wrist_translation": "copied from synchronized mocap each frame",
+        "wrist_translation": "copied from synchronized mocap each frame after the explicit operator display translation",
         "wrist_orientation": "copied from synchronized mocap Human root GlobalQ each frame",
         "glove_pose_source": "root-relative local keypoints articulated by synchronized mocap wrist GlobalQ",
         "per_frame_rotation_refit": false,
@@ -254,11 +274,11 @@
       "root_normalized_frame_mpjpe_mm": {
         "aggregation": "mean_of_16_non_thumb_joint_epe_per_frame",
         "count": 1275,
-        "min": 7.174144215683701,
+        "min": 7.174144215683699,
         "mean": 23.45698732954672,
         "median": 16.991783269033213,
         "p95": 47.306976913667434,
-        "max": 53.19253254068429
+        "max": 53.1925325406843
       },
       "root_normalized_non_thumb_mcp_epe_mm": {
         "aggregation": "pooled_frame_joint_epe",
@@ -274,7 +294,7 @@
         "count": 10200,
         "min": 0.7502571732986542,
         "mean": 23.616596000308608,
-        "median": 15.922984462013716,
+        "median": 15.922984462013726,
         "p95": 67.56749301841613,
         "max": 89.01752085067967
       },
@@ -290,14 +310,14 @@
     },
     "right": {
       "valid_rgb_frames": 1275,
-      "synchronized_mocap_rgb_frames": 1748,
-      "frames_rejected_by_glove_interpolation_or_finite_gate": 473,
-      "retained_fraction_of_synchronized_mocap_frames": 0.7294050343249427,
+      "synchronized_mocap_rgb_frames": 1747,
+      "frames_rejected_by_glove_interpolation_or_finite_gate": 472,
+      "retained_fraction_of_synchronized_mocap_frames": 0.7298225529479107,
       "registration": {
         "method": "fixed canonical rotation and uniform scale in mocap wrist-local frame; non-thumb MCP only",
         "source_segment": "01_210814_Take_000",
         "target_segment_used_in_fit": true,
-        "wrist_translation": "copied from synchronized mocap each frame",
+        "wrist_translation": "copied from synchronized mocap each frame after the explicit operator display translation",
         "wrist_orientation": "copied from synchronized mocap Human root GlobalQ each frame",
         "glove_pose_source": "root-relative local keypoints articulated by synchronized mocap wrist GlobalQ",
         "per_frame_rotation_refit": false,
@@ -368,8 +388,8 @@
         "aggregation": "pooled_frame_joint_epe",
         "count": 5100,
         "min": 4.562670817884995,
-        "mean": 7.437803245032103,
-        "median": 7.7037686672090775,
+        "mean": 7.437803245032102,
+        "median": 7.703768667209085,
         "p95": 9.780488887069373,
         "max": 9.78129614306701
       },
@@ -399,6 +419,7 @@
     "One fixed canonical rotation/scale is used; target finger joints never enter the fit, but target MOCAP wrist GlobalQ conditions every frame.",
     "The canonical scale maps two solver templates and is not a verified anatomical bone-length ratio.",
     "Thumb is drawn but excluded from metrics because glove has 20 points and mocap has 21.",
+    "The operator world XYZ translation is a display-only correction shared by MOCAP and its anchored solved pose; it is not GT, a camera-calibration update, or independent accuracy evidence.",
     "CS-400 calibration is manual visual marker classification plus metric multi-frame depth.",
     "The recorded depth-to-color matrix is used as delivered even though its 3x3 block is slightly non-orthogonal; an official SDK D2C extrinsic or held-out 2D labels are still required for an independent pixel-accuracy claim."
   ],

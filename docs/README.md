@@ -1,14 +1,15 @@
 # GT Calib 文档入口
 
-- 当前状态：`verified_take007_final_nine + verified_9_of_9_full_decode`
-- 最近更新：2026-08-31
+- 当前状态：`verified_final_nine_bvh_fk_y_minus_44 + verified_9_of_9_full_decode`
+- 最近更新：2026-09-01
 - 当前数据版本：`20260829_take000-002 + thor_new4_take007 + no_glove_155410 + 20260831_tabletop_worldcalib`
-- 最新日报：[2026-08-31](daily/2026/2026-08-31.md)
+- 最新日报：[2026-09-01](daily/2026/2026-09-01.md)
 - 数据契约：[dataset/README.md](dataset/README.md)
 - 数据清单：[dataset/datalist.csv](dataset/datalist.csv)
 - 明日索取清单：[DATA_REQUEST_2026-08-31.md](dataset/DATA_REQUEST_2026-08-31.md)
 - 新采集与新世界坐标理解：[NEW_CAPTURE_2026-08-31.md](dataset/NEW_CAPTURE_2026-08-31.md)
 - Take_007 CMM 对齐合同：[TAKE007_CMM_ALIGNMENT_V1.md](calibration/TAKE007_CMM_ALIGNMENT_V1.md)
+- 九视频人工 XYZ 合同：[FINAL_NINE_MANUAL_XYZ_V1.md](calibration/FINAL_NINE_MANUAL_XYZ_V1.md)
 - 评估协议：[CROSS_TAKE_EVALUATION.md](protocols/CROSS_TAKE_EVALUATION.md)
 - 当前推荐 calibrated fusion：[MOCAP_ROOT_FUSION_V1.md](calibration/MOCAP_ROOT_FUSION_V1.md)
 - 当前视频动作匹配协议：[MOCAP_VIDEO_ALIGNMENT_V1.md](calibration/MOCAP_VIDEO_ALIGNMENT_V1.md)
@@ -31,16 +32,28 @@ wrist，不再画成第 21 点。左 thumb tip 已 stitch `11781 → 12503`；RG
 可视化，残差不是独立 GT；video 09 明确绑定 155410 无手套 RGB 和该 recording
 自己的 intrinsics。网页同时提供可导出 profile 的 manual world-XYZ 工具。
 
-正式 `final_9_video_delivery/` 已重建完成：40 个 regular files、
-124,130,375 bytes（118.38 MiB，`du -sh` 为 119M），其中 9/9 H.264 视频通过
-全片解码，delivery validation 为 `status=pass`、`failures=[]`。
-`SHA256SUMS.txt` 含 39 行，覆盖除 checksum 文件自身外的全部 regular files。
-全量回归当前 114 项通过；记录基线为 `114 passed in 99.08s`。
+旧 final 的 video 01/03/05 先前错误使用了 `Human.cma` joint positions；当前
+builder 已改为 `Skeleton_0/1` BVH forward kinematics，每手输出 21 joints。
+`Human.cma` 对这三段只提供已验证的 120 Hz timestamp / frame-counter axis。
+最终人工显示合同把 `Y=-44 mm` 分别应用到 video 01-08 各自的 MOCAP world；
+video 09 是 155410 无手套标定证据，强制不应用。这个数值不是跨 session
+shared extrinsic，也不是独立 GT。
 
-Manual profile 采用 fail-closed 合同：必须属于 `161912 / Take_007`，坐标系为
-`mocap_world_mm`、单位 `mm`，且 `rear_offset_mm` 固定为 20。实际应用时原始
-JSON 会复制到 delivery，并由 manifest SHA-256 与 validation 共同验收；当前
-默认零-offset 包的 `applied_manual_profile` 明确为 `null`。
+新的 BVH-FK + `Y=-44 mm` package 已从原始 source 重建：41 个 regular files、
+122,158,302 bytes（116.50 MiB，`du -sh` 为 117M），9/9 H.264 视频通过 full
+decode，validation 为 `status=pass`、`failures=[]`。`SHA256SUMS.txt` 有 40 行，
+覆盖除 checksum 自身外的全部文件；manifest SHA-256 为
+`6bfd88a0d76b44f641bc7b8553de9a38aa3bae2630c4cea0ebdd7265bf95a6d5`。最新
+`Take_007.cmm` 的输入 SHA-256 也已同时固化为
+`25bebdbb079d233b7c71ba94402531a9ed09b87ac690def05b012065b5748a08`。
+
+当前推荐 profile 为
+`calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json`，schema 是
+`gt_calib.final_nine_manual_xyz.v1`。它必须恰好包含 canonical 9-video 顺序，
+video 01-08 `apply_translation=true`，video 09 为 `false`；非 Take_007 视频的
+左右手 residual 必须为零。旧 `gt_calib.manual_xyz_profile.v1` 继续兼容，但
+严格只作用于 Take_007 video 07/08。应用的原始 JSON 会复制进 delivery，manifest
+记录 SHA-256，validation 必须复核。
 
 当前已将 MOCAP 按 **RGB 曝光时刻**逐帧匹配到视频：旧链路误用了约 254–255 ms 之后的 host poll/callback 时刻；逐行移除该延迟后，三段 zero-lag motion correlation 从 0.395–0.626 提升到 0.876–0.899，残余峰值 +10/+16/+17 ms 均小于一帧且不回写为拟合偏移。正式 `gt_calib.mocap_video_alignment.v2` 还用 `--frame-content-samples 0` 对三段全部 BAG/MP4 frame index 完成 240×135 解码内容 gate。
 
@@ -66,21 +79,26 @@ Take 02/03 的 fusion P95 仍为 joint 86.06–97.44 mm、tip 104.87–113.80 mm
 
 ## 当前可宣称
 
-- 01/02/03 发布的共同区间分别有 1748/1805/1800 个连续 RGB 帧；每帧都有小于 25 ms 的 120 Hz MOCAP bracket。
+- Final 01/02/03 的 BVH-backed 共同区间分别为 RGB source
+  61..1807 / 0..1804 / 4..1802，即 1747/1805/1799 个连续帧；BVH ordinal 0
+  是 vendor seed 并明确排除。每个发布帧都有小于 25 ms 的 120 Hz MOCAP bracket。
 - 逐行移除 capture→poll 延迟后，视觉动作 zero-lag correlation 为 0.876/0.899/0.882；峰值残余均在一个 30 FPS 帧内。
 - 曝光时刻到最近 MOCAP 样本 P95 约 3.95–3.96 ms；这是 120 Hz 采样量化距离，不是端到端同步精度。
 - BAG↔MP4 全帧内容 gate 已通过：raw offset-0 为 1764/1815、1768/1812、1809/1810；所有可辨帧均为 offset 0（1715/1715、1729/1729、1794/1794），三段 global best offset 均为 0。
 - MOCAP 21 点可以用固定外参投影到 RGB，适合做动作相位审阅可视化。
+- Final video 01/03/05 的每手 21 点可由 Skeleton_0/1 BVH FK 重建并投影；
+  `Human.cma` 只保留时间轴，BVH FK joint positions 才是显示位置源。
+- 可对 video 01-08 在各自 MOCAP world 中记录并应用 operator XYZ display
+  correction；Take_007 video 07/08 额外支持左右手 residual，video 09 固定排除。
 - 可在不修改原 21 点、相机外参或逐帧 timing CSV 的情况下，额外显示 hand-local 后侧腕模块 proxy。
 - delivered depth camera pose 是严格 SE(3)，可用于 raw-depth optical frame 与 CS-400/MOCAP nominal world 之间的固定变换；00 内部重复性和跨 Take 静态 RGB 背景检查已通过。
 - Raw-depth MOCAP overlay 直接使用 depth 自己的设备时间戳；01 的额外尾部 depth frame 不会被强配到 RGB，三段所有发布帧都有小于 25 ms 的合法 MOCAP bracket。
 - 冻结 pose 后可报告 projected joint/wrist 的 positive-depth、inside-frame 与 raw-depth nonzero coverage，作为数据链和投影覆盖检查。
 - 可用 Take 01 wrist-local MCP 拟合固定 canonical rotation 和统一尺度，并冻结到 Take 02/03。
 - 在每帧使用 MOCAP wrist SE(3) 的条件下，可报告 glove local finger articulation 的 root-normalized median/P95 与覆盖率。
-- 最终全量回归 `114` 项通过（记录基线 `114 passed in 99.08s`，含
-  Take_007 marker/re-ID/root、strict manual-profile、final-nine、网页与 HTTP
-  Range 合同）；正式九视频 9/9 全片解码通过，validation `failures=[]`。
-  旧 MOCAP-only、fusion、diagnostic 与 depth 媒体的既有验证仍保留。
+- 本轮新的 BVH-FK + Y=-44 package 已完成 9/9 full decode，validation
+  `failures=[]`；旧 MOCAP-only、fusion、diagnostic 与 depth 媒体的既有验证仍
+  保留。全量代码回归为 `155 passed in 107.14s`，不沿用旧 `114` 项基线。
 
 ## 当前不可宣称
 
@@ -95,9 +113,31 @@ Take 02/03 的 fusion P95 仍为 joint 86.06–97.44 mm、tip 104.87–113.80 mm
 - 不能把 `PtpTimeStamp` 称为已验证的绝对 PTP epoch；当前仅使用其高分辨率相对节拍并由 Windows `TimeStamp` affine anchor。
 - 不能报告手套绝对腕部平移、方向或完整 6DoF 精度；fusion 的 wrist translation 与 orientation 均来自 MOCAP。
 - 不能把同段拟合结果称为独立测试精度。
+- 不能把全局表单中的 `Y=-44 mm` 解释为 2026-08-29 与 2026-08-31 共用的一条
+  物理外参；实现会把同一数值分别复制到每段自己的 MOCAP world。
+- 不能把 operator XYZ display correction、BVH FK 投影或其视觉改善称为独立
+  hand-pose GT / camera-calibration accuracy。
 - 不能把 rear-mount proxy 称为实测 module joint/6DoF，也不能启用已被 depth 反证的全局 `+Z37 mm` 作为 GT 修正。
 - 不能再把已用于本轮模型选择和审查的 Take02/03 称为全盲 final test；新模型需在锁定后采集 untouched Take04。
 - 不能只报告较低 median 而隐藏高 P95，也不能把同一 MOCAP asset 链内的 root/hand 一致性称为独立 GT 验证。
+
+## 快速复现最终九视频
+
+```bash
+cd /home/runyi/Project/hands_reloc/GT_calib
+
+uv sync --frozen --group dev
+uv run gt-calib-delivery inspect
+uv run gt-calib-delivery build \
+  --destination rebuilt_9_video_delivery \
+  --manual-profile calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json
+uv run gt-calib-delivery validate \
+  --destination rebuilt_9_video_delivery --full-decode
+```
+
+该 build 会重新渲染 video 01/03/05 的 Skeleton_0/1 BVH-FK 21-joint layer、
+video 02/04/06 的 anchored solved pose，以及 Take_007 video 07/08；不会把旧
+final MP4 当作 source copy。本轮已按该链路获得新的 9/9 full-decode pass。
 
 ## 每日交付最小流程
 

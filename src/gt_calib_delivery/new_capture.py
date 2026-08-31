@@ -15,6 +15,12 @@ from typing import Iterable, Sequence
 import cv2
 import numpy as np
 
+from .manual_profiles import (
+    FINAL_NINE_PROFILE_SCHEMA,
+    SIDE_RESIDUAL_VIDEO_IDS,
+    load_final_nine_profile,
+)
+
 
 CALIBRATION_MEMBER = (
     "movementcap_20260831_worldcalib/results/"
@@ -180,10 +186,36 @@ def default_manual_calibration() -> ManualCalibration:
     )
 
 
-def load_manual_calibration(path: Path | None) -> ManualCalibration:
+def load_manual_calibration(
+    path: Path | None,
+    *,
+    video_id: str | None = None,
+) -> ManualCalibration:
     if path is None:
         return default_manual_calibration()
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if payload.get("schema") == FINAL_NINE_PROFILE_SCHEMA:
+        if video_id not in SIDE_RESIDUAL_VIDEO_IDS:
+            raise ValueError(
+                "Final-nine manual profile requires a Take_007 video_id for this renderer"
+            )
+        profile = load_final_nine_profile(path)
+        annotation = profile.annotations[video_id]
+        if not annotation.apply_translation:
+            raise ValueError(f"Final-nine profile excludes {video_id}")
+        return ManualCalibration(
+            global_world_xyz_mm=(
+                profile.global_world_xyz_mm
+                + annotation.per_video_world_xyz_mm
+            ),
+            side_world_xyz_mm={
+                side: np.asarray(
+                    annotation.side_residual_world_xyz_mm[side], dtype=np.float64
+                )
+                for side in ANATOMICAL_SIDES
+            },
+            rear_offset_mm=DEFAULT_REAR_OFFSET_MM,
+        )
     required = {
         "schema",
         "source_recording",
@@ -234,6 +266,28 @@ def sha256_file(path: Path) -> str:
         while chunk := handle.read(1024 * 1024):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def capture_source_assets(capture: NewCapture) -> dict[str, dict[str, str]]:
+    """Return the immutable inputs that identify one Take_007 render.
+
+    These hashes make the phrase "latest Take_007 CMM" auditable from an
+    extracted delivery without relying only on a recording/take label.
+    Project-local paths are converted to ``project://`` by the delivery
+    provenance normalizer after rendering.
+    """
+
+    paths = {
+        "rgb_video": capture.rgb_path,
+        "cmm_markers": capture.cmm_path,
+        "camera_cmavatar_alignment": capture.alignment_path,
+        "glove_aligned_frame_summary": capture.frame_summary_path,
+        "camera_intrinsics": capture.camera.intrinsics_path,
+    }
+    return {
+        name: {"path": str(Path(path).resolve()), "sha256": sha256_file(path)}
+        for name, path in paths.items()
+    }
 
 
 def verify_calibration_reference_rgb(
@@ -1158,6 +1212,7 @@ def render_raw_markers(
             "status": "visualization_complete",
             "source_recording": capture.recording,
             "source_take": capture.take,
+            "source_assets": capture_source_assets(capture),
             "source_rgb_frames": source_count,
             "rendered_frames": int(len(capture.clock.output_indices)),
             "excluded_unsynchronized_rgb_frames": [source_count - 1],
@@ -1297,6 +1352,7 @@ def render_solved_pose(
             "status": "visualization_complete",
             "source_recording": capture.recording,
             "source_take": capture.take,
+            "source_assets": capture_source_assets(capture),
             "rendered_frames": int(len(capture.clock.output_indices)),
             "validity": diagnostics,
             "root_conditioning": {
@@ -1542,6 +1598,7 @@ def export_calibration_workbench(
         "schema": "gt_calib.manual_xyz_workbench.v1",
         "source_recording": capture.recording,
         "source_take": capture.take,
+        "source_assets": capture_source_assets(capture),
         "video": {
             "path": clean_video.name,
             "width": video_width,
@@ -1631,7 +1688,12 @@ def render_new_three(
     dataset_root = project_root / "thor_new4_20260831_processed"
     archive = project_root / "movementcap_20260831_worldcalib_tabletop_final.tar.gz"
     capture = load_new_capture(dataset_root, archive)
-    manual = load_manual_calibration(manual_profile)
+    raw_manual = load_manual_calibration(
+        manual_profile, video_id="take007-mocap-markers"
+    )
+    solved_manual = load_manual_calibration(
+        manual_profile, video_id="take007-solved"
+    )
     frame_map = frame_maps / "take007_rgb_to_cmm.csv"
     write_frame_map(capture, frame_map)
 
@@ -1641,7 +1703,7 @@ def render_new_three(
         raw_video,
         posters / "07_take007_labeled_mocap_markers.jpg",
         metrics / "07_take007_labeled_mocap_markers.json",
-        manual=manual,
+        manual=raw_manual,
     )
     solved_video = videos / "08_take007_aligned_hand_pose.mp4"
     world_poses, valid, _ = render_solved_pose(
@@ -1649,7 +1711,7 @@ def render_new_three(
         solved_video,
         posters / "08_take007_aligned_hand_pose.jpg",
         metrics / "08_take007_aligned_hand_pose.json",
-        manual=manual,
+        manual=solved_manual,
     )
     # The browser workbench always starts from the explicit default profile so
     # exported XYZ values can be fed back to the renderer without double-counting.
