@@ -1,0 +1,619 @@
+{
+  "schema": "movementcap.camera_to_mocap_world.v1",
+  "generated_at": "2026-08-31T19:46:47+08:00",
+  "status": "manual_visual_calibration_complete",
+  "camera_type": "third_view",
+  "method": "multi_frame_visual_CS400_RGB_PnP_tabletop_origin",
+  "applies_to": [
+    "camera_glove_recording_20260831_155410",
+    "camera_glove_recording_20260831_161402",
+    "camera_glove_recording_20260831_161610",
+    "camera_glove_recording_20260831_161912"
+  ],
+  "fixed_camera_assumption": true,
+  "coordinate_system": {
+    "origin": "CS-400 black vertex-hole axis projected vertically onto the tabletop",
+    "origin_height_mode": "tabletop",
+    "tabletop_world_z_mm": 0.0,
+    "marker_plane_world_z_mm": 45.0,
+    "x_axis": "from origin outward along the CS-400 long arm",
+    "y_axis": "from origin outward along the CS-400 short arm",
+    "z_axis": "tabletop normal, upward",
+    "handedness": "right_handed",
+    "units": "millimetres"
+  },
+  "input": {
+    "dataset_root": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed",
+    "reference_recording": "camera_glove_recording_20260831_155410",
+    "reference_rgb_mp4": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/RGB.mp4",
+    "reference_depth_preview_mp4": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/Depth.mp4",
+    "reference_rgb_frame_index": 30,
+    "reference_depth_frame_index": 30,
+    "rgb_frame_count": 98,
+    "depth_preview_frame_count": 98,
+    "intrinsics_json": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/camera_1_intrinsics.json",
+    "visual_observation_config": "/home/user/Project/intern/20260729-task/movementcap_ruler_worldcalib/configs/manual_cs400_points_20260831.json",
+    "metric_pose_uses_depth_preview": false
+  },
+  "camera_consistency": {
+    "passed": true,
+    "recordings": [
+      {
+        "recording": "camera_glove_recording_20260831_155410",
+        "device_serial_number": "CL8L563010D",
+        "intrinsics_path": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/camera_1_intrinsics.json"
+      },
+      {
+        "recording": "camera_glove_recording_20260831_161402",
+        "device_serial_number": "CL8L563010D",
+        "intrinsics_path": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_161402/rgbd_unpack/camera_1_intrinsics.json"
+      },
+      {
+        "recording": "camera_glove_recording_20260831_161610",
+        "device_serial_number": "CL8L563010D",
+        "intrinsics_path": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_161610/rgbd_unpack/camera_1_intrinsics.json"
+      },
+      {
+        "recording": "camera_glove_recording_20260831_161912",
+        "device_serial_number": "CL8L563010D",
+        "intrinsics_path": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/camera_1_intrinsics.json"
+      }
+    ]
+  },
+  "manual_visual_observations": {
+    "marker_model": "OptiTrack CS-400",
+    "marker_center_height_above_table_mm": 45.0,
+    "marker_centers_world_mm": {
+      "long_far": [
+        370.0,
+        0.0,
+        45.0
+      ],
+      "long_near": [
+        110.0,
+        0.0,
+        45.0
+      ],
+      "short_near": [
+        0.0,
+        65.0,
+        45.0
+      ],
+      "short_far": [
+        0.0,
+        210.0,
+        45.0
+      ]
+    },
+    "rgb_marker_centers_px": {
+      "long_far": [
+        530.1000061,
+        744.30000305
+      ],
+      "long_near": [
+        818.70001221,
+        737.10000229
+      ],
+      "short_near": [
+        936.90002441,
+        774.00000381
+      ],
+      "short_far": [
+        919.50003052,
+        888.30000305
+      ]
+    },
+    "multi_frame_detection": {
+      "source_frame_count": 98,
+      "method": "visual classification plus constrained Hough-circle median over all RGB frames",
+      "detections": {
+        "long_far": 91,
+        "long_near": 98,
+        "short_near": 92,
+        "short_far": 90
+      },
+      "center_standard_deviation_px": {
+        "long_far": [
+          1.0343,
+          1.2544
+        ],
+        "long_near": [
+          0.7794,
+          1.2005
+        ],
+        "short_near": [
+          1.1149,
+          1.3982
+        ],
+        "short_far": [
+          0.6147,
+          0.8144
+        ]
+      }
+    },
+    "model_geometry_provenance": "Nominalized marker centers from the same physical CS-400 ruler reconstructed with the 2026-08-29 raw 16-bit depth calibration; rounded to 370/110 mm on X and 65/210 mm on Y."
+  },
+  "pose_quality": {
+    "solver": "OpenCV SOLVEPNP_ITERATIVE",
+    "marker_order": [
+      "long_far",
+      "long_near",
+      "short_near",
+      "short_far"
+    ],
+    "observed_rgb_pixels": [
+      [
+        530.1000061,
+        744.30000305
+      ],
+      [
+        818.70001221,
+        737.10000229
+      ],
+      [
+        936.90002441,
+        774.00000381
+      ],
+      [
+        919.50003052,
+        888.30000305
+      ]
+    ],
+    "reprojected_rgb_pixels": [
+      [
+        530.1193999117635,
+        744.4193538570139
+      ],
+      [
+        818.6074544434966,
+        736.703168066837
+      ],
+      [
+        936.9909984538264,
+        774.3825415743498
+      ],
+      [
+        919.4803381446351,
+        888.1955869265648
+      ]
+    ],
+    "per_marker_reprojection_error_px": {
+      "long_far": 0.12091623162169486,
+      "long_near": 0.40748538723924693,
+      "short_near": 0.3932065841309381,
+      "short_far": 0.10625684204200063
+    },
+    "reprojection_rms_px": 0.294349711299234,
+    "reprojection_max_px": 0.40748538723924693,
+    "color_camera_origin_in_world_mm": [
+      -100.96469720620286,
+      858.5031805225179,
+      538.0048544474168
+    ],
+    "proper_rotation_determinant": 1.0000000000000002
+  },
+  "depth_to_color_extrinsic_provenance": {
+    "source": "/home/user/Project/intern/20260729-task/movementcap_ruler_worldcalib/results/manual_final/camera_to_world.json",
+    "device_serial_number": "CL8L563010D",
+    "translation_match": true,
+    "recorded_linear_determinant": 0.9949142152632819,
+    "recorded_linear_orthogonality_max_error": 0.010145642514055364,
+    "reason": "The processed intrinsics JSON retains the translation but omits the rotation. The factory transform is reused from a raw BAG calibration of the same serial-numbered device."
+  },
+  "table_plane_in_depth_camera": {
+    "equation": "normal dot point_mm + d_mm = 0",
+    "normal_up": [
+      -0.060348857578838795,
+      -0.8967376321334034,
+      -0.43842859681447116
+    ],
+    "d_mm": 539.8618615079604,
+    "source": "CS-400 RGB PnP tabletop plane; not fitted from lossy Depth.mp4"
+  },
+  "world_origin_in_color_camera_mm": [
+    -8.271017625053197,
+    207.1312255536191,
+    996.8445466201373
+  ],
+  "world_origin_in_depth_camera_mm": [
+    21.3954015789178,
+    106.78745013713103,
+    1009.9942191386765
+  ],
+  "marker_plane_origin_in_color_camera_mm": [
+    -11.120924221525664,
+    165.00201824724132,
+    981.2879427450099
+  ],
+  "marker_plane_origin_in_depth_camera_mm": [
+    18.651306205642214,
+    66.43501838486435,
+    990.2652799517858
+  ],
+  "transforms": {
+    "convention": "column point p_target = T_target_from_source @ [p_source; 1]",
+    "depth_camera_to_world": [
+      [
+        -0.9909010120482366,
+        0.025284651614035123,
+        0.08610851743256882,
+        -68.46846322123689
+      ],
+      [
+        -0.06578525177099973,
+        0.4418751303059278,
+        -0.8946357868753222,
+        857.7977564138847
+      ],
+      [
+        -0.0603476797992377,
+        -0.896720131233916,
+        -0.4384200403599071,
+        539.8513254628155
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "world_to_depth_camera": [
+      [
+        -1.0010559879402279,
+        -0.06646798493464064,
+        -0.060979897183901864,
+        21.3954015789178
+      ],
+      [
+        0.02527617042853078,
+        0.4418745899781229,
+        -0.8967207056059263,
+        106.78745013713103
+      ],
+      [
+        0.08609495890419903,
+        -0.8946366852217633,
+        -0.43842087081979314,
+        1009.9942191386765
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "color_camera_to_world": [
+      [
+        -0.9956884934783647,
+        0.03574847023424254,
+        0.08559480609649076,
+        -100.96469720620284
+      ],
+      [
+        -0.06777592310694164,
+        0.3496326373018542,
+        -0.9344321501213191,
+        858.5031805225176
+      ],
+      [
+        -0.06333125769938816,
+        -0.9362046068083949,
+        -0.34570230833616417,
+        538.004854447417
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "world_to_color_camera": [
+      [
+        -0.9956884934783647,
+        -0.06777592310694165,
+        -0.06333125769938815,
+        -8.271017625053197
+      ],
+      [
+        0.035748470234242546,
+        0.34963263730185457,
+        -0.9362046068083951,
+        207.1312255536191
+      ],
+      [
+        0.08559480609649077,
+        -0.9344321501213195,
+        -0.345702308336164,
+        996.8445466201373
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "depth_camera_to_color_camera": [
+      [
+        0.9949092864990234,
+        0.0016662821872159839,
+        0.002663198858499527,
+        -32.425254821777344
+      ],
+      [
+        -0.0019260905683040619,
+        0.9949113726615906,
+        0.10073523968458176,
+        -0.813623309135437
+      ],
+      [
+        -0.0024817935191094875,
+        -0.10073987394571304,
+        0.9949097037315369,
+        2.8023505210876465
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "color_camera_to_depth_camera": [
+      [
+        1.005106791138741,
+        -0.0019359363902586356,
+        -0.0024944798841902596,
+        32.5962591098038
+      ],
+      [
+        0.0016747998029512743,
+        0.9949114182856692,
+        -0.10073989642973914,
+        1.1460974320825696
+      ],
+      [
+        0.0026768124095142023,
+        0.10073521837706975,
+        0.9949096697276261,
+        -2.619328785185325
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "camera_origins_in_world_mm": {
+    "depth_camera": [
+      -68.46846322123689,
+      857.7977564138847,
+      539.8513254628155
+    ],
+    "color_camera": [
+      -100.96469720620284,
+      858.5031805225176,
+      538.004854447417
+    ]
+  },
+  "approximate_depth_preview_decode": {
+    "mapping": "jet_index = slope_per_mm * depth_mm + intercept",
+    "slope_per_mm": 0.04936511610527823,
+    "intercept": -0.2938479665079783,
+    "millimetres_per_color_index": 20.25721965015449,
+    "candidate_table_pixels": 46056,
+    "robust_fit_pixels": 45305,
+    "table_fit_depth_error_mm_p50": 9.887365306814193,
+    "table_fit_depth_error_mm_p95": 29.82281058805669,
+    "warning": "This mapping recovers a lossy 8-bit preview, not original 16-bit depth. It is used only for the diagnostic point cloud."
+  },
+  "approximate_point_cloud": {
+    "point_count": 110319,
+    "world_bounds_min_xyz_mm": [
+      -2236.9940007275254,
+      -4067.632501384868,
+      -1623.9637276072267
+    ],
+    "world_bounds_max_xyz_mm": [
+      2259.8808223294545,
+      555.0766462860214,
+      621.2502256963937
+    ],
+    "table_candidate_count_within_60mm": 58216,
+    "table_world_z_median_mm": 0.4603750770328361,
+    "table_world_z_p95_absolute_mm": 40.12120004641042,
+    "files": [
+      "reference_approx_depth_camera_coordinates.ply",
+      "reference_approx_world_coordinates.ply",
+      "reference_approx_world_coordinates_with_axes.ply",
+      "world_axes_lines.ply",
+      "reference_approx_world_point_cloud_preview.png"
+    ],
+    "accuracy_warning": "Coordinates use depth recovered from a lossy 8-bit color preview; use this cloud for visual review only."
+  },
+  "diagnostics": {
+    "axis_rgb_pixels": {
+      "tabletop_origin_rgb_pixel": [
+        946.660593371123,
+        778.760001181113
+      ],
+      "x_endpoint_rgb_pixel": [
+        615.3476891736173,
+        786.1337386608855
+      ],
+      "y_endpoint_rgb_pixel": [
+        910.658792183212,
+        1040.139695000318
+      ],
+      "z_endpoint_rgb_pixel": [
+        921.6510080333935,
+        451.56932387090416
+      ],
+      "marker_plane_origin_rgb_pixel": [
+        943.2397289628262,
+        733.8190160909436
+      ],
+      "marker_plane_x_endpoint_rgb_pixel": [
+        607.0911210945013,
+        742.276448359705
+      ],
+      "marker_plane_y_endpoint_rgb_pixel": [
+        905.0994758049503,
+        981.7852476121418
+      ]
+    },
+    "black_hole_marker_plane_origin_rgb_pixel": [
+      943.2397289628262,
+      733.8190160909436
+    ],
+    "tabletop_origin_rgb_pixel": [
+      946.660593371123,
+      778.760001181113
+    ],
+    "black_hole_to_tabletop_pixel_displacement": [
+      3.4208644082967794,
+      44.94098509016942
+    ],
+    "fixed_camera_validation": [
+      {
+        "recording": "camera_glove_recording_20260831_161402",
+        "rgb_video": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_161402/rgbd_unpack/RGB.mp4",
+        "frame_index": 100,
+        "frame_count": 1868,
+        "diagnostic_image": "validation_camera_glove_recording_20260831_161402_world_axes.png",
+        "fixed_camera_visual_stability": {
+          "orb_good_matches": 2029,
+          "ransac_inliers": 1700,
+          "homography_reference_to_target": [
+            [
+              1.0012986356315772,
+              0.0003934918769467817,
+              -0.9567127134356025
+            ],
+            [
+              3.691688204479479e-05,
+              1.000971577748828,
+              -0.325295268955123
+            ],
+            [
+              1.5647521273747692e-07,
+              5.446267439471149e-07,
+              1.0
+            ]
+          ],
+          "probe_displacement_px": [
+            1.0105029344558716,
+            0.992030143737793,
+            0.3038388788700104,
+            0.5391961336135864,
+            0.07603973895311356
+          ],
+          "max_probe_displacement_px": 1.0105029344558716,
+          "center_displacement_px": 0.07603973895311356
+        }
+      },
+      {
+        "recording": "camera_glove_recording_20260831_161610",
+        "rgb_video": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_161610/rgbd_unpack/RGB.mp4",
+        "frame_index": 100,
+        "frame_count": 2620,
+        "diagnostic_image": "validation_camera_glove_recording_20260831_161610_world_axes.png",
+        "fixed_camera_visual_stability": {
+          "orb_good_matches": 2037,
+          "ransac_inliers": 1686,
+          "homography_reference_to_target": [
+            [
+              1.0029284141673136,
+              0.0014234805772404212,
+              -1.870796986223984
+            ],
+            [
+              0.0004971927660289417,
+              1.0017125673164289,
+              -0.6666966529883417
+            ],
+            [
+              8.585850464908315e-07,
+              8.769839050431662e-07,
+              0.9999999999999999
+            ]
+          ],
+          "probe_displacement_px": [
+            1.9860427379608154,
+            0.6525353193283081,
+            0.7292938828468323,
+            0.370851993560791,
+            0.46393445134162903
+          ],
+          "max_probe_displacement_px": 1.9860427379608154,
+          "center_displacement_px": 0.46393445134162903
+        }
+      },
+      {
+        "recording": "camera_glove_recording_20260831_161912",
+        "rgb_video": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/RGB.mp4",
+        "frame_index": 100,
+        "frame_count": 1982,
+        "diagnostic_image": "validation_camera_glove_recording_20260831_161912_world_axes.png",
+        "fixed_camera_visual_stability": {
+          "orb_good_matches": 2069,
+          "ransac_inliers": 1765,
+          "homography_reference_to_target": [
+            [
+              1.0022538989558494,
+              0.0005630106690680394,
+              -1.6578404240152151
+            ],
+            [
+              0.0002664714597204258,
+              1.0007325993849334,
+              -0.44850000436674675
+            ],
+            [
+              5.027493957910457e-07,
+              -1.147026414196085e-07,
+              1.0
+            ]
+          ],
+          "probe_displacement_px": [
+            1.7174361944198608,
+            0.8176008462905884,
+            1.6604267358779907,
+            1.1531237363815308,
+            0.40660643577575684
+          ],
+          "max_probe_displacement_px": 1.7174361944198608,
+          "center_displacement_px": 0.40660643577575684
+        }
+      }
+    ],
+    "files": [
+      "reference_rgb.png",
+      "reference_depth_preview_original.png",
+      "reference_rgb_markers_and_world_axes.png",
+      "reference_rgb_ruler_axes_crop.png",
+      "reference_depth_table_fit_mask.png",
+      "reference_approx_depth_mm.png",
+      "reference_approx_depth_preview.png",
+      "validation_camera_glove_recording_20260831_161402_world_axes.png",
+      "validation_camera_glove_recording_20260831_161610_world_axes.png",
+      "validation_camera_glove_recording_20260831_161912_world_axes.png",
+      "reference_approx_depth_camera_coordinates.ply",
+      "reference_approx_world_coordinates.ply",
+      "reference_approx_world_coordinates_with_axes.ply",
+      "world_axes_lines.ply",
+      "reference_approx_world_point_cloud_preview.png"
+    ]
+  },
+  "review_notes": [
+    "World Z=0 is the tabletop, not the ruler or reflective-marker height.",
+    "The black vertex hole represents the XY origin axis at Z=+45 mm; its vertical projection is the tabletop origin.",
+    "The metric camera/world transform is solved from RGB marker geometry and does not use the lossy depth preview.",
+    "The approximate point cloud is for visual review only because Depth.mp4 has about 20 mm color-index quantization."
+  ]
+}

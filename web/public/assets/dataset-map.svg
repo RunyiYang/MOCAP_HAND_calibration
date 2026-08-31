@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="720" viewBox="0 0 1600 720">
+  <defs>
+    <style>
+      text { font-family: "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; fill: #172033; }
+      .title { font-size: 34px; font-weight: 700; }
+      .head { font-size: 22px; font-weight: 700; }
+      .body { font-size: 17px; }
+      .small { font-size: 15px; fill: #5f6b81; }
+      .roottext { font-size: 24px; font-weight: 700; fill: #ffffff; }
+      .line { stroke: #a5afc0; stroke-width: 3; fill: none; }
+    </style>
+  </defs>
+  <rect width="1600" height="720" fill="#f7f9fc"/>
+  <text x="60" y="58" class="title">Dataset 结构：00 做空间标定，01/02/03 是正式手套 × 动捕采集</text>
+
+  <rect x="525" y="90" width="550" height="72" rx="18" fill="#18233a"/>
+  <text x="800" y="135" text-anchor="middle" class="roottext">同步整理_20260829_三段/</text>
+  <path d="M800 162 V205 M230 205 H1370" class="line"/>
+
+  <rect x="60" y="220" width="340" height="185" rx="18" fill="#eef2f8" stroke="#8d99ad" stroke-width="3"/>
+  <text x="230" y="260" text-anchor="middle" class="head">00：3 秒无手套</text>
+  <text x="230" y="298" text-anchor="middle" class="body">不做手姿态比较</text>
+  <text x="230" y="330" text-anchor="middle" class="body">CS-400 标尺 + RGB-D</text>
+  <text x="230" y="362" text-anchor="middle" class="small">用于求固定相机外参</text>
+  <path d="M230 205 V220" class="line"/>
+
+  <rect x="450" y="220" width="700" height="185" rx="18" fill="#ffffff" stroke="#4d78e8" stroke-width="3"/>
+  <text x="800" y="258" text-anchor="middle" class="head">01 / 02 / 03：正式 Take</text>
+  <rect x="475" y="282" width="145" height="92" rx="12" fill="#edf4ff"/>
+  <text x="547" y="316" text-anchor="middle" class="body">RGB + Depth</text><text x="547" y="346" text-anchor="middle" class="small">MP4 / ROS BAG</text>
+  <rect x="645" y="282" width="145" height="92" rx="12" fill="#edf4ff"/>
+  <text x="717" y="316" text-anchor="middle" class="body">同步校验</text><text x="717" y="346" text-anchor="middle" class="small">三套时钟</text>
+  <rect x="815" y="282" width="145" height="92" rx="12" fill="#edfff5"/>
+  <text x="887" y="316" text-anchor="middle" class="body">手套解算</text><text x="887" y="346" text-anchor="middle" class="small">20 点 / 手</text>
+  <rect x="985" y="282" width="145" height="92" rx="12" fill="#fff7df"/>
+  <text x="1057" y="316" text-anchor="middle" class="body">动捕 CMA</text><text x="1057" y="346" text-anchor="middle" class="small">21 点 / 手</text>
+  <path d="M800 205 V220" class="line"/>
+
+  <rect x="1200" y="220" width="340" height="185" rx="18" fill="#fffaf0" stroke="#e8b538" stroke-width="3"/>
+  <text x="1370" y="260" text-anchor="middle" class="head">新增世界标定包</text>
+  <text x="1370" y="298" text-anchor="middle" class="body">camera_to_world.json</text>
+  <text x="1370" y="330" text-anchor="middle" class="body">world → color camera</text>
+  <text x="1370" y="362" text-anchor="middle" class="small">声明适用于 00/01/02/03</text>
+  <path d="M1370 205 V220" class="line"/>
+
+  <path d="M230 405 V465 H1370 V405" class="line"/>
+  <path d="M800 405 V465" class="line"/>
+  <rect x="300" y="485" width="1000" height="150" rx="20" fill="#ffffff" stroke="#38a873" stroke-width="3"/>
+  <text x="800" y="528" text-anchor="middle" class="head">首版可视化产物</text>
+  <text x="800" y="568" text-anchor="middle" class="body">BAG 真时间 → 同步 glove / Human.cma → 固定 wrist 配准 → 相机投影 → 01/02/03 H.264 视频</text>
+  <text x="800" y="605" text-anchor="middle" class="small">黄色 MOCAP 21 点｜绿色 GLOVE 20 点｜蓝线连接非拇指指尖</text>
+  <path d="M800 465 V485" class="line"/>
+
+  <text x="800" y="681" text-anchor="middle" class="small">Depth.mp4 仅是预览；毫米深度必须来自原始 ROS BAG</text>
+</svg>

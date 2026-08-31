@@ -1,0 +1,61 @@
+{
+  "schema": "gt_calib.take006_mocap_palm_conditioned_glove_pose.v1",
+  "status": "visualization_complete",
+  "rendered_frames": 2619,
+  "validity": {
+    "valid_frames": 1897,
+    "total_frames": 2619,
+    "coverage_percent": 72.43222604047347,
+    "nearest_solver_sample_error_ms": {
+      "left": {
+        "median": 2.512154499981989,
+        "p95": 16.281267799968173,
+        "max": 19.942018999927313
+      },
+      "right": {
+        "median": 2.512154499981989,
+        "p95": 16.281267799968173,
+        "max": 19.942018999927313
+      }
+    }
+  },
+  "root_conditioning": {
+    "conditional_on_mocap_wrist_translation": true,
+    "conditional_on_mocap_palm_orientation": true,
+    "per_frame_fit_uses_only_wrist_and_four_palm_markers": true,
+    "finger_or_fingertip_markers_used_in_fit": false,
+    "glove_input": "root-local solved 20-joint keypoints",
+    "sides": {
+      "right": {
+        "root_marker": "12058",
+        "palm_markers": [
+          "11614",
+          "11678",
+          "11616",
+          "11619"
+        ],
+        "scale": 0.8986121252142041,
+        "fit_residual_median_mm": 25.05,
+        "fit_residual_p95_mm": 56.32
+      },
+      "left": {
+        "root_marker": "11781",
+        "palm_markers": [
+          "12003",
+          "12001",
+          "12013",
+          "12015"
+        ],
+        "scale": 0.8865779393164441,
+        "fit_residual_median_mm": 24.5,
+        "fit_residual_p95_mm": 56.26
+      }
+    }
+  },
+  "evaluation_scope": "same-take visualization fit; not an independent accuracy evaluation",
+  "limitations": [
+    "The CMM does not deliver an anatomical wrist rigid body or joint topology.",
+    "Global wrist/palm pose is conditioned on MOCAP markers and is not glove-only 6DoF.",
+    "Invalid glove/camera intervals are shown as unavailable and are not held or extrapolated."
+  ]
+}

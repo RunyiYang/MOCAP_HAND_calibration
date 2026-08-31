@@ -1,0 +1,191 @@
+{
+  "schema": "gt_calib.mocap_root_conditioned_articulation_profile.v2",
+  "artifact_type": "registration_profile",
+  "pose_mode": "mocap-root-fusion",
+  "source_segment": "01_210814_Take_000",
+  "camera_world_calibration": {
+    "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/movementcap_worldcalib_pointcloud_package_20260830/movementcap_ruler_worldcalib/results/manual_final/camera_to_world.json",
+    "sha256": "c020c67dc9266238366c511b8c24728c5915e61493d5ad51bac354f3f4582283"
+  },
+  "input_files": {
+    "human_cma": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Human.cma",
+      "sha256": "b76c3f632816cff742e3f3f599f43e5d1b919fd0295a91384bf54846df2dec1f"
+    },
+    "left_glove_keypoints": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/手套解算/solved/primary/left_hand_keypoints.csv",
+      "sha256": "7cb49985009d58c607980e338af2b40951df3627ef8b89c1896737af2131c1b7"
+    },
+    "right_glove_keypoints": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/手套解算/solved/primary/right_hand_keypoints.csv",
+      "sha256": "088aa0d80a690c4ee9c6ce5e32813f4496e557c89af7cacdeebef2761d161901"
+    }
+  },
+  "glove_solver": {
+    "left": {
+      "meta_path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/手套解算/solved/primary/left_hand_pose.meta.json",
+      "solver_id": "glove_dexterous_retarget.original_v2.wenhao.root_tip_glove.L20",
+      "solver_version": "original-v2-wenhao-offline-1.0.3",
+      "config_sha256": {
+        "skeleton": "6636cd07641b560eb2779b298020467d64916dd1812a85eb68536dd3d9aad799",
+        "calibration": "848a61ac0577120d648b63a3711fc4c45333719938212dd3f0ddac23d5cce315",
+        "solver_config": "ef15defbf17dfd8424a09f7617f6011deba7fd11df7bee09826694542cd9d571"
+      },
+      "session_neutral_used": true,
+      "session_neutral_captured_at_utc": "2026-08-29T13:08:11.652812+00:00"
+    },
+    "right": {
+      "meta_path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/手套解算/solved/primary/right_hand_pose.meta.json",
+      "solver_id": "glove_dexterous_retarget.original_v2.wenhao.root_tip_glove.L20",
+      "solver_version": "original-v2-wenhao-offline-1.0.3",
+      "config_sha256": {
+        "skeleton": "6636cd07641b560eb2779b298020467d64916dd1812a85eb68536dd3d9aad799",
+        "calibration": "8450a25da85a165cbeb86978df2e3ae0efa3763f03df4acc711b9ffb87c41c49",
+        "solver_config": "f33c23249a2e29de0905ac8b3332336266659d0e2dbe562f60d45161bf91bcd7"
+      },
+      "session_neutral_used": true,
+      "session_neutral_captured_at_utc": "2026-08-29T13:08:12.479050+00:00"
+    }
+  },
+  "fit_joint_names": [
+    "index_mcp",
+    "middle_mcp",
+    "ring_mcp",
+    "pinky_mcp"
+  ],
+  "target_finger_joints_used_in_fit": false,
+  "fingertips_used_in_fit": false,
+  "translation_policy": "evaluation mocap wrist copied per frame",
+  "absolute_wrist_translation_evaluable": false,
+  "max_interpolation_gap_ms": 25.0,
+  "timestamp_alignment": {
+    "camera_timestamp": "color_device_timestamp_us acquisition time",
+    "host_timestamp": "thor poll/receive time",
+    "capture_to_poll_latency_removed_row_by_row": true,
+    "camera_capture_to_thor_poll_latency_ms": {
+      "count": 878,
+      "min": 237.91526100000002,
+      "mean": 255.32669016173125,
+      "median": 255.10294900000002,
+      "p95": 270.29541155,
+      "max": 303.01326700000004
+    },
+    "glove_target_clock": "exposure-corrected thor_monotonic_ns",
+    "mocap_target_clock": "exposure-corrected cmavatar_windows_estimated_ns",
+    "mocap_sample_clock": "PtpTimeStamp high-resolution cadence affinely anchored to millisecond Windows TimeStamp",
+    "mocap_timestamp_fit": {
+      "source": "PtpTimeStamp affine fit to millisecond Windows TimeStamp",
+      "ptp_to_windows_slope": 0.9999783092542173,
+      "display_timestamp_fit_absolute_residual_ms": {
+        "median": 0.36263465881347656,
+        "p95": 1.0987043380737302,
+        "max": 2.2089481353759766
+      },
+      "ptp_vs_120hz_frame_counter_absolute_residual_us": {
+        "median": 1.6666671101006614,
+        "p95": 3.000000468489361,
+        "max": 3.666667424795378
+      },
+      "semantic_status": "high-resolution relative cadence observed; absolute PTP epoch contract was not delivered, so Windows TimeStamp remains the affine anchor"
+    }
+  },
+  "sides": {
+    "left": {
+      "scale": 0.9276215059435184,
+      "rotation_mocap_from_glove": [
+        [
+          -0.9795680360526102,
+          0.1283651064762895,
+          0.15481880435968898
+        ],
+        [
+          0.14527678808449124,
+          -0.08068861159829126,
+          0.9860953314980222
+        ],
+        [
+          0.13907234659660633,
+          0.9884390458686219,
+          0.0603915144241506
+        ]
+      ],
+      "fit_frame_count": 1275,
+      "source_fit_anchor_residual_mm": {
+        "median": 7.469068717932139,
+        "p95": 8.536657958848341
+      },
+      "rotation_mocap_root_local_from_glove_local": [
+        [
+          -0.9795680360526102,
+          0.1283651064762895,
+          0.15481880435968898
+        ],
+        [
+          0.14527678808449124,
+          -0.08068861159829126,
+          0.9860953314980222
+        ],
+        [
+          0.13907234659660633,
+          0.9884390458686219,
+          0.0603915144241506
+        ]
+      ]
+    },
+    "right": {
+      "scale": 0.9244824132677713,
+      "rotation_mocap_from_glove": [
+        [
+          -0.9820296508343406,
+          -0.13670387525759323,
+          -0.1301146239734031
+        ],
+        [
+          -0.12194111755651121,
+          -0.06658822874392985,
+          0.9903011519945923
+        ],
+        [
+          -0.14404210749379096,
+          0.9883714171718562,
+          0.0487217916998621
+        ]
+      ],
+      "fit_frame_count": 1275,
+      "source_fit_anchor_residual_mm": {
+        "median": 7.703768667209084,
+        "p95": 9.78048888706939
+      },
+      "rotation_mocap_root_local_from_glove_local": [
+        [
+          -0.9820296508343406,
+          -0.13670387525759323,
+          -0.1301146239734031
+        ],
+        [
+          -0.12194111755651121,
+          -0.06658822874392985,
+          0.9903011519945923
+        ],
+        [
+          -0.14404210749379096,
+          0.9883714171718562,
+          0.0487217916998621
+        ]
+      ]
+    }
+  },
+  "quaternion_semantics": "empirically verified active root-local-to-mocap-world",
+  "root_conditioning": {
+    "conditional_on_mocap_wrist_translation": true,
+    "conditional_on_mocap_wrist_orientation": true,
+    "target_finger_joints_used_in_fit": false,
+    "mocap_wrist_quaternion_fields": "GlobalQ_R/X/Y/Z",
+    "quaternion_storage_order": "wxyz",
+    "quaternion_semantics": "empirically verified active root-local-to-mocap-world",
+    "rotation_semantics": "active wrist-local to mocap-world",
+    "interpolation": "sign-continuous SLERP",
+    "glove_input": "root-relative local keypoints",
+    "claim_boundary": "calibrated glove articulation on a MOCAP wrist SE(3); not an independent glove wrist or full 6DoF measurement"
+  }
+}

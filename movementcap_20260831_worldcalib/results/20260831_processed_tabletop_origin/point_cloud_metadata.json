@@ -1,0 +1,79 @@
+{
+  "schema": "movementcap.approximate_world_point_cloud.v1",
+  "calibration": "/home/user/Project/intern/20260729-task/movementcap_ruler_worldcalib/results/20260831_processed_tabletop_origin/camera_to_world.json",
+  "source_depth": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/Depth.mp4",
+  "source_rgb": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_155410/rgbd_unpack/RGB.mp4",
+  "frame_index": 30,
+  "depth_decode": {
+    "mapping": "jet_index = slope_per_mm * depth_mm + intercept",
+    "slope_per_mm": 0.04936511610527823,
+    "intercept": -0.2938479665079783,
+    "millimetres_per_color_index": 20.25721965015449,
+    "candidate_table_pixels": 46056,
+    "robust_fit_pixels": 45305,
+    "table_fit_depth_error_mm_p50": 9.887365306814193,
+    "table_fit_depth_error_mm_p95": 29.82281058805669,
+    "warning": "This mapping recovers a lossy 8-bit preview, not original 16-bit depth. It is used only for the diagnostic point cloud."
+  },
+  "point_cloud": {
+    "point_count": 110319,
+    "world_bounds_min_xyz_mm": [
+      -2236.9940007275254,
+      -4067.632501384868,
+      -1623.9637276072267
+    ],
+    "world_bounds_max_xyz_mm": [
+      2259.8808223294545,
+      555.0766462860214,
+      621.2502256963937
+    ],
+    "table_candidate_count_within_60mm": 58216,
+    "table_world_z_median_mm": 0.4603750770328361,
+    "table_world_z_p95_absolute_mm": 40.12120004641042,
+    "files": [
+      "reference_approx_depth_camera_coordinates.ply",
+      "reference_approx_world_coordinates.ply",
+      "reference_approx_world_coordinates_with_axes.ply",
+      "world_axes_lines.ply",
+      "reference_approx_world_point_cloud_preview.png"
+    ],
+    "accuracy_warning": "Coordinates use depth recovered from a lossy 8-bit color preview; use this cloud for visual review only."
+  },
+  "coordinate_system": {
+    "origin": "CS-400 black vertex-hole axis projected vertically onto the tabletop",
+    "origin_height_mode": "tabletop",
+    "tabletop_world_z_mm": 0.0,
+    "marker_plane_world_z_mm": 45.0,
+    "x_axis": "from origin outward along the CS-400 long arm",
+    "y_axis": "from origin outward along the CS-400 short arm",
+    "z_axis": "tabletop normal, upward",
+    "handedness": "right_handed",
+    "units": "millimetres"
+  },
+  "depth_camera_to_world_matrix_4x4_mm": [
+    [
+      -0.9909010120482366,
+      0.025284651614035123,
+      0.08610851743256882,
+      -68.46846322123689
+    ],
+    [
+      -0.06578525177099973,
+      0.4418751303059278,
+      -0.8946357868753222,
+      857.7977564138847
+    ],
+    [
+      -0.0603476797992377,
+      -0.896720131233916,
+      -0.4384200403599071,
+      539.8513254628155
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ]
+}

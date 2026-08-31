@@ -1,0 +1,133 @@
+{
+  "schema": "gt_calib.no_glove_world_calibration_video.v1",
+  "status": "calibration_evidence_complete",
+  "frames": 98,
+  "world_coordinate_system": {
+    "origin": "CS-400 black vertex-hole axis projected vertically onto the tabletop",
+    "origin_height_mode": "tabletop",
+    "tabletop_world_z_mm": 0.0,
+    "marker_plane_world_z_mm": 45.0,
+    "x_axis": "from origin outward along the CS-400 long arm",
+    "y_axis": "from origin outward along the CS-400 short arm",
+    "z_axis": "tabletop normal, upward",
+    "handedness": "right_handed",
+    "units": "millimetres"
+  },
+  "rgb_pnp_reprojection_rms_px": 0.294349711299234,
+  "rgb_pnp_reprojection_max_px": 0.40748538723924693,
+  "fixed_camera_validation": [
+    {
+      "recording": "camera_glove_recording_20260831_161402",
+      "rgb_video": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_161402/rgbd_unpack/RGB.mp4",
+      "frame_index": 100,
+      "frame_count": 1868,
+      "diagnostic_image": "validation_camera_glove_recording_20260831_161402_world_axes.png",
+      "fixed_camera_visual_stability": {
+        "orb_good_matches": 2029,
+        "ransac_inliers": 1700,
+        "homography_reference_to_target": [
+          [
+            1.0012986356315772,
+            0.0003934918769467817,
+            -0.9567127134356025
+          ],
+          [
+            3.691688204479479e-05,
+            1.000971577748828,
+            -0.325295268955123
+          ],
+          [
+            1.5647521273747692e-07,
+            5.446267439471149e-07,
+            1.0
+          ]
+        ],
+        "probe_displacement_px": [
+          1.0105029344558716,
+          0.992030143737793,
+          0.3038388788700104,
+          0.5391961336135864,
+          0.07603973895311356
+        ],
+        "max_probe_displacement_px": 1.0105029344558716,
+        "center_displacement_px": 0.07603973895311356
+      }
+    },
+    {
+      "recording": "camera_glove_recording_20260831_161610",
+      "rgb_video": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_161610/rgbd_unpack/RGB.mp4",
+      "frame_index": 100,
+      "frame_count": 2620,
+      "diagnostic_image": "validation_camera_glove_recording_20260831_161610_world_axes.png",
+      "fixed_camera_visual_stability": {
+        "orb_good_matches": 2037,
+        "ransac_inliers": 1686,
+        "homography_reference_to_target": [
+          [
+            1.0029284141673136,
+            0.0014234805772404212,
+            -1.870796986223984
+          ],
+          [
+            0.0004971927660289417,
+            1.0017125673164289,
+            -0.6666966529883417
+          ],
+          [
+            8.585850464908315e-07,
+            8.769839050431662e-07,
+            0.9999999999999999
+          ]
+        ],
+        "probe_displacement_px": [
+          1.9860427379608154,
+          0.6525353193283081,
+          0.7292938828468323,
+          0.370851993560791,
+          0.46393445134162903
+        ],
+        "max_probe_displacement_px": 1.9860427379608154,
+        "center_displacement_px": 0.46393445134162903
+      }
+    },
+    {
+      "recording": "camera_glove_recording_20260831_161912",
+      "rgb_video": "/home/user/Project/intern/20260729-task/20260831_processed/thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/RGB.mp4",
+      "frame_index": 100,
+      "frame_count": 1982,
+      "diagnostic_image": "validation_camera_glove_recording_20260831_161912_world_axes.png",
+      "fixed_camera_visual_stability": {
+        "orb_good_matches": 2069,
+        "ransac_inliers": 1765,
+        "homography_reference_to_target": [
+          [
+            1.0022538989558494,
+            0.0005630106690680394,
+            -1.6578404240152151
+          ],
+          [
+            0.0002664714597204258,
+            1.0007325993849334,
+            -0.44850000436674675
+          ],
+          [
+            5.027493957910457e-07,
+            -1.147026414196085e-07,
+            1.0
+          ]
+        ],
+        "probe_displacement_px": [
+          1.7174361944198608,
+          0.8176008462905884,
+          1.6604267358779907,
+          1.1531237363815308,
+          0.40660643577575684
+        ],
+        "max_probe_displacement_px": 1.7174361944198608,
+        "center_displacement_px": 0.40660643577575684
+      }
+    }
+  ],
+  "depth_policy": "Depth.mp4 is an 8-bit lossy preview and was not used for the metric RGB PnP pose",
+  "evaluation_scope": "internal calibration reprojection and fixed-camera consistency; not independent dynamic hand GT accuracy"
+}

@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="620" viewBox="0 0 1600 620">
+  <defs>
+    <style>
+      text { font-family: "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; fill: #172033; }
+      .title { font-size: 34px; font-weight: 700; }
+      .head { font-size: 23px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #536079; }
+      .box { fill: #ffffff; stroke-width: 3; rx: 18; }
+      .arrow { stroke: #8b96aa; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#8b96aa"/>
+    </marker>
+    <linearGradient id="bg" x1="0" x2="1">
+      <stop offset="0" stop-color="#f6f9ff"/>
+      <stop offset="1" stop-color="#f8fffb"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="620" fill="url(#bg)"/>
+  <text x="64" y="58" class="title">MOCAP 与手套是两条不同的数据链，最终投到同一张 RGB 图上</text>
+
+  <rect x="55" y="110" width="250" height="155" class="box" stroke="#e9b318"/>
+  <text x="180" y="150" text-anchor="middle" class="head">光学动捕系统</text>
+  <text x="180" y="187" text-anchor="middle" class="body">动捕相机 + Marker</text>
+  <text x="180" y="218" text-anchor="middle" class="small">真实空间观测</text>
+  <text x="180" y="244" text-anchor="middle" class="small">不是 RGB 视频检测</text>
+
+  <rect x="370" y="110" width="250" height="155" class="box" stroke="#e9b318"/>
+  <text x="495" y="150" text-anchor="middle" class="head">CMAvatar 解算</text>
+  <text x="495" y="187" text-anchor="middle" class="body">Marker + 骨骼模型</text>
+  <text x="495" y="218" text-anchor="middle" class="small">得到连续 3D Skeleton</text>
+
+  <rect x="685" y="110" width="250" height="155" class="box" stroke="#e9b318"/>
+  <text x="810" y="150" text-anchor="middle" class="head">Human.cma</text>
+  <text x="810" y="187" text-anchor="middle" class="body">每手 21 点，单位 mm</text>
+  <text x="810" y="218" text-anchor="middle" class="small">mocap world 坐标</text>
+
+  <rect x="1000" y="110" width="250" height="155" class="box" stroke="#5e83ef"/>
+  <text x="1125" y="150" text-anchor="middle" class="head">同步 + 相机外参</text>
+  <text x="1125" y="187" text-anchor="middle" class="body">BAG timestamp</text>
+  <text x="1125" y="218" text-anchor="middle" class="small">world → color camera</text>
+
+  <rect x="1315" y="110" width="230" height="155" class="box" stroke="#e9b318"/>
+  <text x="1430" y="150" text-anchor="middle" class="head">黄色骨架</text>
+  <text x="1430" y="187" text-anchor="middle" class="body">MOCAP 的可视化</text>
+  <text x="1430" y="218" text-anchor="middle" class="small">投影到 RGB 像素</text>
+
+  <path d="M305 188 H360" class="arrow"/><path d="M620 188 H675" class="arrow"/>
+  <path d="M935 188 H990" class="arrow"/><path d="M1250 188 H1305" class="arrow"/>
+
+  <rect x="55" y="355" width="250" height="155" class="box" stroke="#38b978"/>
+  <text x="180" y="395" text-anchor="middle" class="head">手套 IMU</text>
+  <text x="180" y="432" text-anchor="middle" class="body">腕部/手指传感器</text>
+  <text x="180" y="463" text-anchor="middle" class="small">另一套独立输入</text>
+
+  <rect x="370" y="355" width="250" height="155" class="box" stroke="#38b978"/>
+  <text x="495" y="395" text-anchor="middle" class="head">Glove solver</text>
+  <text x="495" y="432" text-anchor="middle" class="body">姿态 + 手部运动学</text>
+  <text x="495" y="463" text-anchor="middle" class="small">每手 20 点</text>
+
+  <rect x="685" y="355" width="250" height="155" class="box" stroke="#38b978"/>
+  <text x="810" y="395" text-anchor="middle" class="head">Keypoints CSV</text>
+  <text x="810" y="432" text-anchor="middle" class="body">腕部平移恒为 0</text>
+  <text x="810" y="463" text-anchor="middle" class="small">不能独立落到视频位置</text>
+
+  <rect x="1000" y="355" width="250" height="155" class="box" stroke="#38b978"/>
+  <text x="1125" y="395" text-anchor="middle" class="head">固定配准</text>
+  <text x="1125" y="432" text-anchor="middle" class="body">借用 MOCAP wrist 平移</text>
+  <text x="1125" y="463" text-anchor="middle" class="small">每段固定 R + scale</text>
+
+  <rect x="1315" y="355" width="230" height="155" class="box" stroke="#38b978"/>
+  <text x="1430" y="395" text-anchor="middle" class="head">绿色骨架</text>
+  <text x="1430" y="432" text-anchor="middle" class="body">GLOVE 的可视化</text>
+  <text x="1430" y="463" text-anchor="middle" class="small">观察姿态/手形差异</text>
+
+  <path d="M305 433 H360" class="arrow"/><path d="M620 433 H675" class="arrow"/>
+  <path d="M935 433 H990" class="arrow"/><path d="M1250 433 H1305" class="arrow"/>
+  <path d="M810 265 V327 H1125 V345" class="arrow"/>
+
+  <rect x="390" y="552" width="820" height="45" rx="22" fill="#fff4d6" stroke="#edc34f"/>
+  <text x="800" y="582" text-anchor="middle" class="body">黄绿距离 = 共享 wrist、同段固定配准后的一致性差异；不是手套独立绝对精度</text>
+</svg>

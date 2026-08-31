@@ -1,0 +1,993 @@
+{
+  "schema": "gt-calib.review-site.v2",
+  "generatedAt": "2026-08-31T13:49:33+00:00",
+  "reportDate": "2026-08-31",
+  "status": "verified_exposure_time_alignment_with_full_frame_rgb_identity",
+  "datasetIds": [
+    "ds-20260829-take000",
+    "ds-20260829-take001",
+    "ds-20260829-take002"
+  ],
+  "protocol": {
+    "rgbFrameIdentity": "BAG color message i 与 MP4 frame i 必须通过解码内容及 ±2 帧错位反证 gate",
+    "cameraTimestamp": "每行 color_device_timestamp_us 对应 RGB 采集；逐行减去 capture-to-poll 延迟",
+    "mocapTimestamp": "PtpTimeStamp 提供高分辨率相对节拍；对 Windows TimeStamp 做 affine anchor",
+    "interpolation": "在相机曝光时刻对 120 Hz MOCAP 做线性位置插值；不做 per-take magic offset",
+    "fit": "Take 01 / Take_000",
+    "freeze": "每只手一个 wrist-local canonical R + uniform scale",
+    "rootSource": "目标 Take 的 MOCAP wrist position + Human GlobalQ",
+    "articulationSource": "目标 Take 的 glove root-local 20 点",
+    "evaluate": "冻结参数后回顾性评估 Take 02 validation + Take 03 test/stress；目标 finger joints 不参与拟合",
+    "metricFrame": "MOCAP-wrist SE(3)-conditioned root-normalized",
+    "gate": "25 ms bracketing-source interpolation span"
+  },
+  "headline": "修正约 255 ms capture→poll 延迟后，三段视频运动与 MOCAP 在零偏移处相关性达到 0.876–0.899。",
+  "primaryFinding": {
+    "captureLatencyMedianRangeMs": [
+      254.008,
+      255.25
+    ],
+    "legacyZeroLagCorrelationRange": [
+      0.3947,
+      0.6261
+    ],
+    "correctedZeroLagCorrelationRange": [
+      0.8761,
+      0.8987
+    ],
+    "residualPeakAdjustmentMs": [
+      10,
+      16,
+      17
+    ],
+    "residualWasApplied": false
+  },
+  "mocapTakes": [
+    {
+      "id": "take-000",
+      "segment": "01_210814_Take_000",
+      "label": "Take 01",
+      "title": "后腕模块 proxy · 1748 帧动作匹配",
+      "role": "calibration",
+      "roleZh": "标定集",
+      "summary": "每手原始 21 joints 完全不变；正式视频里带白色中心的同侧彩色圆点是 rear wrist module proxy，只用于 VIZ、不是 GT。去除约 255 ms capture→poll 延迟后，动作仍按同一逐帧映射投影。",
+      "variant": "mocap",
+      "badgeLabel": "REAR WRIST PROXY · VIZ-ONLY",
+      "video": "/media/take-000-mocap.mp4",
+      "poster": "/media/take-000-mocap-contact.jpg",
+      "rawVideoDownload": "/media/take-000-mocap-raw.mp4",
+      "rawPosterDownload": "/media/take-000-mocap-raw-contact.jpg",
+      "metricsDownload": "/downloads/take-000-mocap-alignment.metrics.json",
+      "alignmentDownload": "/downloads/take-000-mocap-frame-map.csv",
+      "visualizationOnly": true,
+      "rearMountProxyEnabled": true,
+      "rearMountProxyScale": 0.8,
+      "deliveredJointCountPerHand": 21,
+      "original21JointPositionsModified": false,
+      "additionalGroundTruthJoint": false,
+      "alignmentIdenticalToRaw21JointView": true,
+      "validFrames": 1748,
+      "synchronizedFrames": 1748,
+      "coveragePercent": 100.0,
+      "captureLatencyMedianMs": 255.103,
+      "captureLatencyP95Ms": 270.295,
+      "nearestMedianMs": 2.091,
+      "nearestP95Ms": 3.96,
+      "visualLegacyCorr": 0.6261,
+      "visualCorrectedCorr": 0.8761,
+      "visualGain": 0.2501,
+      "residualLagMs": 16,
+      "clockUncertaintyMs": 0.65,
+      "ptpFitP95Ms": 1.099,
+      "wristInsidePercent": 100.0,
+      "timecodeExactPercent": 100.0,
+      "contentFullFrame": true,
+      "contentSampleCount": 1815,
+      "contentSourceFrameCount": 1815,
+      "contentEvidenceLabel": "全 1815 帧",
+      "contentSameIndexBestCount": 1764,
+      "contentSameIndexBestPercent": 97.19,
+      "contentDistinguishableCount": 1715,
+      "contentDistinguishableSameIndexCount": 1715,
+      "contentMseMax": 4.736,
+      "contentPsnrMinDb": 41.376,
+      "contentDhashMax": 3,
+      "contentBestGlobalOffsetFrames": 0,
+      "cards": [
+        {
+          "label": "视觉相位 QA",
+          "primary": 0.876,
+          "primaryLabel": "corrected zero-lag corr",
+          "secondary": 16,
+          "secondaryLabel": "残余峰值 · ms（不回写）"
+        },
+        {
+          "label": "时间链证据",
+          "primary": 100.0,
+          "primaryLabel": "共同区间 MOCAP coverage · %",
+          "secondary": 100.0,
+          "secondaryLabel": "timecode ↔ BAG exact · %"
+        },
+        {
+          "label": "RGB 内容同帧 gate",
+          "primary": "1815/1815",
+          "primaryLabel": "全帧 BAG message i ↔ MP4 frame i",
+          "secondary": "1715/1715",
+          "secondaryLabel": "可辨帧 best offset = 0"
+        }
+      ]
+    },
+    {
+      "id": "take-001",
+      "segment": "02_210955_Take_001",
+      "label": "Take 02",
+      "title": "后腕模块 proxy · 1805 帧动作匹配",
+      "role": "validation_holdout",
+      "roleZh": "验证留出集",
+      "summary": "每手原始 21 joints 完全不变；正式视频里带白色中心的同侧彩色圆点是 rear wrist module proxy，只用于 VIZ、不是 GT。共同区间每帧沿用原 CMAvatar bracket，曝光时刻相关性约 0.90。",
+      "variant": "mocap",
+      "badgeLabel": "REAR WRIST PROXY · VIZ-ONLY",
+      "video": "/media/take-001-mocap.mp4",
+      "poster": "/media/take-001-mocap-contact.jpg",
+      "rawVideoDownload": "/media/take-001-mocap-raw.mp4",
+      "rawPosterDownload": "/media/take-001-mocap-raw-contact.jpg",
+      "metricsDownload": "/downloads/take-001-mocap-alignment.metrics.json",
+      "alignmentDownload": "/downloads/take-001-mocap-frame-map.csv",
+      "visualizationOnly": true,
+      "rearMountProxyEnabled": true,
+      "rearMountProxyScale": 0.8,
+      "deliveredJointCountPerHand": 21,
+      "original21JointPositionsModified": false,
+      "additionalGroundTruthJoint": false,
+      "alignmentIdenticalToRaw21JointView": true,
+      "validFrames": 1805,
+      "synchronizedFrames": 1805,
+      "coveragePercent": 100.0,
+      "captureLatencyMedianMs": 255.25,
+      "captureLatencyP95Ms": 270.358,
+      "nearestMedianMs": 2.1,
+      "nearestP95Ms": 3.958,
+      "visualLegacyCorr": 0.4876,
+      "visualCorrectedCorr": 0.8987,
+      "visualGain": 0.411,
+      "residualLagMs": 10,
+      "clockUncertaintyMs": 0.662,
+      "ptpFitP95Ms": 1.037,
+      "wristInsidePercent": 100.0,
+      "timecodeExactPercent": 100.0,
+      "contentFullFrame": true,
+      "contentSampleCount": 1812,
+      "contentSourceFrameCount": 1812,
+      "contentEvidenceLabel": "全 1812 帧",
+      "contentSameIndexBestCount": 1768,
+      "contentSameIndexBestPercent": 97.57,
+      "contentDistinguishableCount": 1729,
+      "contentDistinguishableSameIndexCount": 1729,
+      "contentMseMax": 4.626,
+      "contentPsnrMinDb": 41.479,
+      "contentDhashMax": 3,
+      "contentBestGlobalOffsetFrames": 0,
+      "cards": [
+        {
+          "label": "视觉相位 QA",
+          "primary": 0.899,
+          "primaryLabel": "corrected zero-lag corr",
+          "secondary": 10,
+          "secondaryLabel": "残余峰值 · ms（不回写）"
+        },
+        {
+          "label": "时间链证据",
+          "primary": 100.0,
+          "primaryLabel": "共同区间 MOCAP coverage · %",
+          "secondary": 100.0,
+          "secondaryLabel": "timecode ↔ BAG exact · %"
+        },
+        {
+          "label": "RGB 内容同帧 gate",
+          "primary": "1812/1812",
+          "primaryLabel": "全帧 BAG message i ↔ MP4 frame i",
+          "secondary": "1729/1729",
+          "secondaryLabel": "可辨帧 best offset = 0"
+        }
+      ]
+    },
+    {
+      "id": "take-002",
+      "segment": "03_211139_Take_002",
+      "label": "Take 03",
+      "title": "后腕模块 proxy · 1800 帧动作匹配",
+      "role": "test_stress_holdout",
+      "roleZh": "回顾性测试 / 压力留出集",
+      "summary": "每手原始 21 joints 完全不变；正式视频里带白色中心的同侧彩色圆点是 rear wrist module proxy，只用于 VIZ、不是 GT。旧 poll-time 相关性约 0.39，曝光修正后约 0.88。",
+      "variant": "mocap",
+      "badgeLabel": "REAR WRIST PROXY · VIZ-ONLY",
+      "video": "/media/take-002-mocap.mp4",
+      "poster": "/media/take-002-mocap-contact.jpg",
+      "rawVideoDownload": "/media/take-002-mocap-raw.mp4",
+      "rawPosterDownload": "/media/take-002-mocap-raw-contact.jpg",
+      "metricsDownload": "/downloads/take-002-mocap-alignment.metrics.json",
+      "alignmentDownload": "/downloads/take-002-mocap-frame-map.csv",
+      "visualizationOnly": true,
+      "rearMountProxyEnabled": true,
+      "rearMountProxyScale": 0.8,
+      "deliveredJointCountPerHand": 21,
+      "original21JointPositionsModified": false,
+      "additionalGroundTruthJoint": false,
+      "alignmentIdenticalToRaw21JointView": true,
+      "validFrames": 1800,
+      "synchronizedFrames": 1800,
+      "coveragePercent": 100.0,
+      "captureLatencyMedianMs": 254.008,
+      "captureLatencyP95Ms": 269.719,
+      "nearestMedianMs": 2.067,
+      "nearestP95Ms": 3.955,
+      "visualLegacyCorr": 0.3947,
+      "visualCorrectedCorr": 0.8819,
+      "visualGain": 0.4872,
+      "residualLagMs": 17,
+      "clockUncertaintyMs": 0.641,
+      "ptpFitP95Ms": 0.981,
+      "wristInsidePercent": 100.0,
+      "timecodeExactPercent": 100.0,
+      "contentFullFrame": true,
+      "contentSampleCount": 1810,
+      "contentSourceFrameCount": 1810,
+      "contentEvidenceLabel": "全 1810 帧",
+      "contentSameIndexBestCount": 1809,
+      "contentSameIndexBestPercent": 99.94,
+      "contentDistinguishableCount": 1794,
+      "contentDistinguishableSameIndexCount": 1794,
+      "contentMseMax": 4.44,
+      "contentPsnrMinDb": 41.657,
+      "contentDhashMax": 3,
+      "contentBestGlobalOffsetFrames": 0,
+      "cards": [
+        {
+          "label": "视觉相位 QA",
+          "primary": 0.882,
+          "primaryLabel": "corrected zero-lag corr",
+          "secondary": 17,
+          "secondaryLabel": "残余峰值 · ms（不回写）"
+        },
+        {
+          "label": "时间链证据",
+          "primary": 100.0,
+          "primaryLabel": "共同区间 MOCAP coverage · %",
+          "secondary": 100.0,
+          "secondaryLabel": "timecode ↔ BAG exact · %"
+        },
+        {
+          "label": "RGB 内容同帧 gate",
+          "primary": "1810/1810",
+          "primaryLabel": "全帧 BAG message i ↔ MP4 frame i",
+          "secondary": "1794/1794",
+          "secondaryLabel": "可辨帧 best offset = 0"
+        }
+      ]
+    }
+  ],
+  "depthTakes": [
+    {
+      "id": "take-000",
+      "segment": "01_210814_Take_000",
+      "label": "Take 01",
+      "title": "1747 帧 raw depth–MOCAP 投影",
+      "role": "fixed_depth_pose_review",
+      "roleZh": "00 外参冻结后的 review",
+      "summary": "直接解码 mono16 毫米深度，并在每个 depth 自身采集时刻插值 MOCAP；本视图只检查时序、SE(3) 投影和深度可用覆盖。",
+      "variant": "depth",
+      "badgeLabel": "00-FROZEN DEPTH POSE REVIEW",
+      "coverageLabel": "共同区间时序覆盖",
+      "video": "/media/take-000-depth.mp4",
+      "poster": "/media/take-000-depth-contact.jpg",
+      "metricsDownload": "/downloads/take-000-depth-mocap.metrics.json",
+      "alignmentDownload": "/downloads/take-000-depth-frame-map.csv",
+      "validFrames": 1747,
+      "synchronizedFrames": 1747,
+      "coveragePercent": 100.0,
+      "depthMessageCount": 1816,
+      "rgbMessageCount": 1815,
+      "depthExtraTailFrames": 1,
+      "alignmentRows": 1747,
+      "firstSourceDepthFrame": 60,
+      "lastSourceDepthFrame": 1806,
+      "depthRgbMedianMs": 1.311,
+      "depthRgbP95Ms": 1.317,
+      "nearestMedianMs": 2.088,
+      "nearestP95Ms": 3.959,
+      "bracketMaxMs": 8.334,
+      "clockUncertaintyMs": 0.65,
+      "insideDepthFramePercent": 100.0,
+      "nonzeroDepthAtJointPercent": 76.43,
+      "rawValidPixelMedianPercent": 61.46,
+      "rotationDeterminant": 1.0,
+      "rotationOrthogonalityError": "2.220e-16",
+      "timestampGatesPassed": true,
+      "se3GatesPassed": true,
+      "skeletonToSurfaceAccuracyMeasured": false,
+      "coverageInterpretation": "nonzero depth coverage 是 projected joint pixel 上的传感器可用率，不是 pose accuracy。",
+      "cards": [
+        {
+          "label": "Depth 时间同步",
+          "primary": 2.088,
+          "primaryLabel": "nearest MOCAP median · ms",
+          "secondary": 8.334,
+          "secondaryLabel": "bracket max · ms"
+        },
+        {
+          "label": "投影 / 非零深度诊断",
+          "primary": 100.0,
+          "primaryLabel": "投影在 640×576 画内 · %",
+          "secondary": 76.43,
+          "secondaryLabel": "joint pixel 非零深度 · %（非精度）"
+        },
+        {
+          "label": "冻结 Depth SE(3)",
+          "primary": "1.000000",
+          "primaryLabel": "rotation determinant",
+          "secondary": "2.220e-16",
+          "secondaryLabel": "max |RᵀR−I|"
+        }
+      ]
+    },
+    {
+      "id": "take-001",
+      "segment": "02_210955_Take_001",
+      "label": "Take 02",
+      "title": "1804 帧 raw depth–MOCAP 投影",
+      "role": "fixed_depth_pose_review",
+      "roleZh": "00 外参冻结后的 review",
+      "summary": "完整共同区间使用 depth 自身时间戳；骨架落在 raw metric depth 上仅用于检查固定外参与运动一致性。",
+      "variant": "depth",
+      "badgeLabel": "00-FROZEN DEPTH POSE REVIEW",
+      "coverageLabel": "共同区间时序覆盖",
+      "video": "/media/take-001-depth.mp4",
+      "poster": "/media/take-001-depth-contact.jpg",
+      "metricsDownload": "/downloads/take-001-depth-mocap.metrics.json",
+      "alignmentDownload": "/downloads/take-001-depth-frame-map.csv",
+      "validFrames": 1804,
+      "synchronizedFrames": 1804,
+      "coveragePercent": 100.0,
+      "depthMessageCount": 1812,
+      "rgbMessageCount": 1812,
+      "depthExtraTailFrames": 0,
+      "alignmentRows": 1804,
+      "firstSourceDepthFrame": 0,
+      "lastSourceDepthFrame": 1803,
+      "depthRgbMedianMs": 1.311,
+      "depthRgbP95Ms": 1.318,
+      "nearestMedianMs": 2.085,
+      "nearestP95Ms": 3.958,
+      "bracketMaxMs": 8.334,
+      "clockUncertaintyMs": 0.662,
+      "insideDepthFramePercent": 100.0,
+      "nonzeroDepthAtJointPercent": 57.44,
+      "rawValidPixelMedianPercent": 60.19,
+      "rotationDeterminant": 1.0,
+      "rotationOrthogonalityError": "2.220e-16",
+      "timestampGatesPassed": true,
+      "se3GatesPassed": true,
+      "skeletonToSurfaceAccuracyMeasured": false,
+      "coverageInterpretation": "nonzero depth coverage 是 projected joint pixel 上的传感器可用率，不是 pose accuracy。",
+      "cards": [
+        {
+          "label": "Depth 时间同步",
+          "primary": 2.085,
+          "primaryLabel": "nearest MOCAP median · ms",
+          "secondary": 8.334,
+          "secondaryLabel": "bracket max · ms"
+        },
+        {
+          "label": "投影 / 非零深度诊断",
+          "primary": 100.0,
+          "primaryLabel": "投影在 640×576 画内 · %",
+          "secondary": 57.44,
+          "secondaryLabel": "joint pixel 非零深度 · %（非精度）"
+        },
+        {
+          "label": "冻结 Depth SE(3)",
+          "primary": "1.000000",
+          "primaryLabel": "rotation determinant",
+          "secondary": "2.220e-16",
+          "secondaryLabel": "max |RᵀR−I|"
+        }
+      ]
+    },
+    {
+      "id": "take-002",
+      "segment": "03_211139_Take_002",
+      "label": "Take 03",
+      "title": "1799 帧 raw depth–MOCAP 投影",
+      "role": "fixed_depth_pose_review",
+      "roleZh": "00 外参冻结后的 review",
+      "summary": "完整共同区间按 depth timestamp 映射到 CMAvatar；非零深度覆盖只反映传感器可用像素，不代表手部位姿精度。",
+      "variant": "depth",
+      "badgeLabel": "00-FROZEN DEPTH POSE REVIEW",
+      "coverageLabel": "共同区间时序覆盖",
+      "video": "/media/take-002-depth.mp4",
+      "poster": "/media/take-002-depth-contact.jpg",
+      "metricsDownload": "/downloads/take-002-depth-mocap.metrics.json",
+      "alignmentDownload": "/downloads/take-002-depth-frame-map.csv",
+      "validFrames": 1799,
+      "synchronizedFrames": 1799,
+      "coveragePercent": 100.0,
+      "depthMessageCount": 1810,
+      "rgbMessageCount": 1810,
+      "depthExtraTailFrames": 0,
+      "alignmentRows": 1799,
+      "firstSourceDepthFrame": 3,
+      "lastSourceDepthFrame": 1801,
+      "depthRgbMedianMs": 1.31,
+      "depthRgbP95Ms": 1.317,
+      "nearestMedianMs": 2.04,
+      "nearestP95Ms": 3.955,
+      "bracketMaxMs": 8.334,
+      "clockUncertaintyMs": 0.641,
+      "insideDepthFramePercent": 100.0,
+      "nonzeroDepthAtJointPercent": 64.55,
+      "rawValidPixelMedianPercent": 59.63,
+      "rotationDeterminant": 1.0,
+      "rotationOrthogonalityError": "2.220e-16",
+      "timestampGatesPassed": true,
+      "se3GatesPassed": true,
+      "skeletonToSurfaceAccuracyMeasured": false,
+      "coverageInterpretation": "nonzero depth coverage 是 projected joint pixel 上的传感器可用率，不是 pose accuracy。",
+      "cards": [
+        {
+          "label": "Depth 时间同步",
+          "primary": 2.04,
+          "primaryLabel": "nearest MOCAP median · ms",
+          "secondary": 8.334,
+          "secondaryLabel": "bracket max · ms"
+        },
+        {
+          "label": "投影 / 非零深度诊断",
+          "primary": 100.0,
+          "primaryLabel": "投影在 640×576 画内 · %",
+          "secondary": 64.55,
+          "secondaryLabel": "joint pixel 非零深度 · %（非精度）"
+        },
+        {
+          "label": "冻结 Depth SE(3)",
+          "primary": "1.000000",
+          "primaryLabel": "rotation determinant",
+          "secondary": "2.220e-16",
+          "secondaryLabel": "max |RᵀR−I|"
+        }
+      ]
+    }
+  ],
+  "takes": [
+    {
+      "id": "take-000",
+      "segment": "01_210814_Take_000",
+      "label": "Take 01",
+      "title": "canonical 配准来源，不是独立测试",
+      "role": "calibration",
+      "roleZh": "标定集",
+      "summary": "本段在 wrist-local frame 拟合 canonical rotation + scale；它不是独立测试。",
+      "variant": "fusion",
+      "video": "/media/take-000-fusion.mp4",
+      "poster": "/media/take-000-fusion-contact.jpg",
+      "metricsDownload": "/downloads/take-000-fusion-strict25.metrics.json",
+      "validFrames": 1275,
+      "synchronizedFrames": 1748,
+      "coveragePercent": 72.9,
+      "nearestMocapMedianMs": 2.091,
+      "nearestMocapP95Ms": 3.96,
+      "maxInterpolationGapMs": 25.0,
+      "registrationSource": "01_210814_Take_000",
+      "targetUsedInFit": true,
+      "isCrossTakeHoldout": false,
+      "left": {
+        "jointMedianMm": 13.44,
+        "jointP95Mm": 83.53,
+        "tipMedianMm": 22.29,
+        "frameMpjpeMeanMm": 23.46
+      },
+      "right": {
+        "jointMedianMm": 11.94,
+        "jointP95Mm": 85.83,
+        "tipMedianMm": 19.42,
+        "frameMpjpeMeanMm": 23.45
+      },
+      "cards": [
+        {
+          "label": "左手",
+          "primary": 13.44,
+          "primaryLabel": "joint median · mm",
+          "secondary": 22.29,
+          "secondaryLabel": "tip median · mm"
+        },
+        {
+          "label": "右手",
+          "primary": 11.94,
+          "primaryLabel": "joint median · mm",
+          "secondary": 19.42,
+          "secondaryLabel": "tip median · mm"
+        }
+      ]
+    },
+    {
+      "id": "take-001",
+      "segment": "02_210955_Take_001",
+      "label": "Take 02",
+      "title": "冻结参数后的独立 validation holdout",
+      "role": "validation_holdout",
+      "roleZh": "验证留出集",
+      "summary": "冻结 Take 01 canonical 参数；MOCAP wrist SE(3) 条件下左右手 median 均约 11.5 mm。",
+      "variant": "fusion",
+      "video": "/media/take-001-fusion.mp4",
+      "poster": "/media/take-001-fusion-contact.jpg",
+      "metricsDownload": "/downloads/take-001-fusion-strict25.metrics.json",
+      "validFrames": 1324,
+      "synchronizedFrames": 1805,
+      "coveragePercent": 73.4,
+      "nearestMocapMedianMs": 2.1,
+      "nearestMocapP95Ms": 3.958,
+      "maxInterpolationGapMs": 25.0,
+      "registrationSource": "01_210814_Take_000",
+      "targetUsedInFit": false,
+      "isCrossTakeHoldout": true,
+      "left": {
+        "jointMedianMm": 11.49,
+        "jointP95Mm": 86.06,
+        "tipMedianMm": 18.05,
+        "frameMpjpeMeanMm": 23.0
+      },
+      "right": {
+        "jointMedianMm": 11.39,
+        "jointP95Mm": 88.08,
+        "tipMedianMm": 18.88,
+        "frameMpjpeMeanMm": 23.61
+      },
+      "cards": [
+        {
+          "label": "左手",
+          "primary": 11.49,
+          "primaryLabel": "joint median · mm",
+          "secondary": 18.05,
+          "secondaryLabel": "tip median · mm"
+        },
+        {
+          "label": "右手",
+          "primary": 11.39,
+          "primaryLabel": "joint median · mm",
+          "secondary": 18.88,
+          "secondaryLabel": "tip median · mm"
+        }
+      ]
+    },
+    {
+      "id": "take-002",
+      "segment": "03_211139_Take_002",
+      "label": "Take 03",
+      "title": "中位数稳定，但 P95 长尾仍高",
+      "role": "test_stress_holdout",
+      "roleZh": "回顾性测试 / 压力留出集",
+      "summary": "冻结 Take 01 canonical 参数；median 稳定在 13 mm 左右，但 P95 长尾仍高。",
+      "variant": "fusion",
+      "video": "/media/take-002-fusion.mp4",
+      "poster": "/media/take-002-fusion-contact.jpg",
+      "metricsDownload": "/downloads/take-002-fusion-strict25.metrics.json",
+      "validFrames": 1219,
+      "synchronizedFrames": 1800,
+      "coveragePercent": 67.7,
+      "nearestMocapMedianMs": 2.067,
+      "nearestMocapP95Ms": 3.955,
+      "maxInterpolationGapMs": 25.0,
+      "registrationSource": "01_210814_Take_000",
+      "targetUsedInFit": false,
+      "isCrossTakeHoldout": true,
+      "left": {
+        "jointMedianMm": 12.94,
+        "jointP95Mm": 95.44,
+        "tipMedianMm": 23.27,
+        "frameMpjpeMeanMm": 28.03
+      },
+      "right": {
+        "jointMedianMm": 13.19,
+        "jointP95Mm": 97.44,
+        "tipMedianMm": 26.38,
+        "frameMpjpeMeanMm": 28.68
+      },
+      "cards": [
+        {
+          "label": "左手",
+          "primary": 12.94,
+          "primaryLabel": "joint median · mm",
+          "secondary": 23.27,
+          "secondaryLabel": "tip median · mm"
+        },
+        {
+          "label": "右手",
+          "primary": 13.19,
+          "primaryLabel": "joint median · mm",
+          "secondary": 26.38,
+          "secondaryLabel": "tip median · mm"
+        }
+      ]
+    }
+  ],
+  "diagnosticTakes": [
+    {
+      "id": "take-000",
+      "segment": "01_210814_Take_000",
+      "label": "Take 01",
+      "title": "旧模式配准来源，不是独立测试",
+      "role": "calibration",
+      "roleZh": "标定集",
+      "summary": "保留 glove wrist orientation，只共享 MOCAP wrist translation 的旧诊断基线。",
+      "variant": "diagnostic",
+      "video": "/media/take-000-diagnostic.mp4",
+      "poster": "/media/take-000-diagnostic-contact.jpg",
+      "metricsDownload": "/downloads/take-000-diagnostic-strict25.metrics.json",
+      "validFrames": 1275,
+      "synchronizedFrames": 1748,
+      "coveragePercent": 72.9,
+      "nearestMocapMedianMs": 2.091,
+      "nearestMocapP95Ms": 3.96,
+      "maxInterpolationGapMs": 25.0,
+      "registrationSource": "01_210814_Take_000",
+      "targetUsedInFit": true,
+      "isCrossTakeHoldout": false,
+      "left": {
+        "jointMedianMm": 32.58,
+        "jointP95Mm": 121.14,
+        "tipMedianMm": 54.26,
+        "frameMpjpeMeanMm": 45.35
+      },
+      "right": {
+        "jointMedianMm": 30.69,
+        "jointP95Mm": 125.15,
+        "tipMedianMm": 51.5,
+        "frameMpjpeMeanMm": 45.04
+      },
+      "cards": [
+        {
+          "label": "左手",
+          "primary": 32.58,
+          "primaryLabel": "joint median · mm",
+          "secondary": 54.26,
+          "secondaryLabel": "tip median · mm"
+        },
+        {
+          "label": "右手",
+          "primary": 30.69,
+          "primaryLabel": "joint median · mm",
+          "secondary": 51.5,
+          "secondaryLabel": "tip median · mm"
+        }
+      ]
+    },
+    {
+      "id": "take-001",
+      "segment": "02_210955_Take_001",
+      "label": "Take 02",
+      "title": "旧模式右手开始退化",
+      "role": "validation_holdout",
+      "roleZh": "验证留出集",
+      "summary": "旧模式显示右手退化，主要混入 wrist orientation/session-neutral 差异。",
+      "variant": "diagnostic",
+      "video": "/media/take-001-diagnostic.mp4",
+      "poster": "/media/take-001-diagnostic-contact.jpg",
+      "metricsDownload": "/downloads/take-001-diagnostic-strict25.metrics.json",
+      "validFrames": 1324,
+      "synchronizedFrames": 1805,
+      "coveragePercent": 73.4,
+      "nearestMocapMedianMs": 2.1,
+      "nearestMocapP95Ms": 3.958,
+      "maxInterpolationGapMs": 25.0,
+      "registrationSource": "01_210814_Take_000",
+      "targetUsedInFit": false,
+      "isCrossTakeHoldout": true,
+      "left": {
+        "jointMedianMm": 31.94,
+        "jointP95Mm": 137.62,
+        "tipMedianMm": 52.0,
+        "frameMpjpeMeanMm": 48.7
+      },
+      "right": {
+        "jointMedianMm": 40.08,
+        "jointP95Mm": 153.87,
+        "tipMedianMm": 62.33,
+        "frameMpjpeMeanMm": 58.56
+      },
+      "cards": [
+        {
+          "label": "左手",
+          "primary": 31.94,
+          "primaryLabel": "joint median · mm",
+          "secondary": 52.0,
+          "secondaryLabel": "tip median · mm"
+        },
+        {
+          "label": "右手",
+          "primary": 40.08,
+          "primaryLabel": "joint median · mm",
+          "secondary": 62.33,
+          "secondaryLabel": "tip median · mm"
+        }
+      ]
+    },
+    {
+      "id": "take-002",
+      "segment": "03_211139_Take_002",
+      "label": "Take 03",
+      "title": "旧 wrist orientation 跨 session 明显发散",
+      "role": "test_stress_holdout",
+      "roleZh": "回顾性测试 / 压力留出集",
+      "summary": "旧模式显示明显发散，用于诊断 glove wrist orientation 的跨 session 漂移。",
+      "variant": "diagnostic",
+      "video": "/media/take-002-diagnostic.mp4",
+      "poster": "/media/take-002-diagnostic-contact.jpg",
+      "metricsDownload": "/downloads/take-002-diagnostic-strict25.metrics.json",
+      "validFrames": 1219,
+      "synchronizedFrames": 1800,
+      "coveragePercent": 67.7,
+      "nearestMocapMedianMs": 2.067,
+      "nearestMocapP95Ms": 3.955,
+      "maxInterpolationGapMs": 25.0,
+      "registrationSource": "01_210814_Take_000",
+      "targetUsedInFit": false,
+      "isCrossTakeHoldout": true,
+      "left": {
+        "jointMedianMm": 43.47,
+        "jointP95Mm": 191.94,
+        "tipMedianMm": 66.3,
+        "frameMpjpeMeanMm": 62.4
+      },
+      "right": {
+        "jointMedianMm": 66.25,
+        "jointP95Mm": 200.56,
+        "tipMedianMm": 101.86,
+        "frameMpjpeMeanMm": 82.8
+      },
+      "cards": [
+        {
+          "label": "左手",
+          "primary": 43.47,
+          "primaryLabel": "joint median · mm",
+          "secondary": 66.3,
+          "secondaryLabel": "tip median · mm"
+        },
+        {
+          "label": "右手",
+          "primary": 66.25,
+          "primaryLabel": "joint median · mm",
+          "secondary": 101.86,
+          "secondaryLabel": "tip median · mm"
+        }
+      ]
+    }
+  ],
+  "calibrationAudit": {
+    "status": "depth_se3_reproducible_fixed_view_supported_color_pose_review",
+    "depthPoseIsSE3": true,
+    "depthCameraOriginWorldMm": [
+      -55.047,
+      845.201,
+      547.291
+    ],
+    "referenceRotationDeltaMaxDeg": 0.0573,
+    "referenceOriginDeltaMaxMm": 0.4743,
+    "rgbFixedViewAllTakesPass": true,
+    "rgbFixedViewMaxTranslationPx": 0.0675,
+    "rgbFixedViewMaxRotationDeg": 0.0022,
+    "depthPlaneReview": true,
+    "depthPlaneNormalDeltaDeg": [
+      1.035,
+      1.139,
+      1.16
+    ],
+    "depthPlaneDDeltaMm": [
+      -7.39,
+      -8.5,
+      -8.75
+    ],
+    "d2cIsRigid": false,
+    "d2cDeterminant": 0.994914,
+    "d2cOrthogonalityError": 0.010146,
+    "d2cRigidCandidateProjectionP95Px": 2.973,
+    "auditDownload": "/downloads/depth-camera-pose-audit.json",
+    "deliveredCalibrationDownload": "/downloads/camera-to-world-delivered.json",
+    "rigidCandidateDownload": "/downloads/d2c-rigid-candidate-NOT-ACTIVE.json",
+    "reportDownload": "/downloads/DEPTH_CAMERA_POSE_AUDIT_V1.md"
+  },
+  "wristSemanticsAudit": {
+    "status": "automated_render_and_provenance_checks_passed",
+    "heldOutFrames": 24,
+    "hypothesisFrameExcluded": true,
+    "deliveredJointCountPerHand": 21,
+    "originalJointPositionsModified": false,
+    "rearProxyFormula": "wrist - 0.8 * (middle_mcp - wrist)",
+    "rearProxyStatus": "display_only_semantic_proxy_not_physical_ground_truth",
+    "contacts": [
+      {
+        "take": "Take 01",
+        "segment": "01_210814_Take_000",
+        "image": "/assets/mocap-wrist-semantics-take-01.png",
+        "selectedFrames": [
+          105,
+          314,
+          524,
+          734,
+          943,
+          1153,
+          1363,
+          1572
+        ]
+      },
+      {
+        "take": "Take 02",
+        "segment": "02_210955_Take_001",
+        "image": "/assets/mocap-wrist-semantics-take-02.png",
+        "selectedFrames": [
+          108,
+          325,
+          541,
+          758,
+          974,
+          1191,
+          1407,
+          1624
+        ]
+      },
+      {
+        "take": "Take 03",
+        "segment": "03_211139_Take_002",
+        "image": "/assets/mocap-wrist-semantics-take-03.png",
+        "selectedFrames": [
+          108,
+          324,
+          540,
+          756,
+          971,
+          1187,
+          1403,
+          1619
+        ]
+      }
+    ],
+    "summaryDownload": "/downloads/mocap-wrist-semantics-summary.json",
+    "provenanceDownload": "/downloads/mocap-wrist-semantics-frame-provenance.csv",
+    "reportDownload": "/downloads/MOCAP_WRIST_SEMANTICS_V1.md"
+  },
+  "requests": [
+    {
+      "id": "REQ-P0-01",
+      "priority": "P0",
+      "item": "原始Marker与质量",
+      "files": "Take_xxx_markers_raw.c3d;Take_xxx_markers_raw.csv",
+      "acceptance": "120Hz且FrameCounter可连接Human.cma;缺失为NaN;无静默补点",
+      "dueDate": "2026-08-31",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P0-02",
+      "priority": "P0",
+      "item": "手部Marker Set与骨架",
+      "files": "mocap native asset;hand_joints.csv;hand_markers.csv;solver config;placement photos",
+      "acceptance": "左右42节点和全部实体Marker均可追溯",
+      "dueDate": "2026-08-31",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P0-03",
+      "priority": "P0",
+      "item": "Human逐关节质量",
+      "files": "Take_xxx_Human_quality.csv",
+      "acceptance": "可无歧义连接Human.cma;若软件不支持需书面确认",
+      "dueDate": "2026-08-31",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P0-04",
+      "priority": "P0",
+      "item": "相机-MOCAP同场标定",
+      "files": "calibration native;coordinate_frames.json;correspondences.csv;Orbbec factory intrinsics;official depth-to-color extrinsics;RGBD bag;MOCAP c3d/tak;report",
+      "acceptance": "覆盖工作区中心边缘与多深度;heldout误差可计算;解释现有D2C 3x3非正交来源",
+      "dueDate": "2026-08-31",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P0-05",
+      "priority": "P0",
+      "item": "手背板与后侧腕模块到glove/skeleton root",
+      "files": "rigid body definitions;T_glove_root_from_body_hand.json;T_rear_module_from_hand_skeleton_left/right.json;rear module marker definitions;hardware frame contract;mount photos;body quality CSV",
+      "acceptance": "照片明确标出前后硬件块;若后模块被追踪则至少3个最好4个非共面Marker;否则书面确认;固定变换来自CAD量具或独立calibration且重复拆装3次",
+      "dueDate": "2026-08-31",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P0-06",
+      "priority": "P0",
+      "item": "时间戳契约与硬件同步",
+      "files": "timestamp_contract.md/json;sync logger source+commit;raw trigger log;next-take sync_trigger_events.csv",
+      "acceptance": "未看手部动作即可独立估计offset/drift/uncertainty;下一次正式动作前后各>=10脉冲;目标P95<1ms否则报告",
+      "dueDate": "2026-08-31",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P0-07",
+      "priority": "P0",
+      "item": "Glove solver可重放输入与session-neutral",
+      "files": "Take_xxx_session_neutral.json;Take_xxx_left/right_hand_imu_raw.csv;solver assets;glove_solver_replay.md",
+      "acceptance": "配置SHA匹配pose.meta;同一输入数值复现pose/keypoints;不能只有原机器绝对路径",
+      "dueDate": "2026-08-31",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P0-08",
+      "priority": "P0",
+      "item": "Femto Bolt相机MOCAP刚体",
+      "files": "FemtoBolt_rigid_body_definition.json;camera_marker_trajectory.c3d;camera_marker_quality.csv;mount_photos",
+      "acceptance": "可逐帧独立得到T_world_from_depth并与00固定外参比较;mount在所有Take中不动",
+      "dueDate": "2026-09-01",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P0-09",
+      "priority": "P0",
+      "item": "RGB-D与MOCAP共同标定板",
+      "files": "board_or_wand_geometry.json;calibration_rgbd.bag;calibration_mocap.c3d;rgb_depth_correspondences.csv;split_manifest.json",
+      "acceptance": "至少20% heldout pose且不参与求解;可比较delivered affine与rigid D2C candidate;报告2D/3D未截断误差",
+      "dueDate": "2026-09-01",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P1-01",
+      "priority": "P1",
+      "item": "独立RGB 2D标注",
+      "files": "Take_xxx_rgb_joints_2d.csv",
+      "acceptance": "每段至少100帧;双人标注与consensus",
+      "dueDate": "2026-09-02",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P1-02",
+      "priority": "P1",
+      "item": "手尺寸和安装记录",
+      "files": "subject_hand_measurements.csv;marker/IMU photos",
+      "acceptance": "可区分骨长定义与算法误差",
+      "dueDate": "2026-09-02",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P1-03",
+      "priority": "P1",
+      "item": "独立calibration/test与重戴",
+      "files": "独立calibration take + untouched Take_004原始全模态数据",
+      "acceptance": "profile和阈值先锁定;Take_004首次跑分前不调参;至少一次脱下重戴holdout",
+      "dueDate": "2026-09-02",
+      "status": "requested"
+    },
+    {
+      "id": "REQ-P1-04",
+      "priority": "P1",
+      "item": "采集manifest与漂移检查",
+      "files": "manifest.json;pre/post calibration records",
+      "acceptance": "每段可追溯且前后外参漂移可量化",
+      "dueDate": "2026-09-02",
+      "status": "requested"
+    }
+  ],
+  "copyMessage": "我们已有 Take_000/001/002 的 TAK、CMA、BVH、RGB-D BAG 和同步表，不需要重复发送，也不要提供人工调出来的 per-take 时间偏移。请优先从原 TAK 导出带 residual、camera mask、occlusion/gap-fill 标志的原始 Marker C3D/CSV，并提供手部 Marker Set、Human 骨架/solver 配置、原始相机—MOCAP 标定与 Orbbec depth→color 官方外参，以及 FrameCounter/TimeStamp/PtpTimeStamp、相机曝光时间戳和同步 logger 的精确定义。下一次采集请增加共享 TTL；如硬件不支持，用 RGB 可见且 MOCAP 可追踪的同步 LED，并交付原始 trigger log。另请在安装照片上分别标出前方手背板和后方腕部黑块，说明它们各自对应哪个 rigid body；交付后侧模块 marker definition，或左右手分别实测的 `T_rear_module_from_hand_skeleton`，并提供 Body Hand 到 glove root 的固定变换。Glove 侧提供 session_neutral、solver assets、设备时间戳原始 IMU 和可重放命令。全部文件请附 schema、软件版本和 SHA256SUMS。",
+  "limitations": [
+    "当前“逐帧匹配”表示 BAG/MP4 内容索引 gate 通过，且共同区间每个 RGB 帧都有曝光时刻 MOCAP bracket；没有硬件触发就不能声称零时间误差。",
+    "视觉相关性的 10–17 ms 残余只用于 QA，不会作为每段手工时间偏移回写。",
+    "PtpTimeStamp 的高分辨率相对节拍已使用，但绝对 PTP epoch 契约未交付，仍由 Windows TimeStamp 做 affine anchor。",
+    "融合结果每帧直接使用目标 Take 的 MOCAP wrist position + orientation；不是独立 glove wrist 或完整 6DoF 精度。",
+    "当前数字是 MOCAP-wrist SE(3)-conditioned 的 finger articulation 一致性误差，不是无条件外部 GT 精度。",
+    "P95 长尾仍高，说明部分姿态、插值边界或遮挡段尚未可靠解决。",
+    "Take 02/03 的 target fingers 未进入 fit，但结果已用于本轮模型审查；它们不是新的全盲 final test。",
+    "Human.cma 缺少逐帧 confidence、visibility、occlusion、gap-fill 与 residual。",
+    "三段各自采集 session-neutral，但 neutral/recenter 原始资产和 replay contract 尚未交付。",
+    "相机外参尚未用完整 21 关节独立 2D 真值做 held-out 验证；当前投影在画内不等于像素精度。",
+    "交付的 depth→color 3×3 轻微非正交；当前忠实使用原始 forward calibration，未静默投影成刚体旋转。",
+    "00 depth pose 可复算且 fixed-view 背景检查通过，但这仍不是独立 absolute pose accuracy；raw-depth 桌面跨 Take 差异保持 review。",
+    "Depth review 直接使用 raw mono16 毫米值和每个 depth frame 自身的设备时间戳；不会用 RGB timestamp 替代约 1.31 ms 后到的 depth timestamp。",
+    "Depth review 的 nonzero depth coverage 只表示投影关节点所在像素有可用量程；MOCAP joint 不是可见表面点，因此该覆盖率不是 pose accuracy。",
+    "推荐 MOCAP 视频中带白色中心的同侧彩色圆点是 wrist 与 middle MCP 的 rear wrist module 显示外推；原始每手 21 joints 没有被修改，该 proxy 不是实测节点或 GT。Held-out audit contact 另用橙色菱形标记同一 proxy。"
+  ]
+}

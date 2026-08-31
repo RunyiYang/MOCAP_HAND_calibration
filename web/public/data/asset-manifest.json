@@ -1,0 +1,625 @@
+{
+  "schema": "gt-calib.asset-manifest.v1",
+  "generatedAt": "2026-08-31T13:49:33+00:00",
+  "cloudflareMaxAssetBytes": 26214400,
+  "assets": [
+    {
+      "path": "404.html",
+      "source": "web/public/404.html",
+      "bytes": 622,
+      "sha256": "2fdc582eee8ee8c16d69387575d1bdb4f41e2c137350b0702b7c6fc5cd34370b"
+    },
+    {
+      "path": "_headers",
+      "source": "web/public/_headers",
+      "bytes": 709,
+      "sha256": "8fdeec580e7f0acdb7d39365b9cf836ff208a643cda1abf904773b411fad2cc4"
+    },
+    {
+      "path": "app.js",
+      "source": "web/public/app.js",
+      "bytes": 23013,
+      "sha256": "40e1a52ef4bfa9003606ca3bb297536f44b941c7311fae86076efe3637a4186a"
+    },
+    {
+      "path": "assets/dataset-map.svg",
+      "source": "outputs/feishu_dataset_understanding/assets/dataset_map.svg",
+      "bytes": 3891,
+      "sha256": "a0d0e3735bda10db6ae3e7815fe0825e0f77735f3637f11aaa80a2a03e720945"
+    },
+    {
+      "path": "assets/depth-camera-pose-audit-summary.png",
+      "source": "outputs/depth_calibration_audit/depth_camera_pose_audit_summary.png",
+      "bytes": 184753,
+      "sha256": "429083c10e243cfc879da4d705be277779a92520ed2d2467c1c8ad7a35ef01da"
+    },
+    {
+      "path": "assets/fusion-comparison-overview.svg",
+      "source": "outputs/mocap_root_fusion_strict25/fusion_comparison_overview.svg",
+      "bytes": 22819,
+      "sha256": "e57b5b5fea0f6f2a192b6d75fc7de56fe1efacfcc6705de719ee71c394f5a469"
+    },
+    {
+      "path": "assets/mocap-pipeline.svg",
+      "source": "outputs/feishu_dataset_understanding/assets/mocap_pipeline.svg",
+      "bytes": 5151,
+      "sha256": "15db15543bba5504ee9956c34ea2e117f21d76418423fcf57b8d27d9483d69dd"
+    },
+    {
+      "path": "assets/mocap-wrist-semantics-take-01.png",
+      "source": "outputs/mocap_wrist_semantics_audit/01_01_210814_Take_000_heldout_raw-rearproxy-z37_contact.png",
+      "bytes": 5062248,
+      "sha256": "4e83e1486386eb0cab5db48d5807666173b2fb37f5fc5ef10787432a32d15533"
+    },
+    {
+      "path": "assets/mocap-wrist-semantics-take-02.png",
+      "source": "outputs/mocap_wrist_semantics_audit/02_02_210955_Take_001_heldout_raw-rearproxy-z37_contact.png",
+      "bytes": 5092828,
+      "sha256": "5b9faf8e55746d52d847b99419e0cbbe3dbb1a3664a08a4035a04f4a403f327f"
+    },
+    {
+      "path": "assets/mocap-wrist-semantics-take-03.png",
+      "source": "outputs/mocap_wrist_semantics_audit/03_03_211139_Take_002_heldout_raw-rearproxy-z37_contact.png",
+      "bytes": 5043676,
+      "sha256": "d66ed1770724d0588cd3e6a3439503706a4cdfaba26b69c7f0492593818504bf"
+    },
+    {
+      "path": "assets/rgb-fixed-camera-registration.jpg",
+      "source": "outputs/depth_calibration_audit/rgb_fixed_camera_registration.jpg",
+      "bytes": 399302,
+      "sha256": "46c9bdc38857c2a93bd3689db5b793aca044ea243e3bd9bbb1b39a008b46689a"
+    },
+    {
+      "path": "assets/strict-metrics-overview.svg",
+      "source": "outputs/holdout_01_strict25/strict_metrics_overview.svg",
+      "bytes": 15088,
+      "sha256": "6da86c10232a16410e5c5542a72c5174a64457e4275317a3ca6a4981d07d4098"
+    },
+    {
+      "path": "bvh/bvh-viewer.css",
+      "source": "web/public/bvh/bvh-viewer.css",
+      "bytes": 18159,
+      "sha256": "e17dfb88ec85350d1bf0899c2ef26934e034e6a6cbe0019763b0fc22e9b02ed8"
+    },
+    {
+      "path": "bvh/bvh-viewer.js",
+      "source": "web/public/bvh/bvh-viewer.js",
+      "bytes": 30804,
+      "sha256": "acde8540bd25e965f60d9d07e63eb17b56be66042872f7ce1556e5a13cb38918"
+    },
+    {
+      "path": "bvh/data/01_210814_Take_000_bvh_motion.json",
+      "source": "outputs/bvh_web/01_210814_Take_000_bvh_motion.json",
+      "bytes": 2609497,
+      "sha256": "960f074d223c51e2ca00d974942236411801e3e8270254a0745830c7e0d427a3"
+    },
+    {
+      "path": "bvh/data/02_210955_Take_001_bvh_motion.json",
+      "source": "outputs/bvh_web/02_210955_Take_001_bvh_motion.json",
+      "bytes": 2698597,
+      "sha256": "c9d8b229de620ea5e928e0d2b059d9c3ac9622d18eb0be32a0e29d0fa81a2147"
+    },
+    {
+      "path": "bvh/data/03_211139_Take_002_bvh_motion.json",
+      "source": "outputs/bvh_web/03_211139_Take_002_bvh_motion.json",
+      "bytes": 2730156,
+      "sha256": "2b03810bc43383773873264b07d6616151b1185a82f8b7fb53ad65cf6dff9910"
+    },
+    {
+      "path": "bvh/data/manifest.json",
+      "source": "outputs/bvh_web/manifest.json",
+      "bytes": 1806,
+      "sha256": "e5156d42c5ec8a6ef6ff7a61ae444050d6d50c022f8e4b749a9c6b742af9d37f"
+    },
+    {
+      "path": "bvh/data/take-000-skeleton-0.bvh",
+      "source": "同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Skeleton_0.bvh",
+      "bytes": 3542548,
+      "sha256": "61301fcae506f6081522fb8b787839a5190679948867b6d8a4912cb07288e97c"
+    },
+    {
+      "path": "bvh/data/take-000-skeleton-1.bvh",
+      "source": "同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Skeleton_1.bvh",
+      "bytes": 3544390,
+      "sha256": "fcf184d2f6211bb06f39487f14c68bcca5d188b0629917f15a9b7559ae2cc5d0"
+    },
+    {
+      "path": "bvh/data/take-001-skeleton-0.bvh",
+      "source": "同步整理_20260829_三段/02_210955_Take_001/动捕/Take_001/Take_001_Skeleton_0.bvh",
+      "bytes": 3674543,
+      "sha256": "61f1dd97aefa72a87789c7059eda9463af568b25572d85b3ecbd27101a1700b6"
+    },
+    {
+      "path": "bvh/data/take-001-skeleton-1.bvh",
+      "source": "同步整理_20260829_三段/02_210955_Take_001/动捕/Take_001/Take_001_Skeleton_1.bvh",
+      "bytes": 3672563,
+      "sha256": "7a87d5891713f5180f88c6583cc286b8803298b746e8a1ceb33552997e567757"
+    },
+    {
+      "path": "bvh/data/take-002-skeleton-0.bvh",
+      "source": "同步整理_20260829_三段/03_211139_Take_002/动捕/Take_002/Take_002_Skeleton_0.bvh",
+      "bytes": 3633562,
+      "sha256": "6ac78d2b274dd94c517834b66b6b159925fd9360f164d666781ec121ec486727"
+    },
+    {
+      "path": "bvh/data/take-002-skeleton-1.bvh",
+      "source": "同步整理_20260829_三段/03_211139_Take_002/动捕/Take_002/Take_002_Skeleton_1.bvh",
+      "bytes": 3610449,
+      "sha256": "d55d74d227c858d11d4c319fa4e9e560abb0c61f3c582a34448dee9e8baf511e"
+    },
+    {
+      "path": "bvh/index.html",
+      "source": "web/public/bvh/index.html",
+      "bytes": 9003,
+      "sha256": "9ad0cf8fae3ed650f6e60bead2add878f2b4b59fdb7ca07f6481ba3984c6ea1e"
+    },
+    {
+      "path": "data/site-data.json",
+      "source": "generated from MOCAP/video + raw-depth/MOCAP alignment + fusion + diagnostic strict metrics and request CSV",
+      "bytes": 38389,
+      "sha256": "514691b201c50b4e1e70fe0fd16896aa4b3e188eb02b0cc203b50cf6a8819e29"
+    },
+    {
+      "path": "downloads/BVH_LOCAL_VIEWER_V1.md",
+      "source": "docs/calibration/BVH_LOCAL_VIEWER_V1.md",
+      "bytes": 4085,
+      "sha256": "f97d1522e3c593cf2b5b7ef18e4ff6b5546e4b15df2935db4a634183f33657bd"
+    },
+    {
+      "path": "downloads/CALIBRATED_ONE_V1.md",
+      "source": "docs/calibration/CALIBRATED_ONE_V1.md",
+      "bytes": 8063,
+      "sha256": "2c9e423559b01e9721977cdb9e76def55097bdd9b478b09a6b0cd3c3c51016a1"
+    },
+    {
+      "path": "downloads/CROSS_TAKE_EVALUATION.md",
+      "source": "docs/protocols/CROSS_TAKE_EVALUATION.md",
+      "bytes": 3034,
+      "sha256": "ee3700a51ec1aa9f9fbf35833dbf2fdb6e6ebb5cfcc9091f440d713fb413967b"
+    },
+    {
+      "path": "downloads/DATA_REQUEST_2026-08-31.md",
+      "source": "docs/dataset/DATA_REQUEST_2026-08-31.md",
+      "bytes": 13376,
+      "sha256": "99770897e598b0ed3ba4407c1b3c0d4db9547137ee716fb28d46850455821abe"
+    },
+    {
+      "path": "downloads/DEPTH_CAMERA_POSE_AUDIT_V1.md",
+      "source": "docs/calibration/DEPTH_CAMERA_POSE_AUDIT_V1.md",
+      "bytes": 7387,
+      "sha256": "a5532a33c02e4ffed50bb712e000c0bf4e95f480e69dfd19086e446a2a13463a"
+    },
+    {
+      "path": "downloads/DEPTH_MOCAP_ALIGNMENT_V1.md",
+      "source": "docs/calibration/DEPTH_MOCAP_ALIGNMENT_V1.md",
+      "bytes": 10207,
+      "sha256": "dd105894c5e10e498e05f0ac6001e83cff4ed85c0f39dc2405794461f0e344d7"
+    },
+    {
+      "path": "downloads/EXPERIMENTAL_ARTICULATION_PROBE.md",
+      "source": "docs/calibration/EXPERIMENTAL_ARTICULATION_PROBE.md",
+      "bytes": 5536,
+      "sha256": "92083b37ee70050f30aac034926eddb806d1dc25385bd273bc22de9bba72b91c"
+    },
+    {
+      "path": "downloads/MOCAP_ROOT_FUSION_V1.md",
+      "source": "docs/calibration/MOCAP_ROOT_FUSION_V1.md",
+      "bytes": 10010,
+      "sha256": "6ddc380e6c3871d8883b23eef8cfce8cb7224f297117d29e644b3c84b677a212"
+    },
+    {
+      "path": "downloads/MOCAP_VIDEO_ALIGNMENT_V1.md",
+      "source": "docs/calibration/MOCAP_VIDEO_ALIGNMENT_V1.md",
+      "bytes": 16323,
+      "sha256": "c6b39c58a1aa419b7c218361a97123b880e75c8a0e7f59fc68ea1793acb2470c"
+    },
+    {
+      "path": "downloads/MOCAP_WRIST_SEMANTICS_V1.md",
+      "source": "docs/calibration/MOCAP_WRIST_SEMANTICS_V1.md",
+      "bytes": 9191,
+      "sha256": "745f7fc444e0f6bc19f2d0dfae6f15019c3b0e2dcbfbf15b0713aa0dc23767fd"
+    },
+    {
+      "path": "downloads/camera-to-world-delivered.json",
+      "source": "同步整理_20260829_三段/movementcap_worldcalib_pointcloud_package_20260830/movementcap_ruler_worldcalib/results/manual_final/camera_to_world.json",
+      "bytes": 16538,
+      "sha256": "c020c67dc9266238366c511b8c24728c5915e61493d5ad51bac354f3f4582283"
+    },
+    {
+      "path": "downloads/d2c-rigid-candidate-NOT-ACTIVE.json",
+      "source": "outputs/depth_calibration_audit/d2c_rigid_candidate.json",
+      "bytes": 2322,
+      "sha256": "b62602173408407dd09ee978c3848d19b947008286a6f91647f651c5714bf0ee"
+    },
+    {
+      "path": "downloads/daily-2026-08-30.md",
+      "source": "docs/daily/2026/2026-08-30.md",
+      "bytes": 10256,
+      "sha256": "f6b3419b13c94a5b592a1f8b7aebba5244cffd859448e8f1a681858968eeb7ae"
+    },
+    {
+      "path": "downloads/daily-2026-08-31.md",
+      "source": "docs/daily/2026/2026-08-31.md",
+      "bytes": 27113,
+      "sha256": "e3c1895d5403fd72eabda9d7236022bf6de3f28b317621c0ee385a7ba1cb2a49"
+    },
+    {
+      "path": "downloads/dataset-inventory.csv",
+      "source": "docs/dataset/datalist.csv",
+      "bytes": 1548,
+      "sha256": "cd9aa4b46b6ea9386ea98629332ceb180efa89a8ba30fe72d5c19cc30182cc7d"
+    },
+    {
+      "path": "downloads/depth-camera-pose-audit.json",
+      "source": "outputs/depth_calibration_audit/depth_camera_pose_audit.json",
+      "bytes": 45145,
+      "sha256": "84db97bf136a1b30996eb09eca2b723c412485098c2d5e2a214a71390e575606"
+    },
+    {
+      "path": "downloads/evidence-index.csv",
+      "source": "docs/evidence/index.csv",
+      "bytes": 16794,
+      "sha256": "bc9dd17398599222c9165f05d0ad91d0bf96f683999a6e3dcb1ba4e7cdbbc3b4"
+    },
+    {
+      "path": "downloads/gt-calib-evidence-2026-08-31.zip",
+      "source": "generated allow-listed evidence bundle (videos excluded)",
+      "bytes": 3295055,
+      "sha256": "90f687c93ef168246e4f976b8d4fbc7611ec559186b0e22023c517655a8420b3"
+    },
+    {
+      "path": "downloads/mocap-root-fusion-profile-take-000.json",
+      "source": "outputs/mocap_root_fusion_strict25/01_210814_Take_000_mocap_root_fusion_registration_profile.json",
+      "bytes": 7306,
+      "sha256": "af5e110231d49bf6fc68a178d2d26927ecd895248b2521366b6e300422f2ee46"
+    },
+    {
+      "path": "downloads/mocap-wrist-semantics-frame-provenance.csv",
+      "source": "outputs/mocap_wrist_semantics_audit/frame_provenance.csv",
+      "bytes": 16514,
+      "sha256": "f6877268474bda5f5b7416ca8846ca072abe25cb7d499fd92fa1a0db2c5814c7"
+    },
+    {
+      "path": "downloads/mocap-wrist-semantics-summary.json",
+      "source": "outputs/mocap_wrist_semantics_audit/summary.json",
+      "bytes": 14394,
+      "sha256": "356d4604695a416e43ddcec62f8cdeadd4094b8a5186fcbe365d8a93e85ffea5"
+    },
+    {
+      "path": "downloads/registration-profile-take-000.json",
+      "source": "outputs/holdout_01_strict25/01_210814_Take_000_registration_profile.json",
+      "bytes": 5713,
+      "sha256": "16270458c4d0000e28959413f1a9d01a0fb8f8dc0e15ecdb5ca95e6d51422689"
+    },
+    {
+      "path": "downloads/request_datalist_2026-08-31.csv",
+      "source": "docs/dataset/request_datalist_2026-08-31.csv",
+      "bytes": 5129,
+      "sha256": "3c9bba8dd55f644eae88fad87e3173c32ed27202967380aca086f70162ad3048"
+    },
+    {
+      "path": "downloads/take-000-depth-frame-map.csv",
+      "source": "outputs/depth_mocap_alignment_review/01_210814_Take_000_depth_mocap_aligned_strict25.alignment.csv",
+      "bytes": 608796,
+      "sha256": "0a035577b8b4ae3ba4773009f6c75909a5c83705aba6d6830de3cef6661b4912"
+    },
+    {
+      "path": "downloads/take-000-depth-mocap.metrics.json",
+      "source": "outputs/depth_mocap_alignment_review/01_210814_Take_000_depth_mocap_aligned_strict25.metrics.json",
+      "bytes": 10706,
+      "sha256": "3007157985c55a9ba99693514fd19c2bcbfd35d99a481a08bfa7ae5f0db9ec33"
+    },
+    {
+      "path": "downloads/take-000-diagnostic-strict25.metrics.json",
+      "source": "outputs/holdout_01_strict25/01_210814_Take_000_glove_vs_mocap_calibration_fit.metrics.json",
+      "bytes": 15034,
+      "sha256": "2bebec06543e034bc312672d0fd6855ff22d37d9f2ff1e0905e23c5886b8eae0"
+    },
+    {
+      "path": "downloads/take-000-fusion-gap50.metrics.json",
+      "source": "outputs/mocap_root_fusion_gap50/01_210814_Take_000_mocap_root_fused_glove_calibration_fit.metrics.json",
+      "bytes": 16228,
+      "sha256": "8fca653010589546804094de7d4722becee15bb6089492ca61b29b9f81064852"
+    },
+    {
+      "path": "downloads/take-000-fusion-strict25.metrics.json",
+      "source": "outputs/mocap_root_fusion_strict25/01_210814_Take_000_mocap_root_fused_glove_calibration_fit.metrics.json",
+      "bytes": 16230,
+      "sha256": "d48007d83ac929a1c65ac5fefd2cca9d642b25d9266a24589714f289c2028166"
+    },
+    {
+      "path": "downloads/take-000-mocap-alignment.metrics.json",
+      "source": "outputs/mocap_video_rear_mount_review/01_210814_Take_000_mocap_video_aligned_strict25.metrics.json",
+      "bytes": 2699233,
+      "sha256": "1c28f72a7ed0ddc0db1430b8ca940ea93738a7344a71abd5a324de8f4fcb1fca"
+    },
+    {
+      "path": "downloads/take-000-mocap-frame-map.csv",
+      "source": "outputs/mocap_video_rear_mount_review/01_210814_Take_000_mocap_video_aligned_strict25.alignment.csv",
+      "bytes": 495975,
+      "sha256": "976dc65b4ab50f6d433f270bc7c24d24690706f73da559c245bcfae6a856aad7"
+    },
+    {
+      "path": "downloads/take-001-depth-frame-map.csv",
+      "source": "outputs/depth_mocap_alignment_review/02_210955_Take_001_depth_mocap_aligned_strict25.alignment.csv",
+      "bytes": 628138,
+      "sha256": "d8224ecd9eeaecaa2717592baff19c4db76649bf8b71ad71725151b5fc714ab6"
+    },
+    {
+      "path": "downloads/take-001-depth-mocap.metrics.json",
+      "source": "outputs/depth_mocap_alignment_review/02_210955_Take_001_depth_mocap_aligned_strict25.metrics.json",
+      "bytes": 10688,
+      "sha256": "bb35a9484c5cbf6be03d18272777605d8fea454449d1d9e046b227d3d156c8cd"
+    },
+    {
+      "path": "downloads/take-001-diagnostic-strict25.metrics.json",
+      "source": "outputs/holdout_01_strict25/02_210955_Take_001_glove_vs_mocap_holdout_from_Take_000.metrics.json",
+      "bytes": 15116,
+      "sha256": "7938d1d2e79324ab46de3d62b28896eef690c57a063f4116688b3cbacbf7b3aa"
+    },
+    {
+      "path": "downloads/take-001-fusion-gap50.metrics.json",
+      "source": "outputs/mocap_root_fusion_gap50/02_210955_Take_001_mocap_root_fused_glove_holdout_from_Take_000.metrics.json",
+      "bytes": 16365,
+      "sha256": "57125dbbfc933b7e7bdf236aab0bd70292fa6f038c104ce3b95988469077baba"
+    },
+    {
+      "path": "downloads/take-001-fusion-strict25.metrics.json",
+      "source": "outputs/mocap_root_fusion_strict25/02_210955_Take_001_mocap_root_fused_glove_holdout_from_Take_000.metrics.json",
+      "bytes": 16362,
+      "sha256": "57715e21421431d1fcc546fcd76dd4fc42677f86597fbcf4f49dbf659b3c4062"
+    },
+    {
+      "path": "downloads/take-001-mocap-alignment.metrics.json",
+      "source": "outputs/mocap_video_rear_mount_review/02_210955_Take_001_mocap_video_aligned_strict25.metrics.json",
+      "bytes": 2694775,
+      "sha256": "eb8a70a6eee6dda023ddcd47e7b237a728db1126797256b2b977bdc90d9a6168"
+    },
+    {
+      "path": "downloads/take-001-mocap-frame-map.csv",
+      "source": "outputs/mocap_video_rear_mount_review/02_210955_Take_001_mocap_video_aligned_strict25.alignment.csv",
+      "bytes": 512149,
+      "sha256": "c662f89dcf5dca4a7a5720a7a3e8367c1e946d517654bf9d38abb5462b4289a8"
+    },
+    {
+      "path": "downloads/take-002-depth-frame-map.csv",
+      "source": "outputs/depth_mocap_alignment_review/03_211139_Take_002_depth_mocap_aligned_strict25.alignment.csv",
+      "bytes": 626364,
+      "sha256": "f3d0ec1ad9fb620e1ad791ca21369cde7cc529d7fd8ac11781514576b50c228e"
+    },
+    {
+      "path": "downloads/take-002-depth-mocap.metrics.json",
+      "source": "outputs/depth_mocap_alignment_review/03_211139_Take_002_depth_mocap_aligned_strict25.metrics.json",
+      "bytes": 10711,
+      "sha256": "26f5a4b1b90c91850d631404a5b4f2d1345d0fb0664286ac6274ee4cb138111d"
+    },
+    {
+      "path": "downloads/take-002-diagnostic-strict25.metrics.json",
+      "source": "outputs/holdout_01_strict25/03_211139_Take_002_glove_vs_mocap_holdout_from_Take_000.metrics.json",
+      "bytes": 15108,
+      "sha256": "87d06834898bad576f6870f99de3c31c02c6145cda379ba6a62ff0f85297315c"
+    },
+    {
+      "path": "downloads/take-002-fusion-gap50.metrics.json",
+      "source": "outputs/mocap_root_fusion_gap50/03_211139_Take_002_mocap_root_fused_glove_holdout_from_Take_000.metrics.json",
+      "bytes": 16372,
+      "sha256": "bde49b9c65dc00afa937b62414871ac478ca236cf6af093800858878380bdf23"
+    },
+    {
+      "path": "downloads/take-002-fusion-strict25.metrics.json",
+      "source": "outputs/mocap_root_fusion_strict25/03_211139_Take_002_mocap_root_fused_glove_holdout_from_Take_000.metrics.json",
+      "bytes": 16357,
+      "sha256": "35be7205c9d71f9ba8986e442fefab7c21957a7b498b788da0c2ceaa6ac672d5"
+    },
+    {
+      "path": "downloads/take-002-mocap-alignment.metrics.json",
+      "source": "outputs/mocap_video_rear_mount_review/03_211139_Take_002_mocap_video_aligned_strict25.metrics.json",
+      "bytes": 2691008,
+      "sha256": "0430bfb229be1081083a80d1ffddf9cc3d8cf523e7d41d3099b4644aa08edd0e"
+    },
+    {
+      "path": "downloads/take-002-mocap-frame-map.csv",
+      "source": "outputs/mocap_video_rear_mount_review/03_211139_Take_002_mocap_video_aligned_strict25.alignment.csv",
+      "bytes": 510622,
+      "sha256": "a37de53909289102ff2c89ba27c87f8c4e78473f6bde807f7d3cb3417ca141ea"
+    },
+    {
+      "path": "favicon.svg",
+      "source": "web/public/favicon.svg",
+      "bytes": 415,
+      "sha256": "4e7c7dff0613ede0b103ebbf0e3adf7912363ab1073ae858af1c2d940eb7c319"
+    },
+    {
+      "path": "index.html",
+      "source": "web/public/index.html",
+      "bytes": 38880,
+      "sha256": "e35242778c4f96825f392cf7983e2990a849dbc9359bebb6c9bf7eed26d8946a"
+    },
+    {
+      "path": "media/take-000-depth-contact.jpg",
+      "source": "outputs/depth_mocap_alignment_review/01_210814_Take_000_depth_mocap_aligned_strict25.contact.jpg",
+      "bytes": 687808,
+      "sha256": "da8f47f9ac30f1d476fa5393acae5f1d4d3b385384f19d42f5e0805b1a4dfdba"
+    },
+    {
+      "path": "media/take-000-depth.mp4",
+      "source": "outputs/depth_mocap_alignment_review/01_210814_Take_000_depth_mocap_aligned_strict25_h264.mp4",
+      "bytes": 14241449,
+      "sha256": "b45792b9a9635e5cf0f8029487598037591601c111044071ed597eb5666dcaba"
+    },
+    {
+      "path": "media/take-000-diagnostic-contact.jpg",
+      "source": "outputs/holdout_01_review/01_210814_Take_000_glove_vs_mocap_calibration_fit.contact.jpg",
+      "bytes": 1091519,
+      "sha256": "f105c9460d982bc437e56dffbb76d56741ec6dee7bc7f5f53cdd1531d8d291f4"
+    },
+    {
+      "path": "media/take-000-diagnostic.mp4",
+      "source": "outputs/holdout_01_review/01_210814_Take_000_glove_vs_mocap_calibration_fit_h264.mp4",
+      "bytes": 9825506,
+      "sha256": "dde098bf8ee65b4db70e685f6245322a4da3decfa4282bc0117e70d8c67e0045"
+    },
+    {
+      "path": "media/take-000-fusion-contact.jpg",
+      "source": "outputs/mocap_root_fusion_review/01_210814_Take_000_mocap_root_fused_glove_calibration_fit.contact.jpg",
+      "bytes": 1095460,
+      "sha256": "ea51c1e6a8719f4d99197ace74af290ef83232e5170d1dee008863436081f3f7"
+    },
+    {
+      "path": "media/take-000-fusion.mp4",
+      "source": "outputs/mocap_root_fusion_review/01_210814_Take_000_mocap_root_fused_glove_calibration_fit_h264.mp4",
+      "bytes": 9742836,
+      "sha256": "1bad63d2cc7c135285be2d9d4e520daa472af4b1e1523f6fedd7bc18e952ec35"
+    },
+    {
+      "path": "media/take-000-mocap-contact.jpg",
+      "source": "outputs/mocap_video_rear_mount_review/01_210814_Take_000_mocap_video_aligned_strict25.contact.jpg",
+      "bytes": 1158853,
+      "sha256": "f960434a47e7e30fbd1d5cda42ee7fb94121e27377446bb76c065cca6b0d226a"
+    },
+    {
+      "path": "media/take-000-mocap-raw-contact.jpg",
+      "source": "outputs/mocap_video_alignment_review/01_210814_Take_000_mocap_video_aligned_strict25.contact.jpg",
+      "bytes": 1169114,
+      "sha256": "8edca693d14c26c21cdabd5e6fbf90324a58de752ddbf7f0bbc9a4d4a64dbc4e"
+    },
+    {
+      "path": "media/take-000-mocap-raw.mp4",
+      "source": "outputs/mocap_video_alignment_review/01_210814_Take_000_mocap_video_aligned_strict25_h264.mp4",
+      "bytes": 7859475,
+      "sha256": "c711286edd5c6e7f3188e44e5178a5ca6780428c8eed115f54c186436195e049"
+    },
+    {
+      "path": "media/take-000-mocap.mp4",
+      "source": "outputs/mocap_video_rear_mount_review/01_210814_Take_000_mocap_video_aligned_strict25_h264.mp4",
+      "bytes": 7926783,
+      "sha256": "431a0b8849311de98e60e6dc5ee679763ab4f5955c5cf25509142ccbfededf1b"
+    },
+    {
+      "path": "media/take-001-depth-contact.jpg",
+      "source": "outputs/depth_mocap_alignment_review/02_210955_Take_001_depth_mocap_aligned_strict25.contact.jpg",
+      "bytes": 656096,
+      "sha256": "9845bc460bad7dea1b00dd83b53cd62a1fd92ba88d16957d72c5c1dbfcf31046"
+    },
+    {
+      "path": "media/take-001-depth.mp4",
+      "source": "outputs/depth_mocap_alignment_review/02_210955_Take_001_depth_mocap_aligned_strict25_h264.mp4",
+      "bytes": 14218051,
+      "sha256": "9a75dbce2ccc1b7d21023b7d1686f03201e47caceb16ad7124f509c12e3264e8"
+    },
+    {
+      "path": "media/take-001-diagnostic-contact.jpg",
+      "source": "outputs/holdout_01_review/02_210955_Take_001_glove_vs_mocap_holdout_from_Take_000.contact.jpg",
+      "bytes": 1112141,
+      "sha256": "3890390a5a9b1969925814c33f238565cecff20ce3921754af269a260f088d07"
+    },
+    {
+      "path": "media/take-001-diagnostic.mp4",
+      "source": "outputs/holdout_01_review/02_210955_Take_001_glove_vs_mocap_holdout_from_Take_000_h264.mp4",
+      "bytes": 10002021,
+      "sha256": "efd5b0cae974c27eb7d66874a61208170619fab70b87b0553242f0ed2202c409"
+    },
+    {
+      "path": "media/take-001-fusion-contact.jpg",
+      "source": "outputs/mocap_root_fusion_review/02_210955_Take_001_mocap_root_fused_glove_holdout_from_Take_000.contact.jpg",
+      "bytes": 1115066,
+      "sha256": "3d0b4b4706180b68ee00bab692128053c71b4a5eb2c5d072c699853bfd9ecb54"
+    },
+    {
+      "path": "media/take-001-fusion.mp4",
+      "source": "outputs/mocap_root_fusion_review/02_210955_Take_001_mocap_root_fused_glove_holdout_from_Take_000_h264.mp4",
+      "bytes": 9966204,
+      "sha256": "e94eda1ca004b559bd5d388ac3ad7b00f74629ae13cea8af0c15885aeaeb8665"
+    },
+    {
+      "path": "media/take-001-mocap-contact.jpg",
+      "source": "outputs/mocap_video_rear_mount_review/02_210955_Take_001_mocap_video_aligned_strict25.contact.jpg",
+      "bytes": 1161202,
+      "sha256": "1ccca21806e90690caf1d9d3f2698e0a2741b1910ed733916ac86ba172d68d7c"
+    },
+    {
+      "path": "media/take-001-mocap-raw-contact.jpg",
+      "source": "outputs/mocap_video_alignment_review/02_210955_Take_001_mocap_video_aligned_strict25.contact.jpg",
+      "bytes": 1172581,
+      "sha256": "6aad83c018ddd8cd5280df3c697eaf442d7873fa33cb1e373f5377ba7b9dce97"
+    },
+    {
+      "path": "media/take-001-mocap-raw.mp4",
+      "source": "outputs/mocap_video_alignment_review/02_210955_Take_001_mocap_video_aligned_strict25_h264.mp4",
+      "bytes": 8637224,
+      "sha256": "f32ca5aed08092da2ad9cb15243a87f87c810483c6f7b24fe66895a3e37c0a6e"
+    },
+    {
+      "path": "media/take-001-mocap.mp4",
+      "source": "outputs/mocap_video_rear_mount_review/02_210955_Take_001_mocap_video_aligned_strict25_h264.mp4",
+      "bytes": 8753867,
+      "sha256": "7a141794217dd773c1a7b4c51d21980210c078047edee0e260013c9acc968093"
+    },
+    {
+      "path": "media/take-002-depth-contact.jpg",
+      "source": "outputs/depth_mocap_alignment_review/03_211139_Take_002_depth_mocap_aligned_strict25.contact.jpg",
+      "bytes": 650671,
+      "sha256": "3299e2ca60a0850c6c72a24cf5fa8d9ee16d5809cbcc4c636f891af5b9af95ee"
+    },
+    {
+      "path": "media/take-002-depth.mp4",
+      "source": "outputs/depth_mocap_alignment_review/03_211139_Take_002_depth_mocap_aligned_strict25_h264.mp4",
+      "bytes": 14125020,
+      "sha256": "5625ecef2f88a10e988ff6350c9c403d0e61a033b260d6607bc59d2ab16e3404"
+    },
+    {
+      "path": "media/take-002-diagnostic-contact.jpg",
+      "source": "outputs/holdout_01_review/03_211139_Take_002_glove_vs_mocap_holdout_from_Take_000.contact.jpg",
+      "bytes": 1101123,
+      "sha256": "50d0f7a227716fd4eb619dc77a6767abc42ca4c10e95811a2cb92117b1a85aa9"
+    },
+    {
+      "path": "media/take-002-diagnostic.mp4",
+      "source": "outputs/holdout_01_review/03_211139_Take_002_glove_vs_mocap_holdout_from_Take_000_h264.mp4",
+      "bytes": 10177855,
+      "sha256": "974d3a2fba04ad2cc9628bb1a2768caa56116e15e50643cf539e3cd26234eb2a"
+    },
+    {
+      "path": "media/take-002-fusion-contact.jpg",
+      "source": "outputs/mocap_root_fusion_review/03_211139_Take_002_mocap_root_fused_glove_holdout_from_Take_000.contact.jpg",
+      "bytes": 1105291,
+      "sha256": "c92802dd19934f10c50e015c48535166d1a043f2d182137baba54033444e6115"
+    },
+    {
+      "path": "media/take-002-fusion.mp4",
+      "source": "outputs/mocap_root_fusion_review/03_211139_Take_002_mocap_root_fused_glove_holdout_from_Take_000_h264.mp4",
+      "bytes": 10078337,
+      "sha256": "4914db4baa011d2777dfd8dbccab1c38c7d58f77b7d2ce58681d29380def71ba"
+    },
+    {
+      "path": "media/take-002-mocap-contact.jpg",
+      "source": "outputs/mocap_video_rear_mount_review/03_211139_Take_002_mocap_video_aligned_strict25.contact.jpg",
+      "bytes": 1162984,
+      "sha256": "09de2a8f322564f76433e8f1fe50138a985010fa3113eea0a5122f5a763d3c02"
+    },
+    {
+      "path": "media/take-002-mocap-raw-contact.jpg",
+      "source": "outputs/mocap_video_alignment_review/03_211139_Take_002_mocap_video_aligned_strict25.contact.jpg",
+      "bytes": 1173127,
+      "sha256": "0f479fbf1d431b19f334b3da3541bbbf2354f73475460bdd9a0068fba897d098"
+    },
+    {
+      "path": "media/take-002-mocap-raw.mp4",
+      "source": "outputs/mocap_video_alignment_review/03_211139_Take_002_mocap_video_aligned_strict25_h264.mp4",
+      "bytes": 8757221,
+      "sha256": "de8298664ad3d5de1b3513be742655a8557b3055200798b463632971503e5611"
+    },
+    {
+      "path": "media/take-002-mocap.mp4",
+      "source": "outputs/mocap_video_rear_mount_review/03_211139_Take_002_mocap_video_aligned_strict25_h264.mp4",
+      "bytes": 8869599,
+      "sha256": "c3d9dc519a99efe56d52047b49120b25ab432efb2f8fdf3c1d96d69aec7c12da"
+    },
+    {
+      "path": "styles.css",
+      "source": "web/public/styles.css",
+      "bytes": 32625,
+      "sha256": "9816b045395f96e789dc0607d45d92309b70093247d48143dbdb1e5057ce3137"
+    }
+  ]
+}

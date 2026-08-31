@@ -1,0 +1,49 @@
+# Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+
+# Node and Cloudflare working state
+node_modules/
+web/node_modules/
+.wrangler/
+web/.wrangler/
+web/.wrangler-dry-run/
+*.log
+
+# Raw source datasets and source archives
+同步整理_20260829_三段/
+thor_new4_20260831_processed/
+20260831_processed.zip
+movementcap_20260831_worldcalib_tabletop_final.tar.gz
+
+# Rebuildable outputs. Keep only the frozen registration profile consumed by
+# delivery.py; the reviewed MOCAP baseline artifacts live in the final folder.
+outputs/*
+!outputs/mocap_root_fusion_review/
+outputs/mocap_root_fusion_review/*
+!outputs/mocap_root_fusion_review/*_registration_profile.json
+
+# The website mirror is reproduced atomically by `publish-web`.
+web/public/downloads/final-nine/
+final_9_video_delivery/_render_scratch/
+
+# Editor, OS, and temporary files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.tmp

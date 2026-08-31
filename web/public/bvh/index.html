@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="完全离线的双手 BVH 动作可视化：视频主时钟、严格帧映射与 42 关节正交视图。">
+    <meta name="theme-color" content="#08111f">
+    <meta name="robots" content="noindex, noarchive">
+    <title>双手 BVH 动作 · 本地可视化</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/bvh/bvh-viewer.css">
+    <script src="/bvh/bvh-viewer.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#viewer">跳到动作视图</a>
+
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="返回 GT Calib 总览">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+        <span>GT_CALIB</span>
+      </a>
+      <div class="topbar-meta">
+        <span class="offline-dot" aria-hidden="true"></span>
+        <span>LOCAL · OFFLINE</span>
+        <a href="/">返回总览</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero page-shell" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">SKELETON_0 + SKELETON_1 · BVH MOTION</p>
+          <h1 id="page-title">双手动作，<br><em>逐帧看清。</em></h1>
+          <p class="hero-copy">仅显示两份完整手骨架：左手 Skeleton_0 与右手 Skeleton_1。视频是播放主时钟，Canvas 按交付的逐帧映射读取 BVH source frame，不使用人工时间偏移。</p>
+        </div>
+        <aside class="hero-facts" aria-label="当前可视化范围">
+          <div><strong>42</strong><span>joints</span></div>
+          <div><strong>40</strong><span>bones</span></div>
+          <div><strong>120 → 60</strong><span>Hz source → web</span></div>
+        </aside>
+      </section>
+
+      <section class="take-bar page-shell" aria-labelledby="take-title">
+        <div>
+          <p class="section-label" id="take-title">SELECT TAKE</p>
+          <div class="take-tabs" role="tablist" aria-label="选择数据段">
+            <button type="button" role="tab" data-take="01" aria-selected="true">01 <span>Take_000</span></button>
+            <button type="button" role="tab" data-take="02" aria-selected="false">02 <span>Take_001</span></button>
+            <button type="button" role="tab" data-take="03" aria-selected="false">03 <span>Take_002</span></button>
+          </div>
+        </div>
+        <div class="load-state" id="load-state" role="status" aria-live="polite">
+          <span class="state-light" aria-hidden="true"></span>
+          <span id="load-state-text">正在读取本地 manifest…</span>
+        </div>
+      </section>
+
+      <section class="viewer-section page-shell" id="viewer" aria-labelledby="viewer-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">SYNCHRONIZED REVIEW</p>
+            <h2 id="viewer-title">BVH 骨架与对应视频</h2>
+          </div>
+          <div class="legend" aria-label="骨架颜色">
+            <span><i class="left-color"></i>左手 · Skeleton_0</span>
+            <span><i class="right-color"></i>右手 · Skeleton_1</span>
+          </div>
+        </div>
+
+        <div class="stage-grid">
+          <article class="stage-card skeleton-card" aria-labelledby="canvas-title">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">ORTHOGRAPHIC PSEUDO-3D</p>
+                <h3 id="canvas-title">双手 42 关节</h3>
+              </div>
+              <button class="quiet-button" id="reset-view" type="button" title="恢复默认视角">重置视角</button>
+            </div>
+            <div class="canvas-wrap" id="canvas-wrap">
+              <canvas id="motion-canvas" aria-label="双手 BVH 三维骨架动画。拖动旋转，滚轮缩放，双击复位。">
+                当前浏览器不支持 Canvas，仍可下载下方原始 BVH 文件。
+              </canvas>
+              <div class="canvas-hud" aria-hidden="true">
+                <span id="hud-output-frame">VIDEO —</span>
+                <span id="hud-source-frame">BVH —</span>
+              </div>
+              <div class="canvas-hint">拖动旋转 · 滚轮缩放 · 双击复位</div>
+              <div class="canvas-loading" id="canvas-loading">
+                <span></span>
+                <p>正在载入动作数据</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="stage-card video-card" aria-labelledby="video-title">
+            <div class="card-head">
+              <div>
+                <p class="card-kicker">MASTER CLOCK · 30 FPS</p>
+                <h3 id="video-title">对应 RGB 参考</h3>
+              </div>
+              <span class="sync-badge"><i></i>VIDEO MASTER</span>
+            </div>
+            <div class="video-wrap">
+              <video id="master-video" preload="auto" playsinline muted aria-label="当前 Take 的 RGB 与 MOCAP 参考视频"></video>
+              <button class="video-play-overlay" id="video-play-overlay" type="button" aria-label="播放">
+                <span aria-hidden="true">▶</span>
+              </button>
+            </div>
+            <p class="video-note">参考视频中已有的投影仅用于对照；左侧 Canvas 的动作位置只来自当前两份 BVH。</p>
+          </article>
+        </div>
+
+        <div class="transport" aria-label="播放控制">
+          <button class="play-button" id="play-toggle" type="button" disabled>
+            <span id="play-icon" aria-hidden="true">▶</span>
+            <span id="play-label">播放</span>
+          </button>
+          <div class="timeline-group">
+            <input id="timeline" type="range" min="0" max="1" step="1" value="0" disabled aria-label="视频帧时间轴">
+            <div class="timeline-meta">
+              <span id="time-readout">00:00.000 / 00:00.000</span>
+              <span id="frame-readout">frame —</span>
+            </div>
+          </div>
+          <label class="speed-control">
+            <span>速度</span>
+            <select id="playback-rate" disabled>
+              <option value="0.25">0.25×</option>
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="1.5">1.5×</option>
+              <option value="2">2×</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="detail-grid page-shell" aria-label="数据状态与下载">
+        <article class="detail-card">
+          <p class="section-label">CURRENT FRAME</p>
+          <div class="metric-grid">
+            <div><span>视频输出帧</span><strong id="metric-video-frame">—</strong></div>
+            <div><span>BVH source frame</span><strong id="metric-bvh-frame">—</strong></div>
+            <div><span>插值 bracket</span><strong id="metric-bracket">—</strong></div>
+            <div><span>插值 α</span><strong id="metric-alpha">—</strong></div>
+          </div>
+        </article>
+
+        <article class="detail-card boundary-card">
+          <p class="section-label">BOUNDARY CONTRACT</p>
+          <h2>首尾无效帧不会伪装成动作</h2>
+          <p id="boundary-copy">正在读取严格 BVH 边界…</p>
+          <div class="boundary-line">
+            <span>strict source range</span>
+            <strong id="strict-range">—</strong>
+          </div>
+        </article>
+
+        <article class="detail-card download-card">
+          <p class="section-label">RAW SOURCE</p>
+          <h2>下载当前 Take 的原始 BVH</h2>
+          <div class="download-actions">
+            <a id="download-left" href="#" download>Skeleton_0 · 左手 <span>↓</span></a>
+            <a id="download-right" href="#" download>Skeleton_1 · 右手 <span>↓</span></a>
+          </div>
+          <a class="json-download" id="download-motion" href="#" download>下载网页动作 JSON</a>
+        </article>
+      </section>
+
+      <section class="scope page-shell" aria-labelledby="scope-title">
+        <div>
+          <p class="section-label">INTERPRETATION BOUNDARY</p>
+          <h2 id="scope-title">这是动作审阅，不是相机标定结果。</h2>
+        </div>
+        <p>Canvas 使用 BVH 原生单位和 XYZ 坐标，只做正交伪 3D 观察；它没有投到 camera optical frame，也不测量 skeleton-to-surface error。视频同步来自既有曝光时刻映射，表示逐帧可追溯，不等于硬件零时差。</p>
+      </section>
+    </main>
+
+    <footer class="footer page-shell">
+      <span>GT_CALIB · BVH REVIEW</span>
+      <span>全部资源来自 localhost，无 CDN 与外部运行时依赖。</span>
+    </footer>
+
+    <noscript>
+      <div class="noscript">需要启用 JavaScript 才能播放 BVH；原始文件仍可从 <code>/bvh/data/</code> 获取。</div>
+    </noscript>
+  </body>
+</html>

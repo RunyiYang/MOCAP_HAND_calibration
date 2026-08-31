@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 940" role="img" aria-labelledby="title description" preserveAspectRatio="xMidYMid meet">
+  <title id="title">手套与 MOCAP 严格跨 Take 协议指标总览</title>
+  <desc id="description">Take 01 是 calibration；Take 02 是 validation holdout；Take 03 是 test and stress holdout。图中逐项列出左右手非拇指关节与指尖的 root-normalized median EPE。MOCAP wrist translation 每帧共享，因此这些结果不是 absolute wrist 或 6DoF 指标。</desc>
+
+  <defs>
+    <style>
+      .sans { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+      .eyebrow { font-size: 14px; font-weight: 800; letter-spacing: 2.2px; fill: #36516f; }
+      .title { font-size: 36px; font-weight: 800; fill: #10243e; }
+      .subtitle { font-size: 16px; font-weight: 500; fill: #52657a; }
+      .badge { font-size: 12px; font-weight: 800; letter-spacing: 1px; }
+      .take { font-size: 24px; font-weight: 800; fill: #10243e; }
+      .segment { font-size: 13px; font-weight: 650; fill: #607287; }
+      .coverage { font-size: 13px; font-weight: 650; fill: #40566e; }
+      .hand { font-size: 14px; font-weight: 800; fill: #10243e; letter-spacing: .4px; }
+      .metric { font-size: 13px; font-weight: 650; fill: #40566e; }
+      .value { font-size: 15px; font-weight: 800; fill: #10243e; font-variant-numeric: tabular-nums; }
+      .axis { font-size: 11px; font-weight: 600; fill: #708196; font-variant-numeric: tabular-nums; }
+      .section-title { font-size: 16px; font-weight: 800; fill: #10243e; }
+      .note { font-size: 13px; font-weight: 560; fill: #40566e; }
+      .boundary { font-size: 14px; font-weight: 800; fill: #7a2d18; }
+      .source { font-size: 11px; font-weight: 600; fill: #708196; }
+      .card { fill: #ffffff; stroke: #d8e1eb; stroke-width: 1.5; }
+      .divider { stroke: #e4eaf1; stroke-width: 1.5; }
+      .track { fill: #edf2f7; }
+      .joint-bar { fill: #2369c8; }
+      .tip-bar { fill: #c65d17; }
+    </style>
+    <pattern id="tipHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#f4c39e"/>
+      <rect width="3" height="8" fill="#c65d17"/>
+    </pattern>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#10243e" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1440" height="940" fill="#f5f8fc"/>
+  <rect x="0" y="0" width="1440" height="8" fill="#2369c8"/>
+
+  <g class="sans">
+    <text class="eyebrow" x="40" y="48">STRICT CROSS-TAKE PROTOCOL · DATASET 01–03</text>
+    <text class="title" x="40" y="91">手套 × MOCAP 严格协议指标总览</text>
+    <text class="subtitle" x="40" y="122">固定 Take 01 配准 → 冻结后评估 Take 02 / 03 · median EPE，单位 mm · 数值四舍五入至 0.01 mm</text>
+
+    <g transform="translate(990 38)">
+      <rect width="410" height="86" rx="14" fill="#eaf1fb" stroke="#c9d9ec"/>
+      <circle cx="24" cy="27" r="7" fill="#2369c8"/>
+      <text class="metric" x="40" y="32">Joint median · 16 个非拇指关节</text>
+      <rect x="17" y="54" width="14" height="14" rx="2" fill="url(#tipHatch)"/>
+      <text class="metric" x="40" y="66">Tip median · 4 个非拇指指尖</text>
+    </g>
+
+    <!-- Take 01: calibration -->
+    <g transform="translate(40 158)" filter="url(#shadow)">
+      <rect class="card" width="440" height="506" rx="20"/>
+      <rect x="0" y="0" width="440" height="8" rx="4" fill="#2369c8"/>
+      <rect x="24" y="27" width="122" height="28" rx="14" fill="#e7f0fb"/>
+      <text class="badge" x="85" y="46" text-anchor="middle" fill="#174f98">CALIBRATION</text>
+      <text class="take" x="24" y="88">Take 01</text>
+      <text class="segment" x="24" y="112">01_210814_Take_000 · target used in fit</text>
+      <text class="coverage" x="24" y="139">有效帧 1275 / 1748 · coverage 72.94%</text>
+      <line class="divider" x1="24" y1="159" x2="416" y2="159"/>
+
+      <g transform="translate(24 184)">
+        <rect width="44" height="24" rx="12" fill="#e9f6f3" stroke="#83bdb1"/>
+        <text class="hand" x="22" y="17" text-anchor="middle">L</text>
+        <text class="hand" x="56" y="17">左手</text>
+
+        <text class="metric" x="0" y="58">Joint</text>
+        <rect class="track" x="82" y="44" width="214" height="16" rx="8"/>
+        <rect class="joint-bar" x="82" y="44" width="63.39" height="16" rx="8"/>
+        <circle cx="145.39" cy="52" r="5" fill="#ffffff" stroke="#174f98" stroke-width="2"/>
+        <text class="value" x="392" y="58" text-anchor="end">32.58 mm</text>
+
+        <text class="metric" x="0" y="98">Tip</text>
+        <rect class="track" x="82" y="84" width="214" height="16" rx="8"/>
+        <rect x="82" y="84" width="105.55" height="16" rx="8" fill="url(#tipHatch)"/>
+        <rect x="182.55" y="87" width="10" height="10" rx="1" transform="rotate(45 187.55 92)" fill="#ffffff" stroke="#8c3e0c" stroke-width="2"/>
+        <text class="value" x="392" y="98" text-anchor="end">54.26 mm</text>
+      </g>
+
+      <line class="divider" x1="24" y1="314" x2="416" y2="314"/>
+
+      <g transform="translate(24 333)">
+        <rect width="44" height="24" rx="12" fill="#f2ebf8" stroke="#b99dcc"/>
+        <text class="hand" x="22" y="17" text-anchor="middle">R</text>
+        <text class="hand" x="56" y="17">右手</text>
+
+        <text class="metric" x="0" y="58">Joint</text>
+        <rect class="track" x="82" y="44" width="214" height="16" rx="8"/>
+        <rect class="joint-bar" x="82" y="44" width="59.70" height="16" rx="8"/>
+        <circle cx="141.70" cy="52" r="5" fill="#ffffff" stroke="#174f98" stroke-width="2"/>
+        <text class="value" x="392" y="58" text-anchor="end">30.69 mm</text>
+
+        <text class="metric" x="0" y="98">Tip</text>
+        <rect class="track" x="82" y="84" width="214" height="16" rx="8"/>
+        <rect x="82" y="84" width="100.20" height="16" rx="8" fill="url(#tipHatch)"/>
+        <rect x="177.20" y="87" width="10" height="10" rx="1" transform="rotate(45 182.20 92)" fill="#ffffff" stroke="#8c3e0c" stroke-width="2"/>
+        <text class="value" x="392" y="98" text-anchor="end">51.50 mm</text>
+      </g>
+
+      <line class="divider" x1="106" y1="465" x2="320" y2="465"/>
+      <g class="axis">
+        <text x="106" y="486" text-anchor="middle">0</text>
+        <text x="203" y="486" text-anchor="middle">50</text>
+        <text x="320" y="486" text-anchor="middle">110</text>
+      </g>
+    </g>
+
+    <!-- Take 02: validation holdout -->
+    <g transform="translate(500 158)" filter="url(#shadow)">
+      <rect class="card" width="440" height="506" rx="20"/>
+      <rect x="0" y="0" width="440" height="8" rx="4" fill="#117a72"/>
+      <rect x="24" y="27" width="196" height="28" rx="14" fill="#e2f3ef"/>
+      <text class="badge" x="122" y="46" text-anchor="middle" fill="#0b5d57">VALIDATION HOLDOUT</text>
+      <text class="take" x="24" y="88">Take 02</text>
+      <text class="segment" x="24" y="112">02_210955_Take_001 · frozen Take 01 profile</text>
+      <text class="coverage" x="24" y="139">有效帧 1324 / 1805 · coverage 73.35%</text>
+      <line class="divider" x1="24" y1="159" x2="416" y2="159"/>
+
+      <g transform="translate(24 184)">
+        <rect width="44" height="24" rx="12" fill="#e9f6f3" stroke="#83bdb1"/>
+        <text class="hand" x="22" y="17" text-anchor="middle">L</text>
+        <text class="hand" x="56" y="17">左手</text>
+
+        <text class="metric" x="0" y="58">Joint</text>
+        <rect class="track" x="82" y="44" width="214" height="16" rx="8"/>
+        <rect class="joint-bar" x="82" y="44" width="62.14" height="16" rx="8"/>
+        <circle cx="144.14" cy="52" r="5" fill="#ffffff" stroke="#174f98" stroke-width="2"/>
+        <text class="value" x="392" y="58" text-anchor="end">31.94 mm</text>
+
+        <text class="metric" x="0" y="98">Tip</text>
+        <rect class="track" x="82" y="84" width="214" height="16" rx="8"/>
+        <rect x="82" y="84" width="101.16" height="16" rx="8" fill="url(#tipHatch)"/>
+        <rect x="178.16" y="87" width="10" height="10" rx="1" transform="rotate(45 183.16 92)" fill="#ffffff" stroke="#8c3e0c" stroke-width="2"/>
+        <text class="value" x="392" y="98" text-anchor="end">52.00 mm</text>
+      </g>
+
+      <line class="divider" x1="24" y1="314" x2="416" y2="314"/>
+
+      <g transform="translate(24 333)">
+        <rect width="44" height="24" rx="12" fill="#f2ebf8" stroke="#b99dcc"/>
+        <text class="hand" x="22" y="17" text-anchor="middle">R</text>
+        <text class="hand" x="56" y="17">右手</text>
+
+        <text class="metric" x="0" y="58">Joint</text>
+        <rect class="track" x="82" y="44" width="214" height="16" rx="8"/>
+        <rect class="joint-bar" x="82" y="44" width="77.98" height="16" rx="8"/>
+        <circle cx="159.98" cy="52" r="5" fill="#ffffff" stroke="#174f98" stroke-width="2"/>
+        <text class="value" x="392" y="58" text-anchor="end">40.08 mm</text>
+
+        <text class="metric" x="0" y="98">Tip</text>
+        <rect class="track" x="82" y="84" width="214" height="16" rx="8"/>
+        <rect x="82" y="84" width="121.26" height="16" rx="8" fill="url(#tipHatch)"/>
+        <rect x="198.26" y="87" width="10" height="10" rx="1" transform="rotate(45 203.26 92)" fill="#ffffff" stroke="#8c3e0c" stroke-width="2"/>
+        <text class="value" x="392" y="98" text-anchor="end">62.33 mm</text>
+      </g>
+
+      <line class="divider" x1="106" y1="465" x2="320" y2="465"/>
+      <g class="axis">
+        <text x="106" y="486" text-anchor="middle">0</text>
+        <text x="203" y="486" text-anchor="middle">50</text>
+        <text x="320" y="486" text-anchor="middle">110</text>
+      </g>
+    </g>
+
+    <!-- Take 03: test/stress holdout -->
+    <g transform="translate(960 158)" filter="url(#shadow)">
+      <rect class="card" width="440" height="506" rx="20"/>
+      <rect x="0" y="0" width="440" height="8" rx="4" fill="#9b4a0c"/>
+      <rect x="24" y="27" width="204" height="28" rx="14" fill="#faecdf"/>
+      <text class="badge" x="126" y="46" text-anchor="middle" fill="#7b3809">TEST / STRESS HOLDOUT</text>
+      <text class="take" x="24" y="88">Take 03</text>
+      <text class="segment" x="24" y="112">03_211139_Take_002 · frozen Take 01 profile</text>
+      <text class="coverage" x="24" y="139">有效帧 1219 / 1800 · coverage 67.72%</text>
+      <line class="divider" x1="24" y1="159" x2="416" y2="159"/>
+
+      <g transform="translate(24 184)">
+        <rect width="44" height="24" rx="12" fill="#e9f6f3" stroke="#83bdb1"/>
+        <text class="hand" x="22" y="17" text-anchor="middle">L</text>
+        <text class="hand" x="56" y="17">左手</text>
+
+        <text class="metric" x="0" y="58">Joint</text>
+        <rect class="track" x="82" y="44" width="214" height="16" rx="8"/>
+        <rect class="joint-bar" x="82" y="44" width="84.58" height="16" rx="8"/>
+        <circle cx="166.58" cy="52" r="5" fill="#ffffff" stroke="#174f98" stroke-width="2"/>
+        <text class="value" x="392" y="58" text-anchor="end">43.47 mm</text>
+
+        <text class="metric" x="0" y="98">Tip</text>
+        <rect class="track" x="82" y="84" width="214" height="16" rx="8"/>
+        <rect x="82" y="84" width="128.98" height="16" rx="8" fill="url(#tipHatch)"/>
+        <rect x="205.98" y="87" width="10" height="10" rx="1" transform="rotate(45 210.98 92)" fill="#ffffff" stroke="#8c3e0c" stroke-width="2"/>
+        <text class="value" x="392" y="98" text-anchor="end">66.30 mm</text>
+      </g>
+
+      <line class="divider" x1="24" y1="314" x2="416" y2="314"/>
+
+      <g transform="translate(24 333)">
+        <rect width="44" height="24" rx="12" fill="#f2ebf8" stroke="#b99dcc"/>
+        <text class="hand" x="22" y="17" text-anchor="middle">R</text>
+        <text class="hand" x="56" y="17">右手</text>
+
+        <text class="metric" x="0" y="58">Joint</text>
+        <rect class="track" x="82" y="44" width="214" height="16" rx="8"/>
+        <rect class="joint-bar" x="82" y="44" width="128.89" height="16" rx="8"/>
+        <circle cx="210.89" cy="52" r="5" fill="#ffffff" stroke="#174f98" stroke-width="2"/>
+        <text class="value" x="392" y="58" text-anchor="end">66.25 mm</text>
+
+        <text class="metric" x="0" y="98">Tip</text>
+        <rect class="track" x="82" y="84" width="214" height="16" rx="8"/>
+        <rect x="82" y="84" width="198.16" height="16" rx="8" fill="url(#tipHatch)"/>
+        <rect x="275.16" y="87" width="10" height="10" rx="1" transform="rotate(45 280.16 92)" fill="#ffffff" stroke="#8c3e0c" stroke-width="2"/>
+        <text class="value" x="392" y="98" text-anchor="end">101.86 mm</text>
+      </g>
+
+      <line class="divider" x1="106" y1="465" x2="320" y2="465"/>
+      <g class="axis">
+        <text x="106" y="486" text-anchor="middle">0</text>
+        <text x="203" y="486" text-anchor="middle">50</text>
+        <text x="320" y="486" text-anchor="middle">110</text>
+      </g>
+    </g>
+
+    <!-- Evaluation contract and boundary -->
+    <g transform="translate(40 698)">
+      <rect width="1360" height="196" rx="18" fill="#ffffff" stroke="#d8e1eb" stroke-width="1.5"/>
+      <g transform="translate(26 27)">
+        <text class="section-title" x="0" y="0">严格协议如何读</text>
+        <circle cx="6" cy="32" r="5" fill="#2369c8"/>
+        <text class="note" x="20" y="37">Take 01 仅用四个非拇指 MCP 拟合固定 R + uniform scale；fingertip 不参与配准。</text>
+        <circle cx="6" cy="63" r="5" fill="#117a72"/>
+        <text class="note" x="20" y="68">Take 02 / 03 冻结 Take 01 profile；目标 Take 不参与 rotation 或 scale 拟合。</text>
+        <circle cx="6" cy="94" r="5" fill="#9b4a0c"/>
+        <text class="note" x="20" y="99">25 ms 插值 bracket 门限；thumb 绘制但不计入指标；跨 Take 包含 neutral / recenter 与重新佩戴影响。</text>
+      </g>
+
+      <line x1="850" y1="24" x2="850" y2="172" stroke="#e4eaf1" stroke-width="1.5"/>
+      <g transform="translate(884 27)">
+        <rect x="0" y="0" width="438" height="112" rx="14" fill="#fff3eb" stroke="#e6b18c"/>
+        <text class="boundary" x="20" y="29">⚠ 指标边界：不是 absolute wrist / 6DoF GT</text>
+        <text class="note" x="20" y="58">所有 EPE 都在 MOCAP-wrist root-normalized 坐标中计算；</text>
+        <text class="note" x="20" y="82">glove 没有全局腕部平移，overlay 每帧复制同步后的</text>
+        <text class="note" x="20" y="103">MOCAP wrist translation，因此不能验证绝对腕部位姿。</text>
+        <text class="source" x="0" y="146">Source: *.metrics.json · CROSS_TAKE_EVALUATION.md · strict 25 ms gate</text>
+      </g>
+    </g>
+
+    <text class="source" x="40" y="922">Median: pooled frame × non-thumb joint EPE · Shared scale: 0–110 mm · Visual encoding uses labels plus circle / hatched-square markers, not color alone.</text>
+  </g>
+</svg>

@@ -1,0 +1,254 @@
+{
+  "schema": "gt_calib.depth_mocap_overlay.v1",
+  "artifact_type": "evaluation_metrics",
+  "generated_at": "2026-08-30T22:48:32+00:00",
+  "segment": "01_210814_Take_000",
+  "status": "raw_metric_depth_timestamp_mapped_mocap_projection_visualization",
+  "claim": "Raw mono16 depth frames use their own device timestamps, CMAvatar is interpolated at those timestamps, and both 21-joint hands are projected with the frozen delivered world-to-depth SE(3). Metrics describe timing and coverage only; skeleton-to-visible-surface distance is not accuracy.",
+  "inputs": {
+    "raw_rgbd_bag": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/原始BAG与内参/camera_1_rgb_depth.bag",
+      "bytes": 917384756,
+      "sha256": "86713f536ac153fe47adb9e288a9de453b4a83deb4ebbea18ab8323996a4d2f9"
+    },
+    "camera_intrinsics_json": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/原始BAG与内参/camera_1_intrinsics.json",
+      "bytes": 2814,
+      "sha256": "51c4e4e36e74b635aedaf2fd3c7c9fa234a570d7c0f396bde40a138b756b52df"
+    },
+    "clock_mapping": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/同步校验/camera_cmavatar_alignment.csv",
+      "bytes": 163197,
+      "sha256": "e7e8e7ee058158423dc74fdb6fb77367217d1e84a24a1b3f65de64c04094c277"
+    },
+    "common_interval_sync_report": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/同步校验/common_interval_sync_report.json",
+      "bytes": 1728,
+      "sha256": "ea4f5f2f473c13d5ac087d30289ad99bb44f5a57d1271b2d2021af715f2cac09"
+    },
+    "mocap_human": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Human.cma",
+      "bytes": 100630078,
+      "sha256": "b76c3f632816cff742e3f3f599f43e5d1b919fd0295a91384bf54846df2dec1f"
+    },
+    "camera_to_world": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/movementcap_worldcalib_pointcloud_package_20260830/movementcap_ruler_worldcalib/results/manual_final/camera_to_world.json",
+      "bytes": 16538,
+      "sha256": "c020c67dc9266238366c511b8c24728c5915e61493d5ad51bac354f3f4582283"
+    }
+  },
+  "depth_frame_contract": {
+    "topic": "/cam/sensor_3/frameType_3",
+    "encoding": "mono16",
+    "units": "millimetres",
+    "raw_bag_depth_messages": 1816,
+    "raw_bag_rgb_messages": 1815,
+    "depth_minus_rgb_message_count": 1,
+    "rgb_depth_pairing": {
+      "pass": true,
+      "same_index_is_nearest_for_all_paired_messages": true,
+      "paired_message_count": 1815,
+      "extra_depth_message_count": 1,
+      "extra_depth_is_validated_tail_frame": true,
+      "extra_depth_tail_timestamp_ns": 1788008955116775036,
+      "paired_depth_minus_rgb_ms": {
+        "min": 1.298904,
+        "median": 1.310825,
+        "p95": 1.317024,
+        "max": 1.338006
+      }
+    },
+    "same_index_is_nearest_for_all_paired_messages": true,
+    "extra_depth_tail_is_not_forced_onto_rgb": true,
+    "source_frame_first": 60,
+    "source_frame_last_inclusive": 1806,
+    "published_clip_frames": 1747,
+    "frame_mapping_rows": 1747,
+    "frame_mapping_output_and_source_frames_contiguous": true,
+    "published_clip_all_frames_mocap_valid": true,
+    "trimmed_prefix_depth_frames": 60,
+    "trimmed_suffix_depth_frames": 9,
+    "covers_full_synchronized_depth_interval": true,
+    "resolution": [
+      640,
+      576
+    ],
+    "fps": 30.0,
+    "preview_fixed_metric_range_mm": [
+      350.0,
+      1800.0
+    ],
+    "decoded_frame_numbers_strictly_increasing": true,
+    "decoded_device_timestamps_strictly_increasing": true,
+    "decoded_device_timestamps_match_bag_index": true,
+    "raw_valid_pixel_fraction": {
+      "median": 0.6145806206597222,
+      "p05": 0.6041097005208333,
+      "p95": 0.6509383138020833
+    }
+  },
+  "temporal_alignment": {
+    "time_key": "depth Image.timestamp_usec / BAG index timestamp",
+    "mapping": "depth device acquisition timestamp -> delivered exposure-time ClockMapping -> CMAvatar time -> linear 120 Hz position interpolation",
+    "depth_timestamp_used_directly_not_rgb_timestamp_substituted": true,
+    "paired_depth_minus_rgb_device_timestamp_ms": {
+      "min": 1.298904,
+      "median": 1.310825,
+      "p95": 1.317024,
+      "max": 1.338006
+    },
+    "mocap_bracket_span_ms": {
+      "min": 8.331775665283203,
+      "median": 8.332967758178711,
+      "p95": 8.333921432495117,
+      "max": 8.333921432495117
+    },
+    "nearest_mocap_sample_delta_ms": {
+      "min": 0.0019073486328125,
+      "median": 2.087831497192383,
+      "p95": 3.9593219757080074,
+      "max": 4.165172576904297
+    },
+    "max_allowed_bracket_span_ms": 25.0,
+    "mocap_sample_timebase": {
+      "source": "PtpTimeStamp affine fit to millisecond Windows TimeStamp",
+      "ptp_to_windows_slope": 0.9999783092542173,
+      "display_timestamp_fit_absolute_residual_ms": {
+        "median": 0.36263465881347656,
+        "p95": 1.0987043380737302,
+        "max": 2.2089481353759766
+      },
+      "ptp_vs_120hz_frame_counter_absolute_residual_us": {
+        "median": 1.6666671101006614,
+        "p95": 3.000000468489361,
+        "max": 3.666667424795378
+      },
+      "semantic_status": "high-resolution relative cadence observed; absolute PTP epoch contract was not delivered, so Windows TimeStamp remains the affine anchor"
+    },
+    "clock_model_estimated_uncertainty_ms": 0.6502872826274029,
+    "all_published_frames_have_valid_interpolation": true
+  },
+  "spatial_projection_coverage": {
+    "calibration_schema": "movementcap.camera_to_mocap_world.v1",
+    "calibration_status": "manual_visual_calibration_complete",
+    "calibration_method": "manual_visual_CS400_markers_plus_109_frame_raw_depth_median",
+    "fixed_camera_assumption": true,
+    "recorded_camera_contract": {
+      "pass": true,
+      "serial_number": "CL8L563010D",
+      "device_name": "Orbbec Femto Bolt",
+      "firmware_version": "1.1.3",
+      "intrinsics_json": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/原始BAG与内参/camera_1_intrinsics.json",
+      "bag_depth_profile_topic": "/cam/streamProfileType_3",
+      "bag_depth_profile_message_type": "custom_msg/OBStreamProfileInfo",
+      "bag_depth_profile_message_count": 1,
+      "bag_depth_profile_timestamp_ns": 1788008894494879007,
+      "bag_depth_profile_stream_type": 3,
+      "bag_depth_profile_pixel_format": 8,
+      "bag_depth_profile_distortion_model": 4,
+      "resolution": [
+        640,
+        576
+      ],
+      "fps": 30,
+      "intrinsics_fx_fy_cx_cy": [
+        505.1873779296875,
+        505.1247253417969,
+        328.88433837890625,
+        320.30377197265625
+      ],
+      "distortion_orbbec_k1_k2_k3_k4_k5_k6_p1_p2": [
+        26.895000457763672,
+        13.134957313537598,
+        0.4587059020996094,
+        27.184513092041016,
+        22.24901008605957,
+        2.9627530574798584,
+        2.6159061235375702e-05,
+        6.605655653402209e-05
+      ],
+      "gates": {
+        "intrinsics_json_schema": true,
+        "bag_filename_matches": true,
+        "single_expected_serial": true,
+        "serial_matches_calibration": true,
+        "segment_has_calibration_detail": true,
+        "json_resolution_matches": true,
+        "json_intrinsics_match": true,
+        "json_distortion_matches": true,
+        "bag_profile_resolution_matches": true,
+        "bag_profile_fps_matches": true,
+        "bag_profile_intrinsics_match": true,
+        "bag_profile_distortion_matches": true,
+        "segment_detail_serial_and_depth_intrinsics_match": true
+      }
+    },
+    "world_to_depth_camera_frozen_no_refit": true,
+    "world_to_depth_camera": [
+      [
+        -0.995518758171714,
+        -0.06889481017518666,
+        -0.06477582310687761,
+        38.88048388443199
+      ],
+      [
+        0.026542715979222455,
+        0.45387966937715185,
+        -0.8906675754480645,
+        105.29630506696088
+      ],
+      [
+        0.09076280271507063,
+        -0.8883956049289148,
+        -0.4500170694388079,
+        1002.1591169237244
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "rotation_determinant": 1.0,
+    "rotation_orthogonality_max_abs_error": 2.220446049250313e-16,
+    "projected_joint_samples": 73374,
+    "positive_camera_depth_fraction": 1.0,
+    "inside_depth_frame_fraction": 1.0,
+    "raw_depth_valid_at_projected_joint_pixel_fraction": 0.7643306893449996,
+    "wrist_samples": 3494,
+    "wrist_inside_depth_frame_fraction": 1.0,
+    "raw_depth_valid_at_projected_wrist_pixel_fraction": 0.6056096164854036,
+    "skeleton_to_surface_error_measured": false,
+    "independent_depth_joint_labels_available": false
+  },
+  "artifacts": {
+    "mp4v_preview": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/outputs/depth_mocap_alignment_review/01_210814_Take_000_depth_mocap_aligned_strict25.mp4",
+      "bytes": 74459924,
+      "sha256": "233fc28830deb0d7a1876da9755f404964b97b07549790b448de5440ae6956f5"
+    },
+    "contact_sheet": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/outputs/depth_mocap_alignment_review/01_210814_Take_000_depth_mocap_aligned_strict25.contact.jpg",
+      "bytes": 687808,
+      "sha256": "da8f47f9ac30f1d476fa5393acae5f1d4d3b385384f19d42f5e0805b1a4dfdba"
+    },
+    "h264_delivery_video": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/outputs/depth_mocap_alignment_review/01_210814_Take_000_depth_mocap_aligned_strict25_h264.mp4",
+      "bytes": 14241449,
+      "sha256": "b45792b9a9635e5cf0f8029487598037591601c111044071ed597eb5666dcaba"
+    },
+    "frame_mapping_csv": {
+      "path": "/home/runyi/Project/hands_reloc/GT_calib/outputs/depth_mocap_alignment_review/01_210814_Take_000_depth_mocap_aligned_strict25.alignment.csv",
+      "bytes": 608796,
+      "sha256": "0a035577b8b4ae3ba4773009f6c75909a5c83705aba6d6830de3cef6661b4912"
+    }
+  },
+  "interpretation_limits": [
+    "A depth pixel is the first visible surface on a ray; a CMAvatar joint is not that surface, so their range difference is not an accuracy metric.",
+    "Projection coverage and nonzero-depth coverage are diagnostics, not independent pose ground truth.",
+    "The fixed world-to-depth transform was manually established from the CS-400/table recording and is reused under the fixed-camera assumption.",
+    "The delivered clock uncertainty is a software-model estimate, not a shared hardware-trigger measurement.",
+    "Human.cma provides no per-joint visibility, residual, occlusion, or gap-fill quality field."
+  ]
+}

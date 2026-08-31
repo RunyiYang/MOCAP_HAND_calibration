@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1120" width="100%" role="img" aria-labelledby="title description" preserveAspectRatio="xMidYMid meet" style="display:block;max-width:1440px;height:auto;background:#f5f8fc">
+  <title id="title">Baseline 与 MOCAP wrist SE3 条件化 calibrated fusion 对比</title>
+  <desc id="description">三个 Take 的左右手非拇指 joint 与 fingertip root-normalized median EPE 对比。Baseline 保留 glove wrist orientation 并共享 MOCAP wrist translation；calibrated fusion 使用 MOCAP wrist SE3 与 glove local articulation。Take 02 和 Take 03 是冻结 Take 01 配准后的 holdout。融合降低 median，但 P95 仍高；该结果依赖 MOCAP wrist SE3，并非独立 glove 6DoF 精度。</desc>
+
+  <defs>
+    <style>
+      .sans { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+      .eyebrow { font-size: 13px; font-weight: 800; letter-spacing: 1.8px; fill: #35506c; }
+      .title { font-size: 34px; font-weight: 850; fill: #10243e; }
+      .subtitle { font-size: 15px; font-weight: 560; fill: #53677d; }
+      .take { font-size: 25px; font-weight: 850; fill: #10243e; }
+      .segment { font-size: 12px; font-weight: 650; fill: #65778b; }
+      .badge { font-size: 11px; font-weight: 850; letter-spacing: .9px; }
+      .method { font-size: 12px; font-weight: 760; fill: #263f5c; }
+      .hand { font-size: 14px; font-weight: 850; fill: #10243e; }
+      .metric { font-size: 12px; font-weight: 750; fill: #38506a; }
+      .pair { font-size: 14px; font-weight: 850; fill: #10243e; font-variant-numeric: tabular-nums; }
+      .reduction { font-size: 11px; font-weight: 800; fill: #08745b; font-variant-numeric: tabular-nums; }
+      .legend { font-size: 12px; font-weight: 700; fill: #3e556e; }
+      .axis { font-size: 10px; font-weight: 650; fill: #75869a; font-variant-numeric: tabular-nums; }
+      .p95-title { font-size: 17px; font-weight: 850; fill: #10243e; }
+      .p95-head { font-size: 12px; font-weight: 850; fill: #2e4864; }
+      .p95-value { font-size: 12px; font-weight: 760; fill: #10243e; font-variant-numeric: tabular-nums; }
+      .note { font-size: 13px; font-weight: 590; fill: #3f566f; }
+      .boundary-title { font-size: 18px; font-weight: 850; fill: #7a2d18; }
+      .boundary-strong { font-size: 15px; font-weight: 850; fill: #7a2d18; }
+      .source { font-size: 10.5px; font-weight: 620; fill: #718297; }
+      .card { fill: #ffffff; stroke: #d6e0ea; stroke-width: 1.5; }
+      .holdout { fill: #ffffff; stroke: #187a70; stroke-width: 3; }
+      .stress { fill: #ffffff; stroke: #9b4a0c; stroke-width: 3; stroke-dasharray: 12 5; }
+      .divider { stroke: #e2e9f1; stroke-width: 1.25; }
+      .track { fill: #edf2f7; stroke: #dce5ee; stroke-width: .75; }
+      .baseline-bar { fill: url(#baselinePattern); }
+      .fusion-bar { fill: url(#fusionPattern); }
+    </style>
+
+    <pattern id="baselinePattern" width="10" height="10" patternUnits="userSpaceOnUse">
+      <rect width="10" height="10" fill="#315d87"/>
+      <circle cx="2.5" cy="2.5" r="1.25" fill="#ffffff" opacity=".72"/>
+      <circle cx="7.5" cy="7.5" r="1.25" fill="#ffffff" opacity=".72"/>
+    </pattern>
+    <pattern id="fusionPattern" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="9" height="9" fill="#0b8b6d"/>
+      <rect width="2.5" height="9" fill="#b9f0df" opacity=".9"/>
+    </pattern>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#10243e" flood-opacity=".08"/>
+    </filter>
+  </defs>
+
+  <rect width="1440" height="1120" fill="#f5f8fc"/>
+  <rect x="0" y="0" width="1440" height="8" fill="#173f68"/>
+
+  <g class="sans">
+    <text class="eyebrow" x="40" y="47">STRICT 25 MS GATE · FIXED TAKE 01 REGISTRATION · ROOT-NORMALIZED EPE</text>
+    <text class="title" x="40" y="87">从 wrist-orientation baseline 到 calibrated fusion</text>
+    <text class="subtitle" x="40" y="117">左右手 joint / tip pooled median，单位 mm · B → F 数值精确至 0.01 mm · 越低越好</text>
+
+    <g transform="translate(908 28)">
+      <rect width="492" height="104" rx="16" fill="#ffffff" stroke="#d6e0ea"/>
+      <circle cx="24" cy="28" r="9" fill="url(#baselinePattern)" stroke="#173f68"/>
+      <text class="method" x="43" y="32">B · Baseline</text>
+      <text class="legend" x="150" y="32">glove wrist orientation preserved + MOCAP translation</text>
+      <rect x="16" y="52" width="16" height="16" transform="rotate(45 24 60)" fill="url(#fusionPattern)" stroke="#08745b"/>
+      <text class="method" x="43" y="64">F · Calibrated fusion</text>
+      <text class="legend" x="173" y="64">MOCAP wrist SE(3) + glove local articulation</text>
+      <text class="axis" x="16" y="90">每行上方圆点纹 = B；下方斜线菱形 = F（标签与纹理共同编码）</text>
+    </g>
+
+    <!-- TAKE 01 / calibration self-fit -->
+    <g transform="translate(40 158)" filter="url(#shadow)">
+      <rect class="card" width="440" height="642" rx="20"/>
+      <rect x="0" y="0" width="440" height="8" rx="4" fill="#315d87"/>
+      <rect x="22" y="25" width="126" height="27" rx="13.5" fill="#e6eef7" stroke="#b8cadc"/>
+      <text class="badge" x="85" y="43" text-anchor="middle" fill="#244d76">CALIBRATION FIT</text>
+      <text class="take" x="22" y="83">Take 01</text>
+      <text class="segment" x="22" y="106">01_210814_Take_000 · same-take / target used in fit</text>
+      <text class="segment" x="22" y="129">固定 canonical R + scale 来源 · 非 holdout</text>
+      <line class="divider" x1="22" y1="150" x2="418" y2="150"/>
+
+      <g transform="translate(22 174)">
+        <rect width="43" height="24" rx="12" fill="#e8f5f2" stroke="#86bdb3"/>
+        <text class="hand" x="21.5" y="17" text-anchor="middle">L</text>
+        <text class="hand" x="53" y="17">左手</text>
+
+        <g transform="translate(0 39)">
+          <text class="metric" x="0" y="12">Joint median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">32.58 → 13.44</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 58.8%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="65.17" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="26.88" height="10" rx="5"/>
+        </g>
+
+        <g transform="translate(0 112)">
+          <text class="metric" x="0" y="12">Tip median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">54.26 → 22.29</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 58.9%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="108.51" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="44.58" height="10" rx="5"/>
+        </g>
+      </g>
+
+      <line class="divider" x1="22" y1="367" x2="418" y2="367"/>
+
+      <g transform="translate(22 387)">
+        <rect width="43" height="24" rx="12" fill="#f2ebf8" stroke="#b99dcc"/>
+        <text class="hand" x="21.5" y="17" text-anchor="middle">R</text>
+        <text class="hand" x="53" y="17">右手</text>
+
+        <g transform="translate(0 39)">
+          <text class="metric" x="0" y="12">Joint median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">30.69 → 11.94</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 61.1%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="61.37" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="23.88" height="10" rx="5"/>
+        </g>
+
+        <g transform="translate(0 112)">
+          <text class="metric" x="0" y="12">Tip median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">51.50 → 19.42</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 62.3%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="103.01" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="38.84" height="10" rx="5"/>
+        </g>
+      </g>
+
+      <text class="axis" x="105" y="623">0</text>
+      <text class="axis" x="205" y="623" text-anchor="middle">50</text>
+      <text class="axis" x="325" y="623" text-anchor="end">110 mm bar scale</text>
+    </g>
+
+    <!-- TAKE 02 / validation holdout -->
+    <g transform="translate(500 158)" filter="url(#shadow)">
+      <rect class="holdout" width="440" height="642" rx="20"/>
+      <rect x="0" y="0" width="440" height="9" rx="4" fill="#187a70"/>
+      <rect x="22" y="25" width="174" height="27" rx="13.5" fill="#e3f4f0" stroke="#86bdb3"/>
+      <text class="badge" x="109" y="43" text-anchor="middle" fill="#0b6259">HOLDOUT 01 · VALIDATION</text>
+      <text class="take" x="22" y="83">Take 02</text>
+      <text class="segment" x="22" y="106">02_210955_Take_001 · frozen Take 01 profile</text>
+      <text class="segment" x="22" y="129">目标 Take 未参与 R / scale 拟合</text>
+      <line class="divider" x1="22" y1="150" x2="418" y2="150"/>
+
+      <g transform="translate(22 174)">
+        <rect width="43" height="24" rx="12" fill="#e8f5f2" stroke="#86bdb3"/>
+        <text class="hand" x="21.5" y="17" text-anchor="middle">L</text>
+        <text class="hand" x="53" y="17">左手</text>
+
+        <g transform="translate(0 39)">
+          <text class="metric" x="0" y="12">Joint median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">31.94 → 11.49</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 64.0%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="63.89" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="22.97" height="10" rx="5"/>
+        </g>
+
+        <g transform="translate(0 112)">
+          <text class="metric" x="0" y="12">Tip median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">52.00 → 18.05</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 65.3%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="103.99" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="36.11" height="10" rx="5"/>
+        </g>
+      </g>
+
+      <line class="divider" x1="22" y1="367" x2="418" y2="367"/>
+
+      <g transform="translate(22 387)">
+        <rect width="43" height="24" rx="12" fill="#f2ebf8" stroke="#b99dcc"/>
+        <text class="hand" x="21.5" y="17" text-anchor="middle">R</text>
+        <text class="hand" x="53" y="17">右手</text>
+
+        <g transform="translate(0 39)">
+          <text class="metric" x="0" y="12">Joint median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">40.08 → 11.39</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 71.6%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="80.16" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="22.77" height="10" rx="5"/>
+        </g>
+
+        <g transform="translate(0 112)">
+          <text class="metric" x="0" y="12">Tip median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">62.33 → 18.88</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 69.7%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="124.66" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="37.75" height="10" rx="5"/>
+        </g>
+      </g>
+
+      <text class="axis" x="105" y="623">0</text>
+      <text class="axis" x="205" y="623" text-anchor="middle">50</text>
+      <text class="axis" x="325" y="623" text-anchor="end">110 mm bar scale</text>
+    </g>
+
+    <!-- TAKE 03 / stress holdout -->
+    <g transform="translate(960 158)" filter="url(#shadow)">
+      <rect class="stress" width="440" height="642" rx="20"/>
+      <rect x="0" y="0" width="440" height="9" rx="4" fill="#9b4a0c"/>
+      <rect x="22" y="25" width="200" height="27" rx="13.5" fill="#faecdf" stroke="#e1a878"/>
+      <text class="badge" x="122" y="43" text-anchor="middle" fill="#7b3809">HOLDOUT 02 · TEST / STRESS</text>
+      <text class="take" x="22" y="83">Take 03</text>
+      <text class="segment" x="22" y="106">03_211139_Take_002 · frozen Take 01 profile</text>
+      <text class="segment" x="22" y="129">目标 Take 未参与 R / scale 拟合</text>
+      <line class="divider" x1="22" y1="150" x2="418" y2="150"/>
+
+      <g transform="translate(22 174)">
+        <rect width="43" height="24" rx="12" fill="#e8f5f2" stroke="#86bdb3"/>
+        <text class="hand" x="21.5" y="17" text-anchor="middle">L</text>
+        <text class="hand" x="53" y="17">左手</text>
+
+        <g transform="translate(0 39)">
+          <text class="metric" x="0" y="12">Joint median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">43.47 → 12.94</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 70.2%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="86.95" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="25.89" height="10" rx="5"/>
+        </g>
+
+        <g transform="translate(0 112)">
+          <text class="metric" x="0" y="12">Tip median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">66.30 → 23.27</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 64.9%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="132.60" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="46.54" height="10" rx="5"/>
+        </g>
+      </g>
+
+      <line class="divider" x1="22" y1="367" x2="418" y2="367"/>
+
+      <g transform="translate(22 387)">
+        <rect width="43" height="24" rx="12" fill="#f2ebf8" stroke="#b99dcc"/>
+        <text class="hand" x="21.5" y="17" text-anchor="middle">R</text>
+        <text class="hand" x="53" y="17">右手</text>
+
+        <g transform="translate(0 39)">
+          <text class="metric" x="0" y="12">Joint median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">66.25 → 13.19</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 80.1%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="132.51" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="26.37" height="10" rx="5"/>
+        </g>
+
+        <g transform="translate(0 112)">
+          <text class="metric" x="0" y="12">Tip median</text>
+          <text class="pair" x="396" y="12" text-anchor="end">101.86 → 26.38</text>
+          <text class="reduction" x="396" y="30" text-anchor="end">↓ 74.1%</text>
+          <circle cx="70" cy="29" r="5" fill="url(#baselinePattern)" stroke="#173f68"/>
+          <rect class="track" x="83" y="24" width="220" height="10" rx="5"/>
+          <rect class="baseline-bar" x="83" y="24" width="203.72" height="10" rx="5"/>
+          <rect x="65" y="41" width="10" height="10" transform="rotate(45 70 46)" fill="url(#fusionPattern)" stroke="#08745b"/>
+          <rect class="track" x="83" y="41" width="220" height="10" rx="5"/>
+          <rect class="fusion-bar" x="83" y="41" width="52.77" height="10" rx="5"/>
+        </g>
+      </g>
+
+      <text class="axis" x="105" y="623">0</text>
+      <text class="axis" x="205" y="623" text-anchor="middle">50</text>
+      <text class="axis" x="325" y="623" text-anchor="end">110 mm bar scale</text>
+    </g>
+
+    <!-- Fusion P95 table: explicitly exposes the remaining long tail -->
+    <g transform="translate(40 828)">
+      <rect width="824" height="238" rx="18" fill="#ffffff" stroke="#d6e0ea" stroke-width="1.5"/>
+      <text class="p95-title" x="24" y="34">Calibrated fusion 的 P95 仍高</text>
+      <text class="note" x="24" y="57">下表为 fusion joint / tip P95（mm），不能只看 median 改善。</text>
+
+      <g transform="translate(24 76)">
+        <rect width="776" height="34" rx="8" fill="#edf2f7"/>
+        <text class="p95-head" x="14" y="22">手 / 指标</text>
+        <text class="p95-head" x="288" y="22" text-anchor="middle">Take 01 · fit</text>
+        <text class="p95-head" x="478" y="22" text-anchor="middle">Take 02 · HOLDOUT</text>
+        <text class="p95-head" x="676" y="22" text-anchor="middle">Take 03 · HOLDOUT</text>
+
+        <text class="p95-head" x="14" y="55">L · Joint / Tip</text>
+        <text class="p95-value" x="288" y="55" text-anchor="middle">83.53 / 102.43</text>
+        <text class="p95-value" x="478" y="55" text-anchor="middle">86.06 / 104.87</text>
+        <text class="p95-value" x="676" y="55" text-anchor="middle">95.44 / 113.80</text>
+        <line class="divider" x1="0" y1="70" x2="776" y2="70"/>
+
+        <text class="p95-head" x="14" y="94">R · Joint / Tip</text>
+        <text class="p95-value" x="288" y="94" text-anchor="middle">85.83 / 104.74</text>
+        <text class="p95-value" x="478" y="94" text-anchor="middle">88.08 / 107.28</text>
+        <text class="p95-value" x="676" y="94" text-anchor="middle">97.44 / 110.23</text>
+      </g>
+
+      <rect x="24" y="195" width="776" height="25" rx="12.5" fill="#fff0e7" stroke="#e4a373"/>
+      <text class="metric" x="412" y="212" text-anchor="middle" fill="#7a2d18">Holdout fusion P95：joint 86.06–97.44 mm · tip 104.87–113.80 mm</text>
+    </g>
+
+    <!-- Claim boundary -->
+    <g transform="translate(888 828)">
+      <rect width="512" height="238" rx="18" fill="#fff5ee" stroke="#dfa276" stroke-width="2"/>
+      <circle cx="34" cy="35" r="17" fill="#9b4a0c"/>
+      <text x="34" y="42" text-anchor="middle" font-size="21" font-weight="900" fill="#ffffff">!</text>
+      <text class="boundary-title" x="62" y="42">条件化融合 ≠ 独立 glove 6DoF</text>
+      <text class="boundary-strong" x="24" y="78">fusion conditional on MOCAP wrist SE(3)</text>
+      <text class="note" x="24" y="108">• wrist translation 与 orientation 都逐帧来自 MOCAP；</text>
+      <text class="note" x="24" y="135">• glove 只提供 root-relative local finger articulation；</text>
+      <text class="note" x="24" y="162">• 因此下降表示“给定 GT wrist 后”的手指形状一致性，</text>
+      <text class="note" x="38" y="185">不能证明 glove 自己恢复了全局 wrist pose / absolute 6DoF。</text>
+      <text class="note" x="24" y="214">• Take 01 是 fit；只有 Take 02 / 03 是冻结配准的 holdout。</text>
+    </g>
+
+    <text class="source" x="40" y="1095">Source of truth: outputs/holdout_01_strict25/*.metrics.json + outputs/mocap_root_fusion_strict25/*.metrics.json · median = pooled frame × non-thumb joint EPE · thumb excluded · generated 2026-08-31</text>
+  </g>
+</svg>

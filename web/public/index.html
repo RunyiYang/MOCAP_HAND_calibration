@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="将 MOCAP 动作按 RGB 与 raw metric depth 各自采集时刻逐帧匹配，并区分原始 21 joints、后腕模块显示 proxy 与物理 GT。">
+    <meta name="theme-color" content="#0f1f36">
+    <title>MOCAP × 视频 · 曝光时刻逐帧匹配</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+
+    <header class="site-header">
+      <div class="nav-shell">
+        <a class="brand" href="#top" aria-label="返回页面顶部">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+          <span>GT_CALIB</span>
+        </a>
+        <nav class="desktop-nav" aria-label="主要导航">
+          <a href="/final-nine/">最终九视频</a>
+          <a href="/bvh/?take=02">BVH 播放器</a>
+          <a href="#videos">视频</a>
+          <a href="#metrics">指标</a>
+          <a href="#calibration">相机标定</a>
+          <a href="#dataset">Dataset</a>
+          <a href="#boundary">GT 边界</a>
+          <a href="#requests">数据清单</a>
+        </nav>
+        <a class="nav-download" href="/downloads/gt-calib-evidence-2026-08-31.zip">下载证据包</a>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-grid page-shell">
+          <div class="hero-copy" data-animate>
+            <p class="eyebrow"><span class="live-dot"></span> VERIFIED · 2026-08-31</p>
+            <h1><span class="title-line">MOCAP <b class="title-times">×</b> 视频</span><span class="title-line">曝光时刻<span class="mobile-title-break">逐帧匹配</span></span></h1>
+            <p class="hero-lead">先用解码图像内容确认 BAG color message i 就是 MP4 frame i；再逐行移除约 255 ms 的采集→回调延迟，把 120 Hz MOCAP 插值到每个 RGB 曝光时刻。</p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="/final-nine/">打开最终 9 视频 <span aria-hidden="true">→</span></a>
+              <a class="button button-secondary" href="#videos">观看旧版对比</a>
+              <a class="button button-secondary" href="#requests">明日数据清单</a>
+            </div>
+            <ul class="hero-facts" aria-label="评估关键事实">
+              <li><strong>3</strong><span>Takes</span></li>
+              <li><strong>0 ms</strong><span>人工偏移回写</span></li>
+              <li><strong>ALL</strong><span>代码测试通过</span></li>
+            </ul>
+          </div>
+
+          <aside class="finding-card" data-animate aria-labelledby="finding-title">
+            <div class="finding-card-top">
+              <p class="card-kicker">PRIMARY FINDING</p>
+              <span class="status-badge">已复核</span>
+            </div>
+            <h2 id="finding-title">找到了 7–8 帧错位的根因</h2>
+            <div class="finding-numbers">
+              <div>
+                <span class="number">254–255</span>
+                <span class="unit">ms</span>
+                <p>capture → poll median</p>
+              </div>
+              <div>
+                <span class="number">.88–.90</span>
+                <span class="unit">corr</span>
+                <p>修正后 zero-lag motion QA</p>
+              </div>
+            </div>
+            <p class="finding-note">BAG↔MP4 同索引先通过解码内容与 ±2 帧错位反证 gate；旧回调时刻的 zero-lag 相关性仅 0.395–0.626，修正到采集时刻后为 0.876–0.899。</p>
+            <div class="scope-warning">
+              <span aria-hidden="true">!</span>
+              <p><strong>逐帧，不等于零误差：</strong>共同区间每帧都有 MOCAP bracket；没有共享硬件触发与独立 2D 标签，仍不能宣称物理零时差或零像素误差。</p>
+            </div>
+          </aside>
+        </div>
+        <div class="hero-gridline" aria-hidden="true"></div>
+      </section>
+
+      <section class="protocol-band" aria-labelledby="protocol-title">
+        <div class="page-shell">
+          <div class="section-heading compact" data-animate>
+            <p class="eyebrow">STRICT PROTOCOL</p>
+            <h2 id="protocol-title">从采集时刻出发，不拟合“看起来对”的偏移</h2>
+          </div>
+          <ol class="protocol-flow" data-animate>
+            <li>
+              <span class="step-index">01</span>
+              <div><strong>Verify RGB identity</strong><p>解码内容 gate · BAG i ↔ MP4 i</p></div>
+            </li>
+            <li>
+              <span class="step-index">−Δ</span>
+              <div><strong>Remove callback latency</strong><p>逐行 capture→poll · 约 255 ms</p></div>
+            </li>
+            <li>
+              <span class="step-index">02</span>
+              <div><strong>Anchor PTP cadence</strong><p>高分辨率节拍 · Windows affine anchor</p></div>
+            </li>
+            <li>
+              <span class="step-index">03</span>
+              <div><strong>Interpolate MOCAP</strong><p>120 Hz bracket → RGB 曝光时刻</p></div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section page-shell" id="videos" aria-labelledby="videos-title">
+        <div class="section-heading split-heading" data-animate>
+          <div>
+            <p class="eyebrow">VIDEO REVIEW</p>
+            <h2 id="videos-title">原始手骨架不动，补画后腕模块位置</h2>
+          </div>
+          <div class="legend" aria-label="视频叠加图例">
+            <span><i class="legend-dot mocap"></i>MOCAP 骨架</span>
+            <span><i class="legend-dot proxy"></i>白心圆点 · Rear wrist proxy · VIZ-only</span>
+            <span><i class="legend-dot depth"></i>Raw metric depth（切换后）</span>
+            <span><i class="legend-dot glove"></i>Glove / 融合（切换后）</span>
+            <span><i class="legend-line delta"></i>逐帧 provenance</span>
+          </div>
+        </div>
+
+        <div class="mode-switch-wrap" data-animate>
+          <div class="mode-switch" role="group" aria-label="选择可视化模式">
+            <button type="button" data-view-mode="mocap" aria-pressed="true">
+              <strong>MOCAP + rear wrist proxy</strong><span>原始 21 joints 不变 · proxy 不是 GT</span>
+            </button>
+            <button type="button" data-view-mode="depth" aria-pressed="false">
+              <strong>Metric depth projection</strong><span>raw mono16 · depth timestamp · fixed SE(3)</span>
+            </button>
+            <button type="button" data-view-mode="fusion" aria-pressed="false">
+              <strong>Calibrated fusion</strong><span>MOCAP wrist SE(3) + glove articulation</span>
+            </button>
+            <button type="button" data-view-mode="diagnostic" aria-pressed="false">
+              <strong>Wrist diagnostic</strong><span>保留 glove wrist orientation 的旧模式</span>
+            </button>
+          </div>
+            <p id="mode-explanation">动作审阅：原始 Skeleton_0/1 每手 21 joints 保持不变；正式视频里带白色中心的同侧彩色圆点仅是朝后腕黑色模块外推的 VIZ-only proxy，不是动捕 GT。</p>
+        </div>
+
+        <div class="take-tabs" role="tablist" aria-label="选择要查看的 Take" data-animate>
+          <button type="button" role="tab" id="tab-take-000" aria-controls="panel-take-000" aria-selected="false" tabindex="-1" data-take="take-000">
+            <span>Take 01</span><small>Calibration</small>
+          </button>
+          <button type="button" role="tab" id="tab-take-001" aria-controls="panel-take-001" aria-selected="true" data-take="take-001">
+            <span>Take 02</span><small>Validation holdout</small>
+          </button>
+          <button type="button" role="tab" id="tab-take-002" aria-controls="panel-take-002" aria-selected="false" tabindex="-1" data-take="take-002">
+            <span>Take 03</span><small>Test / stress</small>
+          </button>
+        </div>
+
+        <div class="take-panels" data-animate>
+          <article class="take-panel" id="panel-take-000" role="tabpanel" aria-labelledby="tab-take-000" data-take="take-000" hidden>
+            <div class="video-frame">
+              <video controls playsinline preload="metadata" data-mocap-poster="/media/take-000-mocap-contact.jpg" data-depth-poster="/media/take-000-depth-contact.jpg" data-fusion-poster="/media/take-000-fusion-contact.jpg" data-diagnostic-poster="/media/take-000-diagnostic-contact.jpg">
+                <source data-mocap-src="/media/take-000-mocap.mp4" data-depth-src="/media/take-000-depth.mp4" data-fusion-src="/media/take-000-fusion.mp4" data-diagnostic-src="/media/take-000-diagnostic.mp4" type="video/mp4">
+                浏览器不支持 HTML5 视频。<a data-video-download href="/media/take-000-mocap.mp4">直接下载 MP4</a>。
+              </video>
+              <span class="video-badge calibration" data-role-badge data-default-label="CALIBRATION / SELF-FIT">CALIBRATION / SELF-FIT</span>
+            </div>
+            <div class="take-analysis">
+              <p class="card-kicker" data-take-kicker>TAKE 01 · 标定集</p>
+              <h3 data-take-title>后腕模块 proxy · 1748 帧动作匹配</h3>
+              <p data-take-summary>每手原始 21 joints 完全不变；正式视频里带白色中心的同侧彩色圆点是 rear wrist module proxy，只用于 VIZ、不是 GT。</p>
+              <div class="coverage-row"><span data-coverage-label>有效覆盖</span><strong data-field="coveragePercent">—</strong></div>
+              <progress data-progress max="100" value="0">0%</progress>
+              <div class="hand-metrics">
+                <div class="hand-card"><span>左手</span><strong data-field="left.jointMedianMm">—</strong><small>joint median · mm</small><b data-field="left.tipMedianMm">—</b><small>tip median · mm</small></div>
+                <div class="hand-card"><span>右手</span><strong data-field="right.jointMedianMm">—</strong><small>joint median · mm</small><b data-field="right.tipMedianMm">—</b><small>tip median · mm</small></div>
+              </div>
+              <a class="text-link" data-metrics-link href="/downloads/take-000-mocap-alignment.metrics.json">查看原始 metrics JSON →</a>
+              <a class="text-link" data-alignment-link href="/downloads/take-000-mocap-frame-map.csv">下载逐帧映射 CSV →</a>
+              <a class="text-link" data-raw-mocap-video-link href="/media/take-000-mocap-raw.mp4">下载无 proxy 的原始 21-joint 视频 →</a>
+              <a class="text-link" data-raw-mocap-poster-link href="/media/take-000-mocap-raw-contact.jpg">查看原始 contact sheet →</a>
+            </div>
+          </article>
+
+          <article class="take-panel" id="panel-take-001" role="tabpanel" aria-labelledby="tab-take-001" data-take="take-001">
+            <div class="video-frame">
+              <video controls playsinline preload="metadata" data-mocap-poster="/media/take-001-mocap-contact.jpg" data-depth-poster="/media/take-001-depth-contact.jpg" data-fusion-poster="/media/take-001-fusion-contact.jpg" data-diagnostic-poster="/media/take-001-diagnostic-contact.jpg">
+                <source data-mocap-src="/media/take-001-mocap.mp4" data-depth-src="/media/take-001-depth.mp4" data-fusion-src="/media/take-001-fusion.mp4" data-diagnostic-src="/media/take-001-diagnostic.mp4" type="video/mp4">
+                浏览器不支持 HTML5 视频。<a data-video-download href="/media/take-001-mocap.mp4">直接下载 MP4</a>。
+              </video>
+              <span class="video-badge holdout" data-role-badge data-default-label="VALIDATION HOLDOUT">VALIDATION HOLDOUT</span>
+            </div>
+            <div class="take-analysis">
+              <p class="card-kicker" data-take-kicker>TAKE 02 · 验证留出集</p>
+              <h3 data-take-title>后腕模块 proxy · 1805 帧动作匹配</h3>
+              <p data-take-summary>每手原始 21 joints 完全不变；正式视频里带白色中心的同侧彩色圆点是 rear wrist module proxy，只用于 VIZ、不是 GT。</p>
+              <div class="coverage-row"><span data-coverage-label>有效覆盖</span><strong data-field="coveragePercent">—</strong></div>
+              <progress data-progress max="100" value="0">0%</progress>
+              <div class="hand-metrics">
+                <div class="hand-card"><span>左手</span><strong data-field="left.jointMedianMm">—</strong><small>joint median · mm</small><b data-field="left.tipMedianMm">—</b><small>tip median · mm</small></div>
+                <div class="hand-card"><span>右手</span><strong data-field="right.jointMedianMm">—</strong><small>joint median · mm</small><b data-field="right.tipMedianMm">—</b><small>tip median · mm</small></div>
+              </div>
+              <a class="text-link" data-metrics-link href="/downloads/take-001-mocap-alignment.metrics.json">查看原始 metrics JSON →</a>
+              <a class="text-link" data-alignment-link href="/downloads/take-001-mocap-frame-map.csv">下载逐帧映射 CSV →</a>
+              <a class="text-link" data-raw-mocap-video-link href="/media/take-001-mocap-raw.mp4">下载无 proxy 的原始 21-joint 视频 →</a>
+              <a class="text-link" data-raw-mocap-poster-link href="/media/take-001-mocap-raw-contact.jpg">查看原始 contact sheet →</a>
+            </div>
+          </article>
+
+          <article class="take-panel" id="panel-take-002" role="tabpanel" aria-labelledby="tab-take-002" data-take="take-002" hidden>
+            <div class="video-frame">
+              <video controls playsinline preload="metadata" data-mocap-poster="/media/take-002-mocap-contact.jpg" data-depth-poster="/media/take-002-depth-contact.jpg" data-fusion-poster="/media/take-002-fusion-contact.jpg" data-diagnostic-poster="/media/take-002-diagnostic-contact.jpg">
+                <source data-mocap-src="/media/take-002-mocap.mp4" data-depth-src="/media/take-002-depth.mp4" data-fusion-src="/media/take-002-fusion.mp4" data-diagnostic-src="/media/take-002-diagnostic.mp4" type="video/mp4">
+                浏览器不支持 HTML5 视频。<a data-video-download href="/media/take-002-mocap.mp4">直接下载 MP4</a>。
+              </video>
+              <span class="video-badge stress" data-role-badge data-default-label="TEST / STRESS HOLDOUT">TEST / STRESS HOLDOUT</span>
+            </div>
+            <div class="take-analysis">
+              <p class="card-kicker" data-take-kicker>TAKE 03 · 回顾性测试 / 压力留出集</p>
+              <h3 data-take-title>后腕模块 proxy · 1800 帧动作匹配</h3>
+              <p data-take-summary>每手原始 21 joints 完全不变；正式视频里带白色中心的同侧彩色圆点是 rear wrist module proxy，只用于 VIZ、不是 GT。</p>
+              <div class="coverage-row"><span data-coverage-label>有效覆盖</span><strong data-field="coveragePercent">—</strong></div>
+              <progress data-progress max="100" value="0">0%</progress>
+              <div class="hand-metrics">
+                <div class="hand-card"><span>左手</span><strong data-field="left.jointMedianMm">—</strong><small>joint median · mm</small><b data-field="left.tipMedianMm">—</b><small>tip median · mm</small></div>
+                <div class="hand-card"><span>右手 · 压力留出</span><strong data-field="right.jointMedianMm">—</strong><small>joint median · mm</small><b data-field="right.tipMedianMm">—</b><small>tip median · mm</small></div>
+              </div>
+              <a class="text-link" data-metrics-link href="/downloads/take-002-mocap-alignment.metrics.json">查看原始 metrics JSON →</a>
+              <a class="text-link" data-alignment-link href="/downloads/take-002-mocap-frame-map.csv">下载逐帧映射 CSV →</a>
+              <a class="text-link" data-raw-mocap-video-link href="/media/take-002-mocap-raw.mp4">下载无 proxy 的原始 21-joint 视频 →</a>
+              <a class="text-link" data-raw-mocap-poster-link href="/media/take-002-mocap-raw-contact.jpg">查看原始 contact sheet →</a>
+            </div>
+          </article>
+        </div>
+        <p class="microcopy" id="mode-microcopy">洋红/青色分别是原始左右手 21 joints；正式视频里带白色中心的同侧彩色圆点是 rear wrist module proxy = wrist − 0.8 × (middle MCP − wrist)。它不改任何原 joint，也不是新增 GT joint；可下载 raw 21-joint 视频逐帧对照。</p>
+      </section>
+
+      <section class="section wrist-semantics-section" id="wrist-semantics" aria-labelledby="wrist-semantics-title">
+        <div class="page-shell">
+          <div class="section-heading split-heading" data-animate>
+            <div>
+              <p class="eyebrow">WRIST SEMANTICS · HELD-OUT VISUAL AUDIT</p>
+              <h2 id="wrist-semantics-title">手背板、原始 wrist 与后腕黑色模块不是同一个点</h2>
+              <p>三段各取 8 个未参与提出假设的帧。每格同时显示 raw 21 joints、rear-module proxy 与 +37 mm world-Z 反例；这些是可复核的视觉对照，不是独立像素 GT。</p>
+            </div>
+            <div class="metric-definition">
+              <strong>raw</strong> = Human.cma 原始 21 joints<br>
+              <strong>rear proxy</strong> = audit 图中橙色菱形；仅新增显示点，原 joints 不动<br>
+              <strong>+Z37</strong> = 反例，不是推荐全局修正
+            </div>
+          </div>
+          <div class="wrist-contact-grid">
+            <figure class="wrist-contact-card" data-animate>
+              <a href="/assets/mocap-wrist-semantics-take-01.png"><img src="/assets/mocap-wrist-semantics-take-01.png" loading="lazy" alt="Take 01 八个 held-out 帧的 raw 21 joints、rear wrist proxy 与 Z37 反例对照"></a>
+              <figcaption><strong>Take 01 · 8 held-out frames</strong><span>点击查看 2880×1312 原图</span></figcaption>
+            </figure>
+            <figure class="wrist-contact-card" data-animate>
+              <a href="/assets/mocap-wrist-semantics-take-02.png"><img src="/assets/mocap-wrist-semantics-take-02.png" loading="lazy" alt="Take 02 八个 held-out 帧的 raw 21 joints、rear wrist proxy 与 Z37 反例对照"></a>
+              <figcaption><strong>Take 02 · 8 held-out frames</strong><span>已排除用于提出假设的 output 661</span></figcaption>
+            </figure>
+            <figure class="wrist-contact-card" data-animate>
+              <a href="/assets/mocap-wrist-semantics-take-03.png"><img src="/assets/mocap-wrist-semantics-take-03.png" loading="lazy" alt="Take 03 八个 held-out 帧的 raw 21 joints、rear wrist proxy 与 Z37 反例对照"></a>
+              <figcaption><strong>Take 03 · 8 held-out frames</strong><span>同一公式、无 per-Take 拟合</span></figcaption>
+            </figure>
+          </div>
+          <div class="wrist-audit-links" data-animate>
+            <p><strong>边界：</strong>rear proxy 解释“末端应落在后腕黑块”的显示语义；它不证明传感器中心、lever arm 或相机外参已经标定。</p>
+            <a href="/downloads/MOCAP_WRIST_SEMANTICS_V1.md">阅读语义审计</a>
+            <a href="/downloads/mocap-wrist-semantics-summary.json">下载 summary JSON</a>
+            <a href="/downloads/mocap-wrist-semantics-frame-provenance.csv">下载 24 帧 provenance</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-tinted" id="metrics" aria-labelledby="metrics-title">
+        <div class="page-shell">
+          <div class="section-heading split-heading" data-animate>
+            <div>
+              <p class="eyebrow" id="metrics-mode-label">EXPOSURE-TIME MOCAP · REAR PROXY VIZ-ONLY</p>
+              <h2 id="metrics-title">原始 21 joints + 后腕模块显示 proxy</h2>
+              <p id="metrics-intro">时序、CMAvatar bracket 与原始 42 joint 坐标保持不变；仅额外画出 rear wrist module proxy。该点用于解释可见安装位置，不进入指标，也不是 GT。</p>
+            </div>
+            <div class="metric-definition" id="metric-definition">
+              <strong>joints</strong> = 原始每手 21 点，不修改<br>
+              <strong>proxy</strong> = wrist 后向外推 0.8×middle-MCP 向量，仅 VIZ
+            </div>
+          </div>
+
+          <figure class="metrics-overview" id="fusion-overview" data-animate hidden>
+            <img src="/assets/fusion-comparison-overview.svg" alt="Take 01 到 Take 03 左右手 joint 与 fingertip median 从旧诊断模式到 calibrated fusion 的对比，以及融合 P95 长尾">
+            <figcaption>严格 25 ms 门限；Take 02/03 finger joints 不参与 canonical rotation 或 scale 拟合。融合逐帧使用目标 Take 的 MOCAP wrist SE(3)。</figcaption>
+          </figure>
+
+          <div class="table-wrap" data-animate>
+            <table>
+              <caption id="metrics-caption">曝光时刻 MOCAP 逐帧匹配结果</caption>
+              <thead>
+                <tr>
+                  <th scope="col" data-table-heading>Take / 角色</th>
+                  <th scope="col" data-table-heading>匹配帧</th>
+                  <th scope="col" data-table-heading>BAG ↔ MP4 内容同帧</th>
+                  <th scope="col" data-table-heading>capture→poll median / P95</th>
+                  <th scope="col" data-table-heading>视觉 corr 旧 → 新</th>
+                  <th scope="col" data-table-heading>残余峰值 / nearest MOCAP P95</th>
+                </tr>
+              </thead>
+              <tbody id="metrics-body">
+                <tr><td colspan="6">正在从严格 metrics JSON 载入…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sensitivity-note" id="fusion-sensitivity" data-animate hidden>
+            <span class="note-index">50 ms</span>
+            <p><strong>灵敏度检查：</strong>放宽门限增加覆盖率，Take 03 右手融合结果为 12.96 / 25.39 mm；中位数稳定。25 ms 下 P95 长尾仍需单独处理。</p>
+            <a href="/downloads/take-002-fusion-gap50.metrics.json">查看 JSON</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section page-shell" id="dataset" aria-labelledby="dataset-title">
+        <div class="section-heading" data-animate>
+          <p class="eyebrow">DATASET UNDERSTANDING</p>
+          <h2 id="dataset-title">三条数据链，在 RGB 与 metric depth 中相遇</h2>
+          <p>MOCAP Human skeleton 分别按 RGB / depth 自身采集时刻插值并投影；正式手骨架仍是 Skeleton_0/1 每手 21 joints。后腕模块 proxy 是单独的显示层，不写回 Human.cma、BVH、逐帧 CSV 或融合指标。</p>
+        </div>
+        <div class="visual-grid">
+          <figure class="visual-card" data-animate>
+            <div class="figure-frame"><img src="/assets/mocap-pipeline.svg" loading="lazy" alt="MOCAP 和 glove 数据到 RGB 视频叠加的处理链路"></div>
+            <figcaption><strong>数据链路</strong><span>同步 → 坐标变换 → 冻结配准 → 视频叠加</span></figcaption>
+          </figure>
+          <figure class="visual-card" data-animate>
+            <div class="figure-frame"><img src="/assets/dataset-map.svg" loading="lazy" alt="Take 01、02、03 的 RGB-D、MOCAP 与 glove 文件结构图"></div>
+            <figcaption><strong>目录与模态</strong><span>三个正式 Take 的相机、动捕、手套数据对应关系</span></figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section calibration-section" id="calibration" aria-labelledby="calibration-title">
+        <div class="page-shell">
+          <div class="section-heading split-heading" data-animate>
+            <div>
+              <p class="eyebrow">RAW DEPTH · CAMERA POSE</p>
+              <h2 id="calibration-title">有固定 depth pose，但 color pose 仍需复核</h2>
+              <p>109 帧 raw mono16 毫米深度可以精确复算 delivered depth-camera SE(3)。静态 RGB 背景支持相机跨 Take 固定；D2C 非正交和 raw-depth 桌面系统差异被单独保留为 review。</p>
+            </div>
+            <div class="calibration-status" data-animate>
+              <span class="status-badge">DEPTH SE(3) PASS</span>
+              <span class="status-badge review">COLOR POSE REVIEW</span>
+            </div>
+          </div>
+
+          <div class="calibration-metrics" data-animate>
+            <article><span>00 分块 rotation</span><strong>0.057°</strong><small>max delta · 同人工 marker 条件</small></article>
+            <article><span>00 分块 origin</span><strong>0.474 mm</strong><small>max delta · repeatability</small></article>
+            <article><span>RGB 固定视角</span><strong>≤ 0.067 px</strong><small>00→三 Take · max translation</small></article>
+            <article class="review"><span>D2C rigidity</span><strong>det 0.994914</strong><small>不是合法 6DoF rotation</small></article>
+          </div>
+
+          <div class="visual-grid calibration-visuals">
+            <figure class="visual-card" data-animate>
+              <div class="figure-frame"><img src="/assets/depth-camera-pose-audit-summary.png" loading="lazy" alt="深度相机位姿审计摘要，包含重复性、固定视角、D2C 和桌面差异"></div>
+              <figcaption><strong>Depth pose 审计</strong><span>严格 SE(3) 与 review 项分开，不把桌面差异直接写成 per-Take 修正。</span></figcaption>
+            </figure>
+            <figure class="visual-card" data-animate>
+              <div class="figure-frame"><img src="/assets/rgb-fixed-camera-registration.jpg" loading="lazy" alt="00 与三段正式 Take 的静态 RGB 背景特征配准"></div>
+              <figcaption><strong>固定相机证据</strong><span>三个时点、两侧静态背景；最大平移 0.067 px，最大旋转 0.0022°。</span></figcaption>
+            </figure>
+          </div>
+
+          <div class="calibration-decision" data-animate>
+            <div>
+              <p class="card-kicker">DECISION</p>
+              <h3>使用 delivered depth SE(3)，不启用 D2C rigid candidate</h3>
+              <p>最近 SO(3) candidate 会在当前工作空间造成 P95 2.973 px 投影变化。只有拿到官方 Orbbec R/t 或 held-out RGB-D/MOCAP 对应后才做 A/B 切换。</p>
+            </div>
+            <div class="calibration-links">
+              <a class="button button-primary" href="/downloads/depth-camera-pose-audit.json">下载审计 JSON</a>
+              <a class="button button-secondary" href="/downloads/DEPTH_CAMERA_POSE_AUDIT_V1.md">阅读协议</a>
+              <a class="text-link" href="/downloads/camera-to-world-delivered.json">delivered camera pose →</a>
+            </div>
+          </div>
+          <p class="microcopy">注意：01–03 raw-depth 桌面相对 00 有 1.035–1.160° / 7.39–8.75 mm 的 ROI-sensitive 差异；结合 RGB 背景不动，该信号当前用于诊断 ToF/场景系统性，不作为 camera moved 或 pose correction 的单独依据。</p>
+        </div>
+      </section>
+
+      <section class="section boundary-section" id="boundary" aria-labelledby="boundary-title">
+        <div class="page-shell">
+          <div class="section-heading inverse" data-animate>
+            <p class="eyebrow">GROUND-TRUTH BOUNDARY</p>
+            <h2 id="boundary-title">现在能说什么，不能说什么</h2>
+          </div>
+          <div class="boundary-grid">
+            <article class="boundary-card can" data-animate>
+              <p class="card-kicker">SUPPORTED CLAIMS</p>
+              <h3><span aria-hidden="true">✓</span> 当前证据支持</h3>
+              <ul>
+                <li>共同有效区间 1748 / 1805 / 1800 帧逐帧都有 120 Hz MOCAP bracket</li>
+                <li>BAG color message i ↔ MP4 frame i 已通过解码内容与 ±2 帧错位反证 gate</li>
+                <li>旧回调时刻错位约 237–303 ms；逐行恢复到相机采集时刻</li>
+                <li>视觉 zero-lag motion correlation 从 0.395–0.626 提升到 0.876–0.899</li>
+                <li>残余峰值 +10 / +16 / +17 ms，均在一帧内且没有回写成拟合参数</li>
+                <li>delivered depth-camera pose 是严格 SE(3)，00 分块重复性和跨 Take 静态 RGB fixed-view gate 已通过</li>
+                <li>三段 raw depth 共同区间 1747 / 1804 / 1799 帧均使用 depth 自身 timestamp，并提供逐帧 CSV</li>
+                <li>rear wrist proxy 只新增两个显示点；原始双手 42 joints、骨长、时间映射与 BVH 均保持不变</li>
+              </ul>
+            </article>
+            <article class="boundary-card cannot" data-animate>
+              <p class="card-kicker">UNSUPPORTED CLAIMS</p>
+              <h3><span aria-hidden="true">×</span> 当前还不能宣称</h3>
+              <ul id="limitations-list">
+                <li>glove 独立的 absolute wrist translation、orientation 或完整 6DoF 精度</li>
+                <li>Human.cma 每个节点都是实体 Marker 的直接测量</li>
+                <li>橙色 rear wrist proxy 是后腕模块的实测中心、传感器 lever arm 或新增 GT joint</li>
+                <li>剔除了所有遮挡、补点和低置信 MOCAP 帧</li>
+                <li>相机外参已通过独立完整 21 点像素真值</li>
+                <li>已查看的 Take 02/03 可继续充当全盲 final test</li>
+              </ul>
+            </article>
+          </div>
+          <p class="boundary-footer" data-animate>因此，当前已经得到可审计的“曝光时刻逐帧匹配”，足以审阅动作相位；要把它升级为最终 GT，还需共享硬件触发、原始 Marker 质量、官方外参和独立 2D held-out 标注。</p>
+        </div>
+      </section>
+
+      <section class="section page-shell" id="requests" aria-labelledby="requests-title">
+        <div class="section-heading split-heading" data-animate>
+          <div>
+            <p class="eyebrow">DATA REQUEST · 2026-08-31</p>
+            <h2 id="requests-title">明天优先要这 9 项 P0</h2>
+            <p>目标是让 MOCAP 从“可用参考”升级为可审计 GT。</p>
+          </div>
+          <div class="request-actions">
+            <a class="button button-secondary" href="/downloads/request_datalist_2026-08-31.csv">下载 CSV</a>
+            <button class="button button-primary" id="copy-request" type="button">复制给数据方</button>
+          </div>
+        </div>
+        <ol class="request-list" id="request-list" data-animate>
+          <li class="request-loading">正在读取数据清单…</li>
+        </ol>
+        <div class="p1-strip" data-animate>
+          <strong>P1 / NEXT</strong>
+          <p>独立 RGB 2D 标注、手尺寸与安装记录、独立 calibration/test + 重戴、采集 manifest 与漂移检查。</p>
+          <a href="/downloads/DATA_REQUEST_2026-08-31.md">完整 Markdown →</a>
+        </div>
+      </section>
+
+      <section class="section section-tinted" id="downloads" aria-labelledby="downloads-title">
+        <div class="page-shell">
+          <div class="section-heading" data-animate>
+            <p class="eyebrow">DAILY DELIVERY</p>
+            <h2 id="downloads-title">今日交付与可复核证据</h2>
+            <p>证据包不包含视频，避免重复下载；视频可在上方单独保存。</p>
+          </div>
+          <div class="download-grid">
+            <a class="download-card featured" href="/downloads/gt-calib-evidence-2026-08-31.zip" data-animate>
+              <span class="file-type">ZIP</span>
+              <div><strong>严格评估证据包</strong><p>协议、日报、metrics、profile、数据清单与 SHA256</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card" href="/downloads/daily-2026-08-31.md" data-animate>
+              <span class="file-type">MD</span>
+              <div><strong>2026-08-31 日报</strong><p>曝光时刻修正、三段验证、复现命令与边界</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card featured" href="/downloads/MOCAP_VIDEO_ALIGNMENT_V1.md" data-animate>
+              <span class="file-type">MD</span>
+              <div><strong>MOCAP × Video Alignment v1</strong><p>逐行时钟公式、PTP anchor、逐帧契约和量化验收</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card featured" href="/downloads/BVH_LOCAL_VIEWER_V1.md" data-animate>
+              <span class="file-type">BVH</span>
+              <div><strong>Skeleton_0/1 本地播放器</strong><p>双手 42 关节、严格首尾边界、视频 frame 映射与复现命令</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card featured" href="/downloads/MOCAP_WRIST_SEMANTICS_V1.md" data-animate>
+              <span class="file-type">MD</span>
+              <div><strong>MOCAP Wrist Semantics v1</strong><p>手背板、原始 wrist 与后腕模块 proxy 的定义、24 帧对照及 GT 边界</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card featured" href="/downloads/DEPTH_MOCAP_ALIGNMENT_V1.md" data-animate>
+              <span class="file-type">MD</span>
+              <div><strong>Depth × MOCAP Alignment v1</strong><p>mono16 解码、depth 自身时间戳、冻结 SE(3)、逐帧 CSV 与 GT 边界</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card featured" href="/downloads/DEPTH_CAMERA_POSE_AUDIT_V1.md" data-animate>
+              <span class="file-type">MD</span>
+              <div><strong>Depth Camera Pose Audit v1</strong><p>raw-depth SE(3)、重复性、固定视角证据、D2C 边界与数据需求</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card" href="/downloads/depth-camera-pose-audit.json" data-animate>
+              <span class="file-type">JSON</span>
+              <div><strong>Depth Camera Pose 审计</strong><p>完整矩阵、全残差、Monte Carlo、跨 Take 与 D2C 指标</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card" href="/downloads/CROSS_TAKE_EVALUATION.md" data-animate>
+              <span class="file-type">MD</span>
+              <div><strong>跨 Take 评估协议</strong><p>split、拟合、门限、主指标与解释边界</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card" href="/downloads/registration-profile-take-000.json" data-animate>
+              <span class="file-type">JSON</span>
+              <div><strong>旧诊断配准 Profile</strong><p>保留 glove wrist orientation 的 baseline 与 provenance</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card featured" href="/downloads/mocap-root-fusion-profile-take-000.json" data-animate>
+              <span class="file-type">JSON</span>
+              <div><strong>融合 canonical Profile</strong><p>Take 01 wrist-local rotation、scale、root conditioning 与 provenance</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card" href="/downloads/CALIBRATED_ONE_V1.md" data-animate>
+              <span class="file-type">MD</span>
+              <div><strong>Calibrated One v1</strong><p>当前公式、参数、证据边界与 v2 Definition of Done</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card featured" href="/downloads/MOCAP_ROOT_FUSION_V1.md" data-animate>
+              <span class="file-type">MD</span>
+              <div><strong>MOCAP Root Fusion v1</strong><p>当前推荐 calibrated one：公式、严格留出指标与边界</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card" href="/downloads/EXPERIMENTAL_ARTICULATION_PROBE.md" data-animate>
+              <span class="file-type">MD</span>
+              <div><strong>Articulation Probe 审计</strong><p>128 DoF 研究上界、过拟合风险、thumb 缺口与否决理由</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card" href="/downloads/evidence-index.csv" data-animate>
+              <span class="file-type">CSV</span>
+              <div><strong>Evidence Index</strong><p>claim、dataset、run、artifact 与 SHA256</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+            <a class="download-card" href="/data/asset-manifest.json" data-animate>
+              <span class="file-type">JSON</span>
+              <div><strong>网页资产清单</strong><p>发布路径、来源、字节数与完整 SHA256</p></div>
+              <span class="download-arrow" aria-hidden="true">↓</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="page-shell footer-grid">
+        <div><strong>GT_CALIB</strong><p>Glove × MOCAP cross-take review</p></div>
+        <p>数据版本：ds-20260829-take000/001/002<br>最后报告：2026-08-31 · 状态 verified exposure-time + full-frame RGB identity</p>
+        <p class="footer-note">页面含可识别人物与实验室画面。非公开评审请使用 Cloudflare Access。</p>
+      </div>
+    </footer>
+
+    <nav class="mobile-nav" aria-label="移动端快捷导航">
+      <a href="#videos"><span aria-hidden="true">▶</span>看视频</a>
+      <a href="#metrics"><span aria-hidden="true">▥</span>看指标</a>
+      <a href="#requests"><span aria-hidden="true">↓</span>数据清单</a>
+    </nav>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

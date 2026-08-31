@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gt-calib-video-delivery"
+version = "0.1.0"
+description = "Reproducible MOCAP, glove-pose, and camera/world calibration video delivery."
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "lz4>=4,<5",
+  "numpy>=2,<3",
+  "opencv-python-headless>=4.10,<6",
+]
+
+[project.scripts]
+gt-calib-delivery = "gt_calib_delivery.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8,<9"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gt_calib_delivery"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+pythonpath = ["src", "."]

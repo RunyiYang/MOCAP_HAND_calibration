@@ -1,0 +1,99 @@
+{
+  "schema": "gt_calib.delivery_validation.v1",
+  "status": "pass",
+  "full_decode": true,
+  "video_count": 9,
+  "failures": [],
+  "probes": {
+    "01_take01_mocap.mp4": {
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1748,
+      "duration_s": 58.266667,
+      "bytes": 7926783
+    },
+    "02_take01_solved_pose.mp4": {
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1748,
+      "duration_s": 58.266667,
+      "bytes": 13410194
+    },
+    "03_take02_mocap.mp4": {
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1805,
+      "duration_s": 60.166667,
+      "bytes": 8753867
+    },
+    "04_take02_solved_pose.mp4": {
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1805,
+      "duration_s": 60.166667,
+      "bytes": 14294867
+    },
+    "05_take03_mocap.mp4": {
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1800,
+      "duration_s": 60.0,
+      "bytes": 8869599
+    },
+    "06_take03_solved_pose.mp4": {
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1800,
+      "duration_s": 60.0,
+      "bytes": 14465329
+    },
+    "07_take006_raw_mocap_markers.mp4": {
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 2619,
+      "duration_s": 87.3,
+      "bytes": 15918508
+    },
+    "08_take006_solved_hand_pose.mp4": {
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 2619,
+      "duration_s": 87.3,
+      "bytes": 16682456
+    },
+    "09_no_glove_world_calibration.mp4": {
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 98,
+      "duration_s": 3.266667,
+      "bytes": 623964
+    }
+  }
+}

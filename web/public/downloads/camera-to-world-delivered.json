@@ -1,0 +1,650 @@
+{
+  "schema": "movementcap.camera_to_mocap_world.v1",
+  "generated_at": "2026-08-30T13:23:44+08:00",
+  "status": "manual_visual_calibration_complete",
+  "camera_type": "third_view",
+  "method": "manual_visual_CS400_markers_plus_109_frame_raw_depth_median",
+  "applies_to": [
+    "00_210652_三秒视频对齐_无手套",
+    "01_210814_Take_000",
+    "02_210955_Take_001",
+    "03_211139_Take_002"
+  ],
+  "fixed_camera_assumption": true,
+  "coordinate_system": {
+    "origin": "CS-400 long/short arm virtual intersection on the tabletop",
+    "x_axis": "from origin outward along the CS-400 long arm",
+    "y_axis": "from origin outward along the CS-400 short arm",
+    "z_axis": "tabletop normal, upward",
+    "handedness": "right_handed",
+    "units": "millimetres"
+  },
+  "input": {
+    "dataset_root": "/home/user/Project/intern/20260729-task/movementcap--同步整理_20260829_三段",
+    "reference_bag": "/home/user/Project/intern/20260729-task/movementcap--同步整理_20260829_三段/00_210652_三秒视频对齐_无手套/原始BAG与内参/camera_1_rgb_depth.bag",
+    "manual_observation_config": "/home/user/Project/intern/20260729-task/movementcap_ruler_worldcalib/configs/manual_cs400_points.json",
+    "raw_depth_frame_count": 109,
+    "depth_source": "raw mono16 millimetres from camera_1_rgb_depth.bag",
+    "depth_preview_used_for_geometry": false
+  },
+  "camera_consistency": {
+    "recordings_checked": 4,
+    "serial_numbers": [
+      "CL8L563010D"
+    ],
+    "same_rgb_intrinsics": true,
+    "same_depth_intrinsics": true,
+    "passed": true,
+    "details": [
+      {
+        "recording": "00_210652_三秒视频对齐_无手套",
+        "serial_number": "CL8L563010D",
+        "rgb": [
+          1124.425537109375,
+          1123.7166748046875,
+          955.9957275390625,
+          544.3760986328125
+        ],
+        "depth": [
+          505.1873779296875,
+          505.1247253417969,
+          328.88433837890625,
+          320.30377197265625
+        ]
+      },
+      {
+        "recording": "01_210814_Take_000",
+        "serial_number": "CL8L563010D",
+        "rgb": [
+          1124.425537109375,
+          1123.7166748046875,
+          955.9957275390625,
+          544.3760986328125
+        ],
+        "depth": [
+          505.1873779296875,
+          505.1247253417969,
+          328.88433837890625,
+          320.30377197265625
+        ]
+      },
+      {
+        "recording": "02_210955_Take_001",
+        "serial_number": "CL8L563010D",
+        "rgb": [
+          1124.425537109375,
+          1123.7166748046875,
+          955.9957275390625,
+          544.3760986328125
+        ],
+        "depth": [
+          505.1873779296875,
+          505.1247253417969,
+          328.88433837890625,
+          320.30377197265625
+        ]
+      },
+      {
+        "recording": "03_211139_Take_002",
+        "serial_number": "CL8L563010D",
+        "rgb": [
+          1124.425537109375,
+          1123.7166748046875,
+          955.9957275390625,
+          544.3760986328125
+        ],
+        "depth": [
+          505.1873779296875,
+          505.1247253417969,
+          328.88433837890625,
+          320.30377197265625
+        ]
+      }
+    ]
+  },
+  "orbbec_profiles_from_bag": {
+    "depth": {
+      "resolution": [
+        640,
+        576
+      ],
+      "fps": 30,
+      "intrinsics_fx_fy_cx_cy": [
+        505.1873779296875,
+        505.1247253417969,
+        328.88433837890625,
+        320.30377197265625
+      ],
+      "distortion_orbbec_k1_k2_k3_k4_k5_k6_p1_p2": [
+        26.895000457763672,
+        13.134957313537598,
+        0.4587059020996094,
+        27.184513092041016,
+        22.24901008605957,
+        2.9627530574798584,
+        2.6159061235375702e-05,
+        6.605655653402209e-05
+      ]
+    },
+    "color": {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "fps": 30,
+      "intrinsics_fx_fy_cx_cy": [
+        1124.425537109375,
+        1123.7166748046875,
+        955.9957275390625,
+        544.3760986328125
+      ],
+      "distortion_orbbec_k1_k2_k3_k4_k5_k6_p1_p2": [
+        0.08412469923496246,
+        -0.11113318800926208,
+        0.046208806335926056,
+        0.0,
+        0.0,
+        0.0,
+        0.0006237360648810863,
+        0.000592515105381608
+      ]
+    }
+  },
+  "table_plane_in_depth_camera": {
+    "equation": "normal dot point_mm + d_mm = 0",
+    "normal_up": [
+      -0.06477582310687761,
+      -0.8906675754480645,
+      -0.4500170694388079
+    ],
+    "d_mm": 547.2912289934357,
+    "candidate_point_count": 103535,
+    "refined_inlier_count": 98335,
+    "inlier_ratio_below_5mm": 0.9446660549572609,
+    "residual_mm_p50": 0.7673075866774752,
+    "residual_mm_p90": 2.4111880980757867,
+    "residual_mm_p95": 3.912497830671242,
+    "residual_mm_p99": 18.04913728369233
+  },
+  "manual_visual_observations": {
+    "marker_model": "OptiTrack CS-400",
+    "marker_center_height_above_table_mm": 45.0,
+    "markers": {
+      "long_far": {
+        "depth_pixel": [
+          170.1639344262,
+          355.5737704918
+        ],
+        "center_depth_camera_mm": [
+          -331.3133390833418,
+          73.62702274644153,
+          1018.128316717364
+        ],
+        "table_foot_depth_camera_mm": [
+          -328.3984270435323,
+          113.70706364160444,
+          1038.3790848421104
+        ],
+        "distance_from_origin_mm": 369.15636977877193
+      },
+      "long_near": {
+        "depth_pixel": [
+          292.1304347826,
+          354.652173913
+        ],
+        "center_depth_camera_mm": [
+          -72.43162670817799,
+          67.6985811251232,
+          992.5981622818855
+        ],
+        "table_foot_depth_camera_mm": [
+          -69.5167146683685,
+          107.7786220202861,
+          1012.8489304066319
+        ],
+        "distance_from_origin_mm": 108.95130409431256
+      },
+      "short_near": {
+        "depth_pixel": [
+          346.3428571429,
+          371.6571428571
+        ],
+        "center_depth_camera_mm": [
+          32.07080019979934,
+          94.34818788662851,
+          924.8114638826755
+        ],
+        "table_foot_depth_camera_mm": [
+          34.98571223960884,
+          134.4282287817914,
+          945.0622320074219
+        ],
+        "distance_from_origin_mm": 64.21754038140598
+      },
+      "short_far": {
+        "depth_pixel": [
+          343.5052631579,
+          420.0631578947
+        ],
+        "center_depth_camera_mm": [
+          23.365763795395065,
+          159.4596962352634,
+          797.196674852582
+        ],
+        "table_foot_depth_camera_mm": [
+          26.28067583520456,
+          199.53973713042632,
+          817.4474429773284
+        ],
+        "distance_from_origin_mm": 207.74739984427748
+      }
+    }
+  },
+  "axis_geometry_quality": {
+    "measured_long_short_angle_deg": 90.94881727765777,
+    "deviation_from_90_deg": 0.948817277657767,
+    "line_intersection_gap_mm": 4.4938668397781776e-14,
+    "axis_fit_method": "equal_weight_marker_line_orthogonal_bisector",
+    "shared_axis_correction_deg": 0.47440863882887996,
+    "orthonormal_basis_determinant": 1.0,
+    "measured_x_alignment_after_orthogonalization": 0.9999657210558938,
+    "measured_y_alignment_after_orthogonalization": 0.9999657210558939,
+    "recorded_depth_to_color_linear_orthogonality_error": 0.010145642514055364
+  },
+  "world_origin_in_depth_camera_mm": [
+    38.88048388443199,
+    105.29630506696088,
+    1002.1591169237244
+  ],
+  "world_axes_in_depth_camera_columns_xyz": [
+    [
+      -0.995518758171714,
+      -0.06889481017518666,
+      -0.06477582310687761
+    ],
+    [
+      0.026542715979222455,
+      0.45387966937715185,
+      -0.8906675754480645
+    ],
+    [
+      0.09076280271507063,
+      -0.8883956049289148,
+      -0.4500170694388079
+    ]
+  ],
+  "transforms": {
+    "convention": "column point p_target = T_target_from_source @ [p_source; 1]",
+    "depth_camera_to_world": [
+      [
+        -0.995518758171714,
+        0.026542715979222455,
+        0.09076280271507063,
+        -55.04736910376623
+      ],
+      [
+        -0.06889481017518666,
+        0.45387966937715185,
+        -0.8883956049289148,
+        845.2005663407886
+      ],
+      [
+        -0.06477582310687761,
+        -0.8906675754480645,
+        -0.4500170694388079,
+        547.2912289934357
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "world_to_depth_camera": [
+      [
+        -0.995518758171714,
+        -0.06889481017518666,
+        -0.06477582310687761,
+        38.88048388443199
+      ],
+      [
+        0.026542715979222455,
+        0.45387966937715185,
+        -0.8906675754480645,
+        105.29630506696088
+      ],
+      [
+        0.09076280271507063,
+        -0.8883956049289148,
+        -0.4500170694388079,
+        1002.1591169237244
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "color_camera_to_world": [
+      [
+        -1.0003152558122739,
+        0.037477922943189135,
+        0.09011018113068714,
+        -87.70487357695288
+      ],
+      [
+        -0.07086455238028967,
+        0.36221071629342755,
+        -0.9294253120538125,
+        845.8020437611673
+      ],
+      [
+        -0.06780292086214698,
+        -0.9313425066002577,
+        -0.3578389926354716,
+        545.3377303221384
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "world_to_color_camera": [
+      [
+        -0.9901649103415924,
+        -0.07015376898760067,
+        -0.06712865641098525,
+        9.101702032158563
+      ],
+      [
+        0.0374681219656863,
+        0.36220999833005135,
+        -0.9313431133243358,
+        204.82471961332746
+      ],
+      [
+        0.09009755529935361,
+        -0.9294262060824092,
+        -0.3578398497333453,
+        989.1561507992096
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "depth_camera_to_color_camera": [
+      [
+        0.9949092864990234,
+        0.0016662821872159839,
+        0.002663198858499527,
+        -32.425254821777344
+      ],
+      [
+        -0.0019260905683040619,
+        0.9949113726615906,
+        0.10073523968458176,
+        -0.813623309135437
+      ],
+      [
+        -0.0024817935191094875,
+        -0.10073987394571304,
+        0.9949097037315369,
+        2.8023505210876465
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "color_camera_to_depth_camera": [
+      [
+        1.005106791138741,
+        -0.0019359363902586356,
+        -0.0024944798841902596,
+        32.596259109803796
+      ],
+      [
+        0.0016747998029512743,
+        0.9949114182856692,
+        -0.10073989642973914,
+        1.1460974320825696
+      ],
+      [
+        0.0026768124095142023,
+        0.10073521837706975,
+        0.9949096697276261,
+        -2.619328785185325
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "camera_origins_in_world_mm": {
+    "depth_camera": [
+      -55.04736910376623,
+      845.2005663407886,
+      547.2912289934357
+    ],
+    "color_camera": [
+      -87.70487357695288,
+      845.8020437611673,
+      545.3377303221384
+    ]
+  },
+  "diagnostics": {
+    "reference_axis_rgb_pixels": {
+      "origin": [
+        966.4088269302074,
+        777.9511528602559
+      ],
+      "x_300mm": [
+        634.6476588980058,
+        785.5022343105426
+      ],
+      "y_300mm": [
+        936.9712315757905,
+        1046.91429884888
+      ],
+      "z_300mm": [
+        941.9201124276287,
+        449.29692193141545
+      ]
+    },
+    "marker_plane_guide_rgb_pixels": {
+      "ground_origin": [
+        966.4088269302074,
+        777.9511528602559
+      ],
+      "vertex_marker_center": [
+        963.0588183600911,
+        733.0036667367513
+      ],
+      "marker_plane_x_300mm": [
+        626.2620348989193,
+        741.7350687889653
+      ],
+      "marker_plane_y_300mm": [
+        931.594290187226,
+        988.8777362136153
+      ]
+    },
+    "files": [
+      "reference_rgb.png",
+      "reference_median_depth_mm.png",
+      "reference_depth_markers_and_axes.png",
+      "reference_rgb_markers_and_world_axes.png",
+      "reference_rgb_marker_vs_ground_axes_crop.png",
+      "reference_depth_to_rgb_registration.png",
+      "validation_01_210814_Take_000.png",
+      "validation_02_210955_Take_001.png",
+      "validation_03_211139_Take_002.png"
+    ],
+    "formal_take_mocap_reprojection": [
+      {
+        "take": "01_210814_Take_000",
+        "diagnostic_image": "validation_01_210814_Take_000.png",
+        "alignment_row_frame_counter": 395483,
+        "body_frame_counter_used": 395483,
+        "target_color_timestamp_us": 1788008925628875,
+        "actual_bag_color_timestamp_us": 1788008925628875,
+        "bag_frame_timestamp_delta_us": 0,
+        "mocap_world_points_mm": {
+          "LeftHand": [
+            -287.663,
+            257.909,
+            242.234
+          ],
+          "RightHand": [
+            169.267,
+            256.496,
+            253.309
+          ]
+        },
+        "projected_rgb_pixels": {
+          "LeftHand": [
+            1420.0216883523015,
+            654.9835060896245
+          ],
+          "RightHand": [
+            631.7607170408878,
+            658.5932124238716
+          ]
+        },
+        "axis_rgb_pixels": {
+          "origin": [
+            966.4088269302074,
+            777.9511528602559
+          ],
+          "x_300mm": [
+            634.6476588980058,
+            785.5022343105426
+          ],
+          "y_300mm": [
+            936.9712315757905,
+            1046.91429884888
+          ],
+          "z_300mm": [
+            941.9201124276287,
+            449.29692193141545
+          ]
+        }
+      },
+      {
+        "take": "02_210955_Take_001",
+        "diagnostic_image": "validation_02_210955_Take_001.png",
+        "alignment_row_frame_counter": 407485,
+        "body_frame_counter_used": 407485,
+        "target_color_timestamp_us": 1788009025654963,
+        "actual_bag_color_timestamp_us": 1788009025654963,
+        "bag_frame_timestamp_delta_us": 0,
+        "mocap_world_points_mm": {
+          "LeftHand": [
+            -279.438,
+            247.069,
+            254.791
+          ],
+          "RightHand": [
+            129.639,
+            239.906,
+            261.09
+          ]
+        },
+        "projected_rgb_pixels": {
+          "LeftHand": [
+            1400.475709913844,
+            626.7275030606278
+          ],
+          "RightHand": [
+            702.589971877662,
+            632.4834161860161
+          ]
+        },
+        "axis_rgb_pixels": {
+          "origin": [
+            966.4088269302074,
+            777.9511528602559
+          ],
+          "x_300mm": [
+            634.6476588980058,
+            785.5022343105426
+          ],
+          "y_300mm": [
+            936.9712315757905,
+            1046.91429884888
+          ],
+          "z_300mm": [
+            941.9201124276287,
+            449.29692193141545
+          ]
+        }
+      },
+      {
+        "take": "03_211139_Take_002",
+        "diagnostic_image": "validation_03_211139_Take_002.png",
+        "alignment_row_frame_counter": 419987,
+        "body_frame_counter_used": 419987,
+        "target_color_timestamp_us": 1788009129826148,
+        "actual_bag_color_timestamp_us": 1788009129826148,
+        "bag_frame_timestamp_delta_us": 0,
+        "mocap_world_points_mm": {
+          "LeftHand": [
+            -274.264,
+            237.209,
+            252.745
+          ],
+          "RightHand": [
+            122.423,
+            245.753,
+            259.216
+          ]
+        },
+        "projected_rgb_pixels": {
+          "LeftHand": [
+            1385.7097469244382,
+            622.8126629127695
+          ],
+          "RightHand": [
+            712.0198107479026,
+            639.1378367580103
+          ]
+        },
+        "axis_rgb_pixels": {
+          "origin": [
+            966.4088269302074,
+            777.9511528602559
+          ],
+          "x_300mm": [
+            634.6476588980058,
+            785.5022343105426
+          ],
+          "y_300mm": [
+            936.9712315757905,
+            1046.91429884888
+          ],
+          "z_300mm": [
+            941.9201124276287,
+            449.29692193141545
+          ]
+        }
+      }
+    ]
+  },
+  "review_notes": [
+    "Marker identities were selected by visual inspection of the RGB video and median raw-depth holes.",
+    "The CS-400 45 mm offset was applied so Z=0 is the tabletop, not the reflective marker-center plane.",
+    "The same transform is reused only because the camera and table/ruler frame did not move across the three formal takes."
+  ]
+}

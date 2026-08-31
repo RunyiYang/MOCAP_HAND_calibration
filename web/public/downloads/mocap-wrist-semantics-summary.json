@@ -1,0 +1,443 @@
+{
+  "schema": "gt_calib.mocap_wrist_semantics_audit.v1",
+  "generated_at": "2026-08-31T10:28:33.215204+00:00",
+  "status": "automated_render_and_provenance_checks_passed",
+  "purpose": "Held-out wrist-semantics rendering of delivered 21-joint hands, a display-only rear-mount proxy, and a uniform +37 mm world-Z 2D counterexample.",
+  "evidence_boundary": {
+    "automated_evidence": [
+      "exact reuse of strict25 source RGB frame",
+      "exact reuse of CMA low/high frame counters and interpolation alpha",
+      "rear proxy is derived from wrist and middle MCP without modifying any delivered joint",
+      "Z37 counterexample differs only by one uniform [0,0,37] mm translation",
+      "bone lengths are invariant under the Z37 counterexample translation",
+      "deterministic contact sheets for human review"
+    ],
+    "not_provided": [
+      "subjective pixel ground truth",
+      "independent annotated wrist-module centers",
+      "independent 2D joint reprojection error"
+    ],
+    "interpretation": "Automated checks make the comparison reproducible but do not decide which overlay looks better or establish calibrated accuracy. The Z37 rendering is not a recommended global fix."
+  },
+  "selection": {
+    "quantiles": [
+      0.06,
+      0.18,
+      0.3,
+      0.42,
+      0.54,
+      0.66,
+      0.78,
+      0.9
+    ],
+    "frames_per_take": 8,
+    "total_frames": 24,
+    "take02_output_661_excluded": true
+  },
+  "views": {
+    "raw_21_joints": {
+      "source": "unchanged interpolated Human.cma positions",
+      "delivered_joint_count": 42
+    },
+    "rear_mount_proxy": {
+      "formula": "wrist - 0.8 * (middle_mcp - wrist)",
+      "middle_mcp_index": 9,
+      "scale": 0.8,
+      "additional_points": 2,
+      "modifies_delivered_21_joint_hands": false,
+      "status": "display_only_semantic_proxy_not_physical_ground_truth"
+    },
+    "global_z37_counterexample": {
+      "translation_world_mm": [
+        0.0,
+        0.0,
+        37.0
+      ],
+      "application_order": "after unchanged CMA timestamp interpolation, before camera projection",
+      "applied_to": "all 42 joints identically",
+      "status": "2d_counterexample_not_recommended_global_fix"
+    }
+  },
+  "camera_calibration": {
+    "path": "同步整理_20260829_三段/movementcap_worldcalib_pointcloud_package_20260830/movementcap_ruler_worldcalib/results/manual_final/camera_to_world.json",
+    "sha256": "c020c67dc9266238366c511b8c24728c5915e61493d5ad51bac354f3f4582283"
+  },
+  "render": {
+    "crop_xyxy": [
+      350,
+      360,
+      1570,
+      900
+    ],
+    "contact_panel_size_wh": [
+      480,
+      270
+    ],
+    "raw_color_bgr": [
+      25,
+      25,
+      245
+    ],
+    "rear_proxy_skeleton_color_bgr": [
+      245,
+      220,
+      45
+    ],
+    "rear_proxy_color_bgr": [
+      0,
+      165,
+      255
+    ],
+    "z37_counterexample_color_bgr": [
+      30,
+      230,
+      30
+    ]
+  },
+  "assertions": {
+    "exact_alignment_mapping_matches": 24,
+    "decoded_exact_source_frame_assertions": 24,
+    "rear_proxy_joint_mutation_max_abs_error_mm": 0.0,
+    "rear_proxy_joint_pixel_max_abs_error_px": 0.0,
+    "rigid_translation_max_abs_error_mm": 2.842170943040401e-14,
+    "bone_length_max_abs_error_mm": 4.263256414560601e-14,
+    "all_passed": true
+  },
+  "rear_proxy_from_raw_wrist_pixel_shift_summary": {
+    "01": {
+      "left": {
+        "dx_median_px": -20.808875282962617,
+        "dx_min_px": -30.050377275725623,
+        "dx_max_px": -15.04779871517303,
+        "dy_median_px": -62.543315959165,
+        "dy_min_px": -79.1958819927828,
+        "dy_max_px": -43.368595577729025
+      },
+      "right": {
+        "dx_median_px": 9.320491956554065,
+        "dx_min_px": 3.3034929116867033,
+        "dx_max_px": 15.946616403140865,
+        "dy_median_px": -59.29521545603944,
+        "dy_min_px": -74.60759670086043,
+        "dy_max_px": -46.72950635404959
+      }
+    },
+    "02": {
+      "left": {
+        "dx_median_px": -19.628714846396292,
+        "dx_min_px": -30.49152064211421,
+        "dx_max_px": -14.626787566542816,
+        "dy_median_px": -54.1648537958373,
+        "dy_min_px": -83.99692279972436,
+        "dy_max_px": -41.76069711487355
+      },
+      "right": {
+        "dx_median_px": 5.133859328742005,
+        "dx_min_px": -0.7228095063185265,
+        "dx_max_px": 9.061063712450391,
+        "dy_median_px": -59.33523621770024,
+        "dy_min_px": -81.94077623208887,
+        "dy_max_px": -48.66465407648866
+      }
+    },
+    "03": {
+      "left": {
+        "dx_median_px": -26.20849902961743,
+        "dx_min_px": -28.7723623901029,
+        "dx_max_px": -10.715432557643226,
+        "dy_median_px": -57.43751750220463,
+        "dy_min_px": -73.6599773559235,
+        "dy_max_px": -41.315263754436614
+      },
+      "right": {
+        "dx_median_px": 2.6692595170344475,
+        "dx_min_px": -10.717200987805654,
+        "dx_max_px": 9.850218642979485,
+        "dy_median_px": -59.697572011027546,
+        "dy_min_px": -65.41558241025774,
+        "dy_max_px": -51.67663895493229
+      }
+    }
+  },
+  "z37_root_pixel_shift_summary": {
+    "01": {
+      "left": {
+        "dx_median_px": 3.1207919536030886,
+        "dx_min_px": 2.833924374403523,
+        "dx_max_px": 3.426269965729489,
+        "dy_median_px": -55.27598423034749,
+        "dy_min_px": -56.305876302299225,
+        "dy_max_px": -54.25609619096929
+      },
+      "right": {
+        "dx_median_px": -8.210306136284657,
+        "dx_min_px": -8.66646980397013,
+        "dx_max_px": -7.9582905919554605,
+        "dy_median_px": -52.31744573375755,
+        "dy_min_px": -53.16229228369468,
+        "dy_max_px": -51.65409227834698
+      }
+    },
+    "02": {
+      "left": {
+        "dx_median_px": 3.3951179669511475,
+        "dx_min_px": 3.0865136118491137,
+        "dx_max_px": 4.330965939354655,
+        "dy_median_px": -55.97948696420832,
+        "dy_min_px": -58.55037683896836,
+        "dy_max_px": -54.50190878982528
+      },
+      "right": {
+        "dx_median_px": -8.201603120860227,
+        "dx_min_px": -8.522823016965049,
+        "dx_max_px": -7.760413946466542,
+        "dy_median_px": -52.27769139437129,
+        "dy_min_px": -53.94361690512494,
+        "dy_max_px": -51.22667739659789
+      }
+    },
+    "03": {
+      "left": {
+        "dx_median_px": 3.960968072309015,
+        "dx_min_px": 3.5540277803395384,
+        "dx_max_px": 4.3657852514561455,
+        "dy_median_px": -55.03385911331952,
+        "dy_min_px": -56.8406763605592,
+        "dy_max_px": -53.89724341964882
+      },
+      "right": {
+        "dx_median_px": -8.469570342584234,
+        "dx_min_px": -9.129507645797162,
+        "dx_max_px": -7.99798299813915,
+        "dy_median_px": -52.38521881090918,
+        "dy_min_px": -53.625989513841034,
+        "dy_max_px": -52.071711035050726
+      }
+    }
+  },
+  "frame_provenance": {
+    "path": "frame_provenance.csv",
+    "sha256": "f6877268474bda5f5b7416ca8846ca072abe25cb7d499fd92fa1a0db2c5814c7",
+    "row_count": 24
+  },
+  "takes": [
+    {
+      "take_key": "01",
+      "segment": "01_210814_Take_000",
+      "alignment_csv": {
+        "path": "outputs/mocap_video_alignment_review/01_210814_Take_000_mocap_video_aligned_strict25.alignment.csv",
+        "sha256": "976dc65b4ab50f6d433f270bc7c24d24690706f73da559c245bcfae6a856aad7",
+        "row_count": 1748
+      },
+      "rgb_video": {
+        "path": "同步整理_20260829_三段/01_210814_Take_000/视频/RGB.mp4",
+        "sha256": "9b892cbaef5fceaed7ee4783f90ca64673164424770fd1a83385c83adc620770"
+      },
+      "human_cma": {
+        "path": "同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Human.cma",
+        "sha256": "b76c3f632816cff742e3f3f599f43e5d1b919fd0295a91384bf54846df2dec1f"
+      },
+      "selected_output_frames": [
+        105,
+        314,
+        524,
+        734,
+        943,
+        1153,
+        1363,
+        1572
+      ],
+      "excluded_hypothesis_development_frames": [],
+      "contact_sheet": "01_01_210814_Take_000_heldout_raw-rearproxy-z37_contact.png",
+      "contact_sheet_sha256": "4e83e1486386eb0cab5db48d5807666173b2fb37f5fc5ef10787432a32d15533",
+      "frames": [
+        {
+          "output_frame": 105,
+          "source_video_frame": 165,
+          "pair_image": "01_output0105_source0165_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 314,
+          "source_video_frame": 374,
+          "pair_image": "01_output0314_source0374_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 524,
+          "source_video_frame": 584,
+          "pair_image": "01_output0524_source0584_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 734,
+          "source_video_frame": 794,
+          "pair_image": "01_output0734_source0794_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 943,
+          "source_video_frame": 1003,
+          "pair_image": "01_output0943_source1003_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 1153,
+          "source_video_frame": 1213,
+          "pair_image": "01_output1153_source1213_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 1363,
+          "source_video_frame": 1423,
+          "pair_image": "01_output1363_source1423_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 1572,
+          "source_video_frame": 1632,
+          "pair_image": "01_output1572_source1632_raw-rearproxy-z37.png"
+        }
+      ]
+    },
+    {
+      "take_key": "02",
+      "segment": "02_210955_Take_001",
+      "alignment_csv": {
+        "path": "outputs/mocap_video_alignment_review/02_210955_Take_001_mocap_video_aligned_strict25.alignment.csv",
+        "sha256": "c662f89dcf5dca4a7a5720a7a3e8367c1e946d517654bf9d38abb5462b4289a8",
+        "row_count": 1805
+      },
+      "rgb_video": {
+        "path": "同步整理_20260829_三段/02_210955_Take_001/视频/RGB.mp4",
+        "sha256": "2a9d7020e13a086aa9ff5c1a0c0f2942fde8498ff29a694dd48381498d8c21fc"
+      },
+      "human_cma": {
+        "path": "同步整理_20260829_三段/02_210955_Take_001/动捕/Take_001/Take_001_Human.cma",
+        "sha256": "0bb22bb6fa9cc65a442efc933c1a2cfcffa9370b5ea6a9de5117f77bc4e993be"
+      },
+      "selected_output_frames": [
+        108,
+        325,
+        541,
+        758,
+        974,
+        1191,
+        1407,
+        1624
+      ],
+      "excluded_hypothesis_development_frames": [
+        661
+      ],
+      "contact_sheet": "02_02_210955_Take_001_heldout_raw-rearproxy-z37_contact.png",
+      "contact_sheet_sha256": "5b9faf8e55746d52d847b99419e0cbbe3dbb1a3664a08a4035a04f4a403f327f",
+      "frames": [
+        {
+          "output_frame": 108,
+          "source_video_frame": 108,
+          "pair_image": "02_output0108_source0108_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 325,
+          "source_video_frame": 325,
+          "pair_image": "02_output0325_source0325_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 541,
+          "source_video_frame": 541,
+          "pair_image": "02_output0541_source0541_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 758,
+          "source_video_frame": 758,
+          "pair_image": "02_output0758_source0758_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 974,
+          "source_video_frame": 974,
+          "pair_image": "02_output0974_source0974_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 1191,
+          "source_video_frame": 1191,
+          "pair_image": "02_output1191_source1191_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 1407,
+          "source_video_frame": 1407,
+          "pair_image": "02_output1407_source1407_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 1624,
+          "source_video_frame": 1624,
+          "pair_image": "02_output1624_source1624_raw-rearproxy-z37.png"
+        }
+      ]
+    },
+    {
+      "take_key": "03",
+      "segment": "03_211139_Take_002",
+      "alignment_csv": {
+        "path": "outputs/mocap_video_alignment_review/03_211139_Take_002_mocap_video_aligned_strict25.alignment.csv",
+        "sha256": "a37de53909289102ff2c89ba27c87f8c4e78473f6bde807f7d3cb3417ca141ea",
+        "row_count": 1800
+      },
+      "rgb_video": {
+        "path": "同步整理_20260829_三段/03_211139_Take_002/视频/RGB.mp4",
+        "sha256": "4423454b0c84a49faf2959e5fbc5ae1366cad6be7864b0ec0b7e2cd764b6f1b7"
+      },
+      "human_cma": {
+        "path": "同步整理_20260829_三段/03_211139_Take_002/动捕/Take_002/Take_002_Human.cma",
+        "sha256": "d5bcff007589aedfbb09ff08e40bb0b71be0ca2b09ebefda99ca32f0ad04268d"
+      },
+      "selected_output_frames": [
+        108,
+        324,
+        540,
+        756,
+        971,
+        1187,
+        1403,
+        1619
+      ],
+      "excluded_hypothesis_development_frames": [],
+      "contact_sheet": "03_03_211139_Take_002_heldout_raw-rearproxy-z37_contact.png",
+      "contact_sheet_sha256": "d66ed1770724d0588cd3e6a3439503706a4cdfaba26b69c7f0492593818504bf",
+      "frames": [
+        {
+          "output_frame": 108,
+          "source_video_frame": 111,
+          "pair_image": "03_output0108_source0111_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 324,
+          "source_video_frame": 327,
+          "pair_image": "03_output0324_source0327_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 540,
+          "source_video_frame": 543,
+          "pair_image": "03_output0540_source0543_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 756,
+          "source_video_frame": 759,
+          "pair_image": "03_output0756_source0759_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 971,
+          "source_video_frame": 974,
+          "pair_image": "03_output0971_source0974_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 1187,
+          "source_video_frame": 1190,
+          "pair_image": "03_output1187_source1190_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 1403,
+          "source_video_frame": 1406,
+          "pair_image": "03_output1403_source1406_raw-rearproxy-z37.png"
+        },
+        {
+          "output_frame": 1619,
+          "source_video_frame": 1622,
+          "pair_image": "03_output1619_source1622_raw-rearproxy-z37.png"
+        }
+      ]
+    }
+  ]
+}

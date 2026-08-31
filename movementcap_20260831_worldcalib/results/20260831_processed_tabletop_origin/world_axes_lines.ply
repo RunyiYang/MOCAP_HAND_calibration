@@ -1,0 +1,21 @@
+ply
+format ascii 1.0
+comment coordinates are millimetres
+element vertex 4
+property float x
+property float y
+property float z
+element edge 3
+property int vertex1
+property int vertex2
+property uchar red
+property uchar green
+property uchar blue
+end_header
+0 0 0
+300.0 0 0
+0 300.0 0
+0 0 300.0
+0 1 255 45 45
+0 2 45 230 70
+0 3 60 130 255

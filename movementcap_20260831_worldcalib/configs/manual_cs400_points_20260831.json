@@ -1,0 +1,53 @@
+{
+  "schema": "movementcap.cs400_rgb_observations.v1",
+  "dataset_label": "thor_new4_20260831_processed",
+  "reference_recording": "camera_glove_recording_20260831_155410",
+  "reference_rgb_frame_index": 30,
+  "reference_depth_frame_index": 30,
+  "validation_rgb_frame_index": 100,
+  "marker_model": "OptiTrack CS-400",
+  "marker_center_height_above_table_mm": 45.0,
+  "coordinate_definition": {
+    "origin_xy": "vertical projection of the CS-400 black vertex-hole axis",
+    "origin_z": "tabletop plane (not the marker/ruler height)",
+    "x_positive": "from the vertex outward along the long arm",
+    "y_positive": "from the vertex outward along the short arm",
+    "z_positive": "normal to the tabletop, upward",
+    "handedness": "right_handed",
+    "units": "millimetres"
+  },
+  "marker_centers_world_mm": {
+    "long_far": [370.0, 0.0, 45.0],
+    "long_near": [110.0, 0.0, 45.0],
+    "short_near": [0.0, 65.0, 45.0],
+    "short_far": [0.0, 210.0, 45.0]
+  },
+  "rgb_marker_centers_px": {
+    "long_far": [530.1000061, 744.30000305],
+    "long_near": [818.70001221, 737.10000229],
+    "short_near": [936.90002441, 774.00000381],
+    "short_far": [919.50003052, 888.30000305]
+  },
+  "multi_frame_visual_detection": {
+    "source_frame_count": 98,
+    "method": "visual classification plus constrained Hough-circle median over all RGB frames",
+    "detections": {
+      "long_far": 91,
+      "long_near": 98,
+      "short_near": 92,
+      "short_far": 90
+    },
+    "center_standard_deviation_px": {
+      "long_far": [1.0343, 1.2544],
+      "long_near": [0.7794, 1.2005],
+      "short_near": [1.1149, 1.3982],
+      "short_far": [0.6147, 0.8144]
+    }
+  },
+  "model_geometry_provenance": "Nominalized marker centers from the same physical CS-400 ruler reconstructed with the 2026-08-29 raw 16-bit depth calibration; rounded to 370/110 mm on X and 65/210 mm on Y.",
+  "approximate_depth_decode": {
+    "colormap": "OpenCV COLORMAP_JET",
+    "fit_source": "known tabletop plane projected into the depth camera and green-table pixels in RGB",
+    "warning": "Depth.mp4 is a lossy 8-bit colorized preview. Recovered depth is suitable only for visualization and has about 20 mm quantization."
+  }
+}

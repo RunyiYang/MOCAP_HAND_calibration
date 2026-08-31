@@ -1,0 +1,370 @@
+{
+  "schema": "gt_calib.glove_mocap_rgb_preview.v2",
+  "segment": "01_210814_Take_000",
+  "evaluation_scope": {
+    "statistics_scope": "full_source_take",
+    "source_frame_first": 0,
+    "source_frame_stop_exclusive": 1815,
+    "source_frame_last_inclusive": 1814,
+    "evaluated_rgb_frames": 1815,
+    "source_take_total_rgb_frames": 1815,
+    "covers_full_source_take": true
+  },
+  "evaluation_protocol": {
+    "pose_mode": "glove-wrist-preserved",
+    "registration_source_segment": "01_210814_Take_000",
+    "target_segment_used_in_registration_fit": true,
+    "is_cross_take_holdout": false,
+    "metric_frame": "mocap-wrist root-normalized",
+    "conditional_on_mocap_wrist_translation": true,
+    "conditional_on_mocap_wrist_orientation": false,
+    "target_finger_joints_used_in_fit": false,
+    "quaternion_semantics": null,
+    "cross_take_scope": "same-take registration consistency",
+    "absolute_wrist_translation_evaluable": false,
+    "absolute_6dof_metrics": null,
+    "absolute_6dof_unavailable_reason": "glove wrist translation is zero and synchronized mocap wrist translation is copied into the overlay"
+  },
+  "inputs": {
+    "rgb_mp4": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/视频/RGB.mp4",
+    "rgb_bag": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/原始BAG与内参/camera_1_rgb_depth.bag",
+    "calibration": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/movementcap_worldcalib_pointcloud_package_20260830/movementcap_ruler_worldcalib/results/manual_final/camera_to_world.json",
+    "glove_solver": {
+      "left": {
+        "meta_path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/手套解算/solved/primary/left_hand_pose.meta.json",
+        "solver_id": "glove_dexterous_retarget.original_v2.wenhao.root_tip_glove.L20",
+        "solver_version": "original-v2-wenhao-offline-1.0.3",
+        "config_sha256": {
+          "skeleton": "6636cd07641b560eb2779b298020467d64916dd1812a85eb68536dd3d9aad799",
+          "calibration": "848a61ac0577120d648b63a3711fc4c45333719938212dd3f0ddac23d5cce315",
+          "solver_config": "ef15defbf17dfd8424a09f7617f6011deba7fd11df7bee09826694542cd9d571"
+        },
+        "session_neutral_used": true,
+        "session_neutral_captured_at_utc": "2026-08-29T13:08:11.652812+00:00"
+      },
+      "right": {
+        "meta_path": "/home/runyi/Project/hands_reloc/GT_calib/同步整理_20260829_三段/01_210814_Take_000/手套解算/solved/primary/right_hand_pose.meta.json",
+        "solver_id": "glove_dexterous_retarget.original_v2.wenhao.root_tip_glove.L20",
+        "solver_version": "original-v2-wenhao-offline-1.0.3",
+        "config_sha256": {
+          "skeleton": "6636cd07641b560eb2779b298020467d64916dd1812a85eb68536dd3d9aad799",
+          "calibration": "8450a25da85a165cbeb86978df2e3ae0efa3763f03df4acc711b9ffb87c41c49",
+          "solver_config": "f33c23249a2e29de0905ac8b3332336266659d0e2dbe562f60d45161bf91bcd7"
+        },
+        "session_neutral_used": true,
+        "session_neutral_captured_at_utc": "2026-08-29T13:08:12.479050+00:00"
+      }
+    }
+  },
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "nominal_fps": 30.0,
+    "frame_count": 1815,
+    "bag_index_color_message_count": 1815,
+    "actual_mean_rate_hz": 29.91216093706998,
+    "bag_duration_minus_frame_index_over_nominal_fps_ms": 177.56441434224257
+  },
+  "synchronization": {
+    "common_interval_pass": true,
+    "timestamp_semantics": "color_device_timestamp_us is the frame acquisition time; Thor poll/receive latency is subtracted row by row before mapping to glove monotonic and CMAvatar Windows time",
+    "camera_capture_to_thor_poll_latency_ms": {
+      "count": 878,
+      "min": 237.91526100000002,
+      "mean": 255.32669016173125,
+      "median": 255.10294900000002,
+      "p95": 270.29541155,
+      "max": 303.01326700000004
+    },
+    "nearest_mocap_sample_delta_ms": {
+      "count": 1748,
+      "min": 0.0002384185791015625,
+      "mean": 2.0840135264451227,
+      "median": 2.090573310852051,
+      "p95": 3.9602041244506836,
+      "max": 4.163265228271484
+    },
+    "exposure_to_nearest_mocap_sample_absolute_error_ms": {
+      "count": 1748,
+      "min": 0.0002384185791015625,
+      "mean": 2.0840135264451227,
+      "median": 2.090573310852051,
+      "p95": 3.9602041244506836,
+      "max": 4.163265228271484
+    },
+    "camera_to_mocap_absolute_error_ms": {
+      "count": 1748,
+      "min": 0.0002384185791015625,
+      "mean": 2.0840135264451227,
+      "median": 2.090573310852051,
+      "p95": 3.9602041244506836,
+      "max": 4.163265228271484
+    },
+    "deprecated_metric_aliases": {
+      "exposure_to_nearest_mocap_sample_absolute_error_ms": {
+        "replacement": "nearest_mocap_sample_delta_ms",
+        "semantics": "Deprecated compatibility alias: nearest 120 Hz MOCAP sample quantization distance, not synchronization error or GT accuracy."
+      },
+      "camera_to_mocap_absolute_error_ms": {
+        "replacement": "nearest_mocap_sample_delta_ms",
+        "semantics": "Deprecated compatibility alias: nearest 120 Hz MOCAP sample quantization distance at corrected acquisition time, not synchronization error or GT accuracy."
+      }
+    },
+    "mocap_bracketing_source_span_ms": {
+      "count": 1748,
+      "min": 8.331775665283203,
+      "mean": 8.333153528261512,
+      "median": 8.332967758178711,
+      "p95": 8.333921432495117,
+      "max": 8.333921432495117
+    },
+    "synchronized_rgb_frames": 1748,
+    "max_interpolation_gap_ms": 25.0,
+    "large_interpolation_gaps_are_rejected": true,
+    "gap_definition": "time span between the two bracketing source samples",
+    "interpolation_target": "corrected RGB frame acquisition timestamp",
+    "mocap_sample_timebase": {
+      "source": "PtpTimeStamp affine fit to millisecond Windows TimeStamp",
+      "ptp_to_windows_slope": 0.9999783092542173,
+      "display_timestamp_fit_absolute_residual_ms": {
+        "median": 0.36263465881347656,
+        "p95": 1.0987043380737302,
+        "max": 2.2089481353759766
+      },
+      "ptp_vs_120hz_frame_counter_absolute_residual_us": {
+        "median": 1.6666671101006614,
+        "p95": 3.000000468489361,
+        "max": 3.666667424795378
+      },
+      "semantic_status": "high-resolution relative cadence observed; absolute PTP epoch contract was not delivered, so Windows TimeStamp remains the affine anchor"
+    }
+  },
+  "mocap_joint_quality": {
+    "per_frame_confidence_available_in_human_cma": false,
+    "marker_visibility_available_in_human_cma": false,
+    "occlusion_or_gap_fill_flags_available_in_human_cma": false,
+    "reconstruction_residual_available_in_human_cma": false
+  },
+  "spatial_calibration": {
+    "schema": "movementcap.camera_to_mocap_world.v1",
+    "status": "manual_visual_calibration_complete",
+    "method": "manual_visual_CS400_markers_plus_109_frame_raw_depth_median",
+    "fixed_camera_assumption": true,
+    "world_to_color_camera": [
+      [
+        -0.9901649103415924,
+        -0.07015376898760067,
+        -0.06712865641098525,
+        9.101702032158563
+      ],
+      [
+        0.0374681219656863,
+        0.36220999833005135,
+        -0.9313431133243358,
+        204.82471961332746
+      ],
+      [
+        0.09009755529935361,
+        -0.9294262060824092,
+        -0.3578398497333453,
+        989.1561507992096
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "review_notes": [
+      "Marker identities were selected by visual inspection of the RGB video and median raw-depth holes.",
+      "The CS-400 45 mm offset was applied so Z=0 is the tabletop, not the reflective marker-center plane.",
+      "The same transform is reused only because the camera and table/ruler frame did not move across the three formal takes."
+    ]
+  },
+  "sides": {
+    "left": {
+      "valid_rgb_frames": 1275,
+      "synchronized_mocap_rgb_frames": 1748,
+      "frames_rejected_by_glove_interpolation_or_finite_gate": 473,
+      "retained_fraction_of_synchronized_mocap_frames": 0.7294050343249427,
+      "registration": {
+        "method": "fixed rotation and uniform scale; non-thumb MCP only",
+        "source_segment": "01_210814_Take_000",
+        "target_segment_used_in_fit": true,
+        "wrist_translation": "copied from synchronized mocap each frame",
+        "wrist_orientation": "preserved from glove world keypoints; not copied from mocap",
+        "glove_pose_source": "world keypoints rotated by the solved glove wrist quaternion",
+        "per_frame_rotation_refit": false,
+        "preserves_glove_vs_mocap_wrist_orientation_difference": true,
+        "conditional_on_mocap_wrist_se3": false,
+        "target_finger_joints_used_in_fit": false,
+        "fingertips_used_in_fit": false,
+        "scale": 0.8865779393164441,
+        "rotation_mocap_from_glove": [
+          [
+            0.09034069205005774,
+            -0.3468798172476586,
+            0.933548580281791
+          ],
+          [
+            0.9946042830739085,
+            0.07942638318540692,
+            -0.06673656977341971
+          ],
+          [
+            -0.050998818132914944,
+            0.9345404443042129,
+            0.35218358637041874
+          ]
+        ],
+        "fit_frame_count": 1209,
+        "source_fit_anchor_residual_mm": {
+          "median": 16.899758712390398,
+          "p95": 47.956640132722576
+        }
+      },
+      "root_normalized_non_thumb_joint_epe_mm": {
+        "aggregation": "pooled_frame_joint_epe",
+        "count": 20400,
+        "min": 0.38417123184669666,
+        "mean": 45.35319592696922,
+        "median": 32.58285149345308,
+        "p95": 121.14427245367158,
+        "max": 208.28042607643064
+      },
+      "root_normalized_frame_mpjpe_mm": {
+        "aggregation": "mean_of_16_non_thumb_joint_epe_per_frame",
+        "count": 1275,
+        "min": 8.8888987653819,
+        "mean": 45.35319592696922,
+        "median": 38.37909203542466,
+        "p95": 94.85976569784839,
+        "max": 162.2467964716494
+      },
+      "root_normalized_non_thumb_mcp_epe_mm": {
+        "aggregation": "pooled_frame_joint_epe",
+        "count": 5100,
+        "min": 0.38417123184669666,
+        "mean": 24.523698013345502,
+        "median": 18.199186485201455,
+        "p95": 61.201871494152854,
+        "max": 104.7351162847773
+      },
+      "root_normalized_non_thumb_intermediate_joint_epe_mm": {
+        "aggregation": "pooled_frame_joint_epe",
+        "count": 10200,
+        "min": 2.14983429441164,
+        "mean": 46.997871292391395,
+        "median": 38.195703578493344,
+        "p95": 117.27435398327586,
+        "max": 193.51062900385995
+      },
+      "root_normalized_non_thumb_fingertip_epe_mm": {
+        "aggregation": "pooled_frame_joint_epe",
+        "count": 5100,
+        "min": 1.9391605918076047,
+        "mean": 62.89334310974862,
+        "median": 54.25663399219713,
+        "p95": 146.74635175540635,
+        "max": 208.28042607643064
+      }
+    },
+    "right": {
+      "valid_rgb_frames": 1275,
+      "synchronized_mocap_rgb_frames": 1748,
+      "frames_rejected_by_glove_interpolation_or_finite_gate": 473,
+      "retained_fraction_of_synchronized_mocap_frames": 0.7294050343249427,
+      "registration": {
+        "method": "fixed rotation and uniform scale; non-thumb MCP only",
+        "source_segment": "01_210814_Take_000",
+        "target_segment_used_in_fit": true,
+        "wrist_translation": "copied from synchronized mocap each frame",
+        "wrist_orientation": "preserved from glove world keypoints; not copied from mocap",
+        "glove_pose_source": "world keypoints rotated by the solved glove wrist quaternion",
+        "per_frame_rotation_refit": false,
+        "preserves_glove_vs_mocap_wrist_orientation_difference": true,
+        "conditional_on_mocap_wrist_se3": false,
+        "target_finger_joints_used_in_fit": false,
+        "fingertips_used_in_fit": false,
+        "scale": 0.8986121252142041,
+        "rotation_mocap_from_glove": [
+          [
+            0.27444222175595967,
+            0.30610468760500487,
+            -0.9115818049653553
+          ],
+          [
+            -0.9495741954301837,
+            0.23574711729271608,
+            -0.2067175465733236
+          ],
+          [
+            0.15162557268077306,
+            0.9223465817762958,
+            0.35536807509230595
+          ]
+        ],
+        "fit_frame_count": 1125,
+        "source_fit_anchor_residual_mm": {
+          "median": 16.385310582084145,
+          "p95": 39.707559048723425
+        }
+      },
+      "root_normalized_non_thumb_joint_epe_mm": {
+        "aggregation": "pooled_frame_joint_epe",
+        "count": 20400,
+        "min": 1.6008618374200896,
+        "mean": 45.04468361100159,
+        "median": 30.68599067784603,
+        "p95": 125.1471252612689,
+        "max": 195.33059306403376
+      },
+      "root_normalized_frame_mpjpe_mm": {
+        "aggregation": "mean_of_16_non_thumb_joint_epe_per_frame",
+        "count": 1275,
+        "min": 9.895531790553012,
+        "mean": 45.04468361100158,
+        "median": 38.27112203683402,
+        "p95": 119.08163354850197,
+        "max": 145.15482610030352
+      },
+      "root_normalized_non_thumb_mcp_epe_mm": {
+        "aggregation": "pooled_frame_joint_epe",
+        "count": 5100,
+        "min": 1.6008618374200896,
+        "mean": 24.191290389134718,
+        "median": 18.077799339573406,
+        "p95": 75.55131321090353,
+        "max": 90.35132589920167
+      },
+      "root_normalized_non_thumb_intermediate_joint_epe_mm": {
+        "aggregation": "pooled_frame_joint_epe",
+        "count": 10200,
+        "min": 2.1080511225662177,
+        "mean": 46.40731875432161,
+        "median": 35.42080547989714,
+        "p95": 123.73068389171094,
+        "max": 178.8940884604907
+      },
+      "root_normalized_non_thumb_fingertip_epe_mm": {
+        "aggregation": "pooled_frame_joint_epe",
+        "count": 5100,
+        "min": 3.587791767082108,
+        "mean": 63.1728065462284,
+        "median": 51.5041140350036,
+        "p95": 152.26403597139574,
+        "max": 195.33059306403376
+      }
+    }
+  },
+  "interpretation_limits": [
+    "Glove has no global wrist translation; mocap wrist translation is shared.",
+    "Target segment contributed to palm registration; metrics are same-take consistency.",
+    "One fixed take-level rotation/scale is used; per-frame rotation is not refitted, so wrist-orientation differences remain visible.",
+    "The fitted scale is a registration gain under orientation mismatch, not a pure anatomical bone-length ratio.",
+    "Thumb is drawn but excluded from metrics because glove has 20 points and mocap has 21.",
+    "CS-400 calibration is manual visual marker classification plus metric multi-frame depth.",
+    "The recorded depth-to-color matrix is used as delivered even though its 3x3 block is slightly non-orthogonal; an official SDK D2C extrinsic or held-out 2D labels are still required for an independent pixel-accuracy claim."
+  ]
+}
