@@ -1,6 +1,6 @@
 # GT Calib 文档入口
 
-- 当前状态：`verified_final_nine_bvh_fk_y_minus_44 + verified_9_of_9_full_decode`
+- 当前状态：`verified_final_nine_bvh_fk_y_minus_44 + verified_imu_mocap_supplement`
 - 最近更新：2026-09-01
 - 当前数据版本：`20260829_take000-002 + thor_new4_take007 + no_glove_155410 + 20260831_tabletop_worldcalib`
 - 最新日报：[2026-09-01](daily/2026/2026-09-01.md)
@@ -9,6 +9,7 @@
 - 明日索取清单：[DATA_REQUEST_2026-08-31.md](dataset/DATA_REQUEST_2026-08-31.md)
 - 新采集与新世界坐标理解：[NEW_CAPTURE_2026-08-31.md](dataset/NEW_CAPTURE_2026-08-31.md)
 - Take_007 CMM 对齐合同：[TAKE007_CMM_ALIGNMENT_V1.md](calibration/TAKE007_CMM_ALIGNMENT_V1.md)
+- IMU 解算 pose × MOCAP 对比：[IMU_SOLVED_VS_MOCAP_V1.md](calibration/IMU_SOLVED_VS_MOCAP_V1.md)
 - 九视频人工 XYZ 合同：[FINAL_NINE_MANUAL_XYZ_V1.md](calibration/FINAL_NINE_MANUAL_XYZ_V1.md)
 - 评估协议：[CROSS_TAKE_EVALUATION.md](protocols/CROSS_TAKE_EVALUATION.md)
 - 当前推荐 calibrated fusion：[MOCAP_ROOT_FUSION_V1.md](calibration/MOCAP_ROOT_FUSION_V1.md)
@@ -23,6 +24,15 @@
 - 变更日志：[CHANGELOG.md](CHANGELOG.md)
 
 ## 当前一句话结论
+
+新增的 `imu_mocap_comparison_delivery/` 是最终九视频之外的独立
+supplement，不改动 canonical 9-video manifest。它对每个 RGB 帧直接
+显示最近一条实际 glove solver keypoint row，不做 pose 插值、平滑或
+门控隐藏；样本过旧时仅标记 `STALE DISPLAY / NOT SCORED`。差异指标
+仍只使用原始严格时间有效帧，避免把持有显示的旧 pose 混入评估。
+旧 Take 01/02/03 对比最新 `Skeleton_0/1.bvh` FK；Take_007 对比
+CMM 表面点。这里的“IMU pose”是 IMU 驱动的 20-joint solver 输出，
+不是 raw gyro/accelerometer/quaternion stream。
 
 最终新增动作已从 Take_006 修订为 `161912 / Take_007`。照片 #1..#10 被解释为
 每手五组 tip/base CMM 表面点（双手共 20 个实测点），#11 只用于构造
@@ -98,7 +108,12 @@ Take 02/03 的 fusion P95 仍为 joint 86.06–97.44 mm、tip 104.87–113.80 mm
 - 在每帧使用 MOCAP wrist SE(3) 的条件下，可报告 glove local finger articulation 的 root-normalized median/P95 与覆盖率。
 - 本轮新的 BVH-FK + Y=-44 package 已完成 9/9 full decode，validation
   `failures=[]`；旧 MOCAP-only、fusion、diagnostic 与 depth 媒体的既有验证仍
-  保留。全量代码回归为 `155 passed in 107.14s`，不沿用旧 `114` 项基线。
+  保留。
+- IMU-solved × MOCAP supplement 的 4/4 H.264 已 full decode；每帧 CSV
+  明确分开 nearest-row display 与 strict-score mask，不会再因门控把手画面
+  整体隐藏。
+- 全量回归为 `169 passed in 115.83s`，覆盖真实 bundle、MP4 full-decode
+  record、包内 profile、网站 mirror 和伪 MP4/篡改 metrics/CSV 负例。
 
 ## 当前不可宣称
 
@@ -138,6 +153,21 @@ uv run gt-calib-delivery validate \
 该 build 会重新渲染 video 01/03/05 的 Skeleton_0/1 BVH-FK 21-joint layer、
 video 02/04/06 的 anchored solved pose，以及 Take_007 video 07/08；不会把旧
 final MP4 当作 source copy。本轮已按该链路获得新的 9/9 full-decode pass。
+
+## 快速复现 IMU-solved × MOCAP supplement
+
+```bash
+cd /home/runyi/Project/hands_reloc/GT_calib
+
+uv run gt-calib-delivery build-imu-comparison \
+  --destination rebuilt_imu_mocap_comparison_delivery \
+  --manual-profile calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json
+uv run gt-calib-delivery validate-imu-comparison \
+  --destination rebuilt_imu_mocap_comparison_delivery --full-decode
+```
+
+本地网页为 `http://127.0.0.1:8811/downloads/imu-mocap/`；完整可下载目录是
+`/home/runyi/Project/hands_reloc/GT_calib/imu_mocap_comparison_delivery/`。
 
 ## 每日交付最小流程
 

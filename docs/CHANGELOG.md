@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-09-01
+
+### IMU-solved pose vs MOCAP supplemental review
+
+- 新增独立 `imu_mocap_comparison_delivery/`，包含 Take 01/02/03 对
+  `Skeleton_0/1.bvh` FK 和 Take_007 对 CMM 表面点的 4 段视频；
+  canonical final-nine manifest 仍严格为 9 段。
+- 显示策略改为每个 RGB 帧选择最近一条实际 solver row：不做
+  pose 插值、平滑、外推或门控隐藏。时间过旧帧继续显示但标记
+  `STALE DISPLAY / NOT SCORED`。
+- 科学计分保留旧数据 25 ms 严格 mask；Take_007 保留 camera-valid
+  且 nearest solver age 不超过 20 ms 的 mask。显示帧与计分帧完全分离。
+- 旧 Take 保留 solver wrist orientation，只因 solver 缺全局平移而复用
+  MOCAP wrist translation；不再复制 MOCAP wrist orientation。固定 Take01
+  non-thumb-MCP rotation + scale 冻结到 Take02/03。
+- Take_007 用前 20% 帧的四个 non-thumb base marker 估计一次固定
+  rotation + scale，后 80% 冻结评估；不使用 per-frame CMM rotation。
+- 新增 `build-imu-comparison` / `validate-imu-comparison`、完整 H.264
+  full-decode/hash/path validator、每帧 CSV、metrics JSON、poster 和独立下载页。
+- `Y=-44 mm` manual profile 已作为
+  `calibration/applied_manual_profile.json` 复制进 standalone folder；manifest
+  同时绑定包内 hash 与 project-source provenance，下载包可独立审计。
+- 旧 Take 的固定 registration 也已从旧 `Human.cma` position fit 替换为
+  Take01 `Skeleton_0/1.bvh` FK 非拇指 MCP fit；builder 会重算并核对
+  profile 数值与源文件 SHA，避免旧 profile 被静默复用。
+- 旧 Take 严格帧的左/右 16-joint median 为：Take01 32.62/30.74 mm，
+  Take02 31.97/40.12 mm，Take03 43.48/66.32 mm。Take_007 冻结后半段
+  10 个表面对应的左/右 median 为 39.03/41.11 mm。所有结果都不是
+  absolute wrist 6DoF 或独立 anatomical GT accuracy。
+- 4/4 H.264 已 full decode，standalone validation 为 `status=pass`、
+  `failures=[]`；网站 assembly 同时校验 final-nine 和 supplemental 两个交付。
+- 最终全量回归 `169 passed in 115.83s`；新增伪 MP4、非 canonical ID、
+  metrics summary 篡改、strict CSV 计数篡改和 manual-profile provenance 负例。
+
 ## 2026-08-31
 
 ### Final-nine BVH source and operator XYZ revision

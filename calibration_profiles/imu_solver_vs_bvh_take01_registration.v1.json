@@ -1,0 +1,96 @@
+{
+  "schema": "gt_calib.glove_mocap_registration.v1",
+  "pose_mode": "glove-wrist-preserved",
+  "source_segment": "01_210814_Take_000",
+  "max_interpolation_gap_ms": 25.0,
+  "fit_joint_names": [
+    "index_mcp",
+    "middle_mcp",
+    "ring_mcp",
+    "pinky_mcp"
+  ],
+  "target_finger_joints_used_in_fit": false,
+  "fingertips_used_in_fit": false,
+  "translation_policy": "synchronized MOCAP wrist translation copied per frame",
+  "wrist_orientation_policy": "preserve glove solver world orientation; do not copy MOCAP wrist orientation",
+  "absolute_wrist_translation_evaluable": false,
+  "sides": {
+    "left": {
+      "scale": 0.8861507540945289,
+      "rotation_mocap_from_glove": [
+        [0.090363772367031, -0.34643029642098083, 0.9337132527522944],
+        [0.9946799609111423, 0.07795500936170714, -0.06734086335371502],
+        [-0.04945871010658295, 0.934831036196963, 0.3516315824232877]
+      ],
+      "fit_frame_count": 1212,
+      "source_fit_anchor_residual_mm": {
+        "median": 16.97518819038666,
+        "p95": 48.21147367943162
+      }
+    },
+    "right": {
+      "scale": 0.8987981857830478,
+      "rotation_mocap_from_glove": [
+        [0.2743615810613594, 0.30552977188355496, -0.9117989259317506],
+        [-0.9495698854379746, 0.23575413939285017, -0.20672933615829311],
+        [0.15179840416428267, 0.9225353891596352, 0.35480374891094013]
+      ],
+      "fit_frame_count": 1123,
+      "source_fit_anchor_residual_mm": {
+        "median": 16.392793830740683,
+        "p95": 39.60156259738856
+      }
+    }
+  },
+  "provenance": {
+    "fit_position_source": "Skeleton_0/1 BVH forward kinematics",
+    "sampling": "nearest observed solver row; no pose interpolation",
+    "rendered_source_rgb_interval": {
+      "first": 61,
+      "stop_exclusive": 1808,
+      "frame_count": 1747
+    },
+    "strict_25ms_candidate_frames": {
+      "left": 1275,
+      "right": 1275
+    },
+    "generated_by": "gt_calib_delivery.imu_mocap_comparison.fit_take01_bvh_registration",
+    "source_assets": {
+      "left_skeleton_bvh": {
+        "path": "同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Skeleton_0.bvh",
+        "bytes": 3542548,
+        "sha256": "61301fcae506f6081522fb8b787839a5190679948867b6d8a4912cb07288e97c"
+      },
+      "right_skeleton_bvh": {
+        "path": "同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Skeleton_1.bvh",
+        "bytes": 3544390,
+        "sha256": "fcf184d2f6211bb06f39487f14c68bcca5d188b0629917f15a9b7559ae2cc5d0"
+      },
+      "left_glove_solver_keypoints": {
+        "path": "同步整理_20260829_三段/01_210814_Take_000/手套解算/solved/primary/left_hand_keypoints.csv",
+        "bytes": 16936899,
+        "sha256": "7cb49985009d58c607980e338af2b40951df3627ef8b89c1896737af2131c1b7"
+      },
+      "right_glove_solver_keypoints": {
+        "path": "同步整理_20260829_三段/01_210814_Take_000/手套解算/solved/primary/right_hand_keypoints.csv",
+        "bytes": 17178977,
+        "sha256": "088aa0d80a690c4ee9c6ce5e32813f4496e557c89af7cacdeebef2761d161901"
+      },
+      "human_cma_timestamps_only": {
+        "path": "同步整理_20260829_三段/01_210814_Take_000/动捕/Take_000/Take_000_Human.cma",
+        "bytes": 100630078,
+        "sha256": "b76c3f632816cff742e3f3f599f43e5d1b919fd0295a91384bf54846df2dec1f"
+      },
+      "camera_cmavatar_alignment": {
+        "path": "同步整理_20260829_三段/01_210814_Take_000/同步校验/camera_cmavatar_alignment.csv",
+        "bytes": 163197,
+        "sha256": "e7e8e7ee058158423dc74fdb6fb77367217d1e84a24a1b3f65de64c04094c277"
+      },
+      "common_interval_sync_report": {
+        "path": "同步整理_20260829_三段/01_210814_Take_000/同步校验/common_interval_sync_report.json",
+        "bytes": 1728,
+        "sha256": "ea4f5f2f473c13d5ac087d30289ad99bb44f5a57d1271b2d2021af715f2cac09"
+      }
+    }
+  }
+}

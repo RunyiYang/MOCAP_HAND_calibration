@@ -1,6 +1,6 @@
 {
   "schema": "gt-calib.asset-manifest.v1",
-  "generatedAt": "2026-08-31T21:54:30+00:00",
+  "generatedAt": "2026-09-01T11:10:36+00:00",
   "cloudflareMaxAssetBytes": 26214400,
   "assets": [
     {
@@ -157,7 +157,7 @@
       "path": "data/site-data.json",
       "source": "generated from MOCAP/video + raw-depth/MOCAP alignment + fusion + diagnostic strict metrics and request CSV",
       "bytes": 38389,
-      "sha256": "09df419b5b78c2a8e949369e4608144a4d663c32ae10ca3eac28bafcff0f04ce"
+      "sha256": "523e8e964cc3a6326af7f570a529f3450e89c65650a00305d5ea3c0ed7b2ff1c"
     },
     {
       "path": "downloads/BVH_LOCAL_VIEWER_V1.md",
@@ -252,8 +252,8 @@
     {
       "path": "downloads/daily-2026-09-01.md",
       "source": "docs/daily/2026/2026-09-01.md",
-      "bytes": 6406,
-      "sha256": "b7ad5cfaf1b9790c82987f9718fb47c8a20a5cd6a7fb87773b977169e62135c2"
+      "bytes": 9974,
+      "sha256": "9164528260dede869faafe10f1e67a55a53188f6eb53af5ccb3d8651ade3ddf7"
     },
     {
       "path": "downloads/dataset-inventory.csv",
@@ -522,8 +522,146 @@
     {
       "path": "downloads/gt-calib-evidence-2026-08-31.zip",
       "source": "generated allow-listed evidence bundle (videos excluded)",
-      "bytes": 3305129,
-      "sha256": "63c7bc3a907014815949e7ebeda57b3ef3b3573e34e4955c834bf7eac4f45700"
+      "bytes": 3306555,
+      "sha256": "c410e64e0151f4293f1aa79a1223997eed411b79b0666fb25012193a6f4b0bbd"
+    },
+    {
+      "path": "downloads/imu-mocap/README.md",
+      "source": "imu_mocap_comparison_delivery/README.md",
+      "bytes": 1882,
+      "sha256": "95ba5a18466f677bf34721abbc25cac57e94bfe7c361d032cc3dcb2034bcfa69"
+    },
+    {
+      "path": "downloads/imu-mocap/SHA256SUMS.txt",
+      "source": "imu_mocap_comparison_delivery/SHA256SUMS.txt",
+      "bytes": 2250,
+      "sha256": "aafda3afba7d42d4bc54445837f5f67bb59a795171f744ff89130b31512e2ebe"
+    },
+    {
+      "path": "downloads/imu-mocap/calibration/applied_manual_profile.json",
+      "source": "imu_mocap_comparison_delivery/calibration/applied_manual_profile.json",
+      "bytes": 4344,
+      "sha256": "2eaf48440999a1efe8a27bb259a98e9305da5132f4783605ede7601f7e3c78d8"
+    },
+    {
+      "path": "downloads/imu-mocap/frame_maps/take007_imu_vs_mocap.csv",
+      "source": "imu_mocap_comparison_delivery/frame_maps/take007_imu_vs_mocap.csv",
+      "bytes": 423023,
+      "sha256": "9581aa85da999af25078c46ebef7314f94538b5de712ca6ffd591708f6f40453"
+    },
+    {
+      "path": "downloads/imu-mocap/frame_maps/take01_imu_vs_mocap.csv",
+      "source": "imu_mocap_comparison_delivery/frame_maps/take01_imu_vs_mocap.csv",
+      "bytes": 528517,
+      "sha256": "57260ae5401210078cbc4d8456322c3970c0412046d98c1cf4213f39111c7a1b"
+    },
+    {
+      "path": "downloads/imu-mocap/frame_maps/take02_imu_vs_mocap.csv",
+      "source": "imu_mocap_comparison_delivery/frame_maps/take02_imu_vs_mocap.csv",
+      "bytes": 545939,
+      "sha256": "b6358c5958bfca9cbc8ba9eff18cbedda51ff19257154d9ce6565bfc8713dab0"
+    },
+    {
+      "path": "downloads/imu-mocap/frame_maps/take03_imu_vs_mocap.csv",
+      "source": "imu_mocap_comparison_delivery/frame_maps/take03_imu_vs_mocap.csv",
+      "bytes": 543807,
+      "sha256": "78317649a793254cf0e3e5dc9bfbc9293f1fed1a0bd3775c3a85841e3ff37329"
+    },
+    {
+      "path": "downloads/imu-mocap/index.html",
+      "source": "imu_mocap_comparison_delivery/index.html",
+      "bytes": 4890,
+      "sha256": "84ca891539f1bd7f1c4fe9c2686bc36f9b5c60cd5c56e22c4e6fe812376e4cf5"
+    },
+    {
+      "path": "downloads/imu-mocap/manifest.json",
+      "source": "imu_mocap_comparison_delivery/manifest.json",
+      "bytes": 6806,
+      "sha256": "55478a785a8742337cfd5f26768d1c84bfa5751151f86e67fbc0a0697b7dd984"
+    },
+    {
+      "path": "downloads/imu-mocap/metrics/01_take01_imu_solved_vs_bvh_mocap.json",
+      "source": "imu_mocap_comparison_delivery/metrics/01_take01_imu_solved_vs_bvh_mocap.json",
+      "bytes": 24725,
+      "sha256": "4dc49619d2979c67fff1c59f5a99faf52887c677f676ca00c591738a94737a47"
+    },
+    {
+      "path": "downloads/imu-mocap/metrics/02_take02_imu_solved_vs_bvh_mocap.json",
+      "source": "imu_mocap_comparison_delivery/metrics/02_take02_imu_solved_vs_bvh_mocap.json",
+      "bytes": 24707,
+      "sha256": "e5f3411f98ce0a4fb1b82a1d6fee37bf20a2486ddb217a873df72fe788205b13"
+    },
+    {
+      "path": "downloads/imu-mocap/metrics/03_take03_imu_solved_vs_bvh_mocap.json",
+      "source": "imu_mocap_comparison_delivery/metrics/03_take03_imu_solved_vs_bvh_mocap.json",
+      "bytes": 24752,
+      "sha256": "9ecec20ceb18c3856631922194268ad90ce7ae8cf2a6c91f344f45176322b191"
+    },
+    {
+      "path": "downloads/imu-mocap/metrics/04_take007_imu_solved_vs_cmm_mocap.json",
+      "source": "imu_mocap_comparison_delivery/metrics/04_take007_imu_solved_vs_cmm_mocap.json",
+      "bytes": 21145,
+      "sha256": "9f7b024bf8ae353c0bdb968bf86e1790b03babbe7c12a0e27de52618ac1d1828"
+    },
+    {
+      "path": "downloads/imu-mocap/posters/01_take01_imu_solved_vs_bvh_mocap.jpg",
+      "source": "imu_mocap_comparison_delivery/posters/01_take01_imu_solved_vs_bvh_mocap.jpg",
+      "bytes": 1130982,
+      "sha256": "972197aa83b6dcec299e9351d89ddaf444d0a41c43cdbd105538b58c3006625d"
+    },
+    {
+      "path": "downloads/imu-mocap/posters/02_take02_imu_solved_vs_bvh_mocap.jpg",
+      "source": "imu_mocap_comparison_delivery/posters/02_take02_imu_solved_vs_bvh_mocap.jpg",
+      "bytes": 1134769,
+      "sha256": "f2b42715173e1c4ef95edd37d52ad1b40beeacbec8f7a33d0f6c4eb7c7285fe8"
+    },
+    {
+      "path": "downloads/imu-mocap/posters/03_take03_imu_solved_vs_bvh_mocap.jpg",
+      "source": "imu_mocap_comparison_delivery/posters/03_take03_imu_solved_vs_bvh_mocap.jpg",
+      "bytes": 1143153,
+      "sha256": "a87163913e6f11f42c66c356ea3f6aa778449e1ec75f75f74c0e7d7af0348867"
+    },
+    {
+      "path": "downloads/imu-mocap/posters/04_take007_imu_solved_vs_cmm_mocap.jpg",
+      "source": "imu_mocap_comparison_delivery/posters/04_take007_imu_solved_vs_cmm_mocap.jpg",
+      "bytes": 1096941,
+      "sha256": "552fc67ae6c9ce658a4286910857152b8997c1be75dce4585999ed08d2592872"
+    },
+    {
+      "path": "downloads/imu-mocap/styles.css",
+      "source": "imu_mocap_comparison_delivery/styles.css",
+      "bytes": 2267,
+      "sha256": "1fd9cc462679d8d5fcb3d26ed1b143a77c18a25df060ae62d5f126b13b48a4a3"
+    },
+    {
+      "path": "downloads/imu-mocap/validation.json",
+      "source": "imu_mocap_comparison_delivery/validation.json",
+      "bytes": 148,
+      "sha256": "e0d7cc98940e134b2b8344e8ce451d289e2ececfc5555d032d112fd06b164d89"
+    },
+    {
+      "path": "downloads/imu-mocap/videos/01_take01_imu_solved_vs_bvh_mocap.mp4",
+      "source": "imu_mocap_comparison_delivery/videos/01_take01_imu_solved_vs_bvh_mocap.mp4",
+      "bytes": 14672589,
+      "sha256": "9900d33f85e2a91e2d11d9183032759abcc446f7b7b7d1bf720b29df2a5ecad4"
+    },
+    {
+      "path": "downloads/imu-mocap/videos/02_take02_imu_solved_vs_bvh_mocap.mp4",
+      "source": "imu_mocap_comparison_delivery/videos/02_take02_imu_solved_vs_bvh_mocap.mp4",
+      "bytes": 15910077,
+      "sha256": "9ac35c2f6e2b7f7e3fdaece58228c591c821d25b56eaaf80bda6a711ede8e57f"
+    },
+    {
+      "path": "downloads/imu-mocap/videos/03_take03_imu_solved_vs_bvh_mocap.mp4",
+      "source": "imu_mocap_comparison_delivery/videos/03_take03_imu_solved_vs_bvh_mocap.mp4",
+      "bytes": 16713800,
+      "sha256": "648fdbbec1b8312fe4f394a3b202d7e56f129ae631d26e0b9a9f28c89b52ddd9"
+    },
+    {
+      "path": "downloads/imu-mocap/videos/04_take007_imu_solved_vs_cmm_mocap.mp4",
+      "source": "imu_mocap_comparison_delivery/videos/04_take007_imu_solved_vs_cmm_mocap.mp4",
+      "bytes": 14699618,
+      "sha256": "10bdcf6b473d53f7767e7a12824c37f53ebdb172e65d3739dbaec96f06edaf16"
     },
     {
       "path": "downloads/mocap-root-fusion-profile-take-000.json",
@@ -696,8 +834,8 @@
     {
       "path": "final-nine/index.html",
       "source": "web/public/final-nine/index.html",
-      "bytes": 29631,
-      "sha256": "9577b1d6c4445a932cf9d240e9393e88ce63efe7bb108f81ef1403242b86c1cb"
+      "bytes": 30892,
+      "sha256": "cceb1d59016fc3679aa4c6fbed585a19b6217e44718c15d09a46ad626a5768e7"
     },
     {
       "path": "final-nine/styles.css",

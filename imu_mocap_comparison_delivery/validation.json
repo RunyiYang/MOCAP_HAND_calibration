@@ -1,0 +1,7 @@
+{
+  "schema": "gt_calib.imu_mocap_comparison_validation.v1",
+  "status": "pass",
+  "comparison_count": 4,
+  "full_decode": true,
+  "failures": []
+}

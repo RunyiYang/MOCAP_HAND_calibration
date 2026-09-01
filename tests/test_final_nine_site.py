@@ -44,6 +44,18 @@ class FinalNineSiteContractTests(unittest.TestCase):
         self.assertTrue((PAGE / "styles.css").is_file())
         self.assertTrue((PAGE / "app.js").is_file())
 
+    def test_imu_comparison_is_a_supplement_not_a_tenth_manifest_video(self) -> None:
+        html = (PAGE / "index.html").read_text(encoding="utf-8")
+        manifest = json.loads((DELIVERY / "manifest.json").read_text(encoding="utf-8"))
+
+        self.assertIn('id="imu-comparison"', html)
+        self.assertIn("SUPPLEMENTAL · NOT PART OF FINAL 9", html)
+        self.assertIn('href="/downloads/imu-mocap/"', html)
+        self.assertIn("不做 pose 插值、不平滑", html)
+        self.assertEqual(html.count("<video "), 9)
+        self.assertNotIn("data-imu-comparison-id", html)
+        self.assertEqual(manifest["video_count"], 9)
+
     def test_nine_video_manual_xyz_workbench_contract(self) -> None:
         html = (PAGE / "index.html").read_text(encoding="utf-8")
         javascript = (PAGE / "app.js").read_text(encoding="utf-8")

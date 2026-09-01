@@ -1,0 +1,645 @@
+{
+  "schema": "gt_calib.imu_solved_pose_vs_cmm_markers.v1",
+  "status": "comparison_complete",
+  "source_recording": "camera_glove_recording_20260831_161912",
+  "source_take": "Take_007",
+  "rendered_frames": 1981,
+  "visualization": {
+    "imu_layer": "nearest observed glove solver world-keypoint row; always drawn",
+    "pose_interpolation": false,
+    "pose_smoothing": false,
+    "validity_gate_hides_pose": false,
+    "stale_frames_colored_amber": true,
+    "mocap_layer": "ten photographed CMM surface markers per hand",
+    "drawn_connectors": "all ten photograph-defined marker/keypoint correspondences"
+  },
+  "comparison_protocol": {
+    "imu_semantics": "20-joint glove solver output derived from IMU sensors; not raw sensor quaternions",
+    "coordinate_registration": "fixed rotation and scale fitted on first 20% only using four non-thumb base markers",
+    "calibration_frame_interval": [
+      0,
+      396
+    ],
+    "evaluation_frame_interval": [
+      396,
+      1981
+    ],
+    "per_frame_cmm_rotation_used": false,
+    "cmm_virtual_wrist_translation_copied_per_frame": true,
+    "absolute_wrist_translation_evaluable": false,
+    "absolute_6dof_evaluable": false,
+    "scientific_metric_mask": "camera_valid and nearest solver sample <=20 ms",
+    "stale_display_frames_in_scientific_metrics": false
+  },
+  "original_strict_validity_diagnostics": {
+    "valid_frames": 1367,
+    "total_frames": 1981,
+    "coverage_percent": 69.0055527511358,
+    "nearest_solver_sample_error_ms": {
+      "left": {
+        "median": 2.3883040000782785,
+        "p95": 15.894094599980237,
+        "max": 19.938476499874014
+      },
+      "right": {
+        "median": 2.3883040000782785,
+        "p95": 15.894094599980237,
+        "max": 19.938476499874014
+      }
+    }
+  },
+  "manual_display_translation": {
+    "global_world_xyz_mm": [
+      0.0,
+      -44.0,
+      0.0
+    ],
+    "left_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "right_world_xyz_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rear_offset_mm": 20.0
+  },
+  "sides": {
+    "left": {
+      "fixed_coordinate_registration": {
+        "scale": 0.8203800641538597,
+        "rotation_mocap_from_solver": [
+          [
+            0.12112608501444849,
+            -0.785150488605777,
+            0.6073443683538876
+          ],
+          [
+            0.9924640590851023,
+            0.08436589492752998,
+            -0.08886780742990873
+          ],
+          [
+            0.0185354512595458,
+            0.6135316666767794,
+            0.7894525514756529
+          ]
+        ],
+        "input_frames": 279,
+        "retained_frames": 270,
+        "fit_base_residual_median_mm": 34.72057627484184,
+        "fit_base_residual_p95_mm": 60.2644774150323
+      },
+      "solver_sample_age_ms_all_displayed_frames": {
+        "count": 1981,
+        "mean": 8.07912204013124,
+        "median": 3.51731299997482,
+        "p95": 28.932080000004134,
+        "max": 54.02443666662293,
+        "rmse": 12.461875918983736
+      },
+      "evaluation_all_displayed_frames_not_scientific_gate": {
+        "frame_count": 1585,
+        "pooled_joint_epe_mm": {
+          "count": 15850,
+          "mean": 46.10911906710138,
+          "median": 39.278508929528996,
+          "p95": 103.83259290339949,
+          "max": 144.25098789154305,
+          "rmse": 53.644897449409065
+        },
+        "frame_mpjpe_mm": {
+          "count": 1585,
+          "mean": 46.10911906710139,
+          "median": 43.74067855974488,
+          "p95": 68.67792756361844,
+          "max": 93.37012193561861,
+          "rmse": 47.264822147458204
+        },
+        "per_joint_epe_mm": {
+          "thumb_tip": {
+            "count": 1585,
+            "mean": 97.06477835443168,
+            "median": 93.96100926512594,
+            "p95": 128.8028447310283,
+            "max": 141.4052335659802,
+            "rmse": 98.95350509018142
+          },
+          "thumb_base": {
+            "count": 1585,
+            "mean": 59.94554730339315,
+            "median": 59.67076988556213,
+            "p95": 67.22902042953561,
+            "max": 74.86148104693537,
+            "rmse": 60.147131256834776
+          },
+          "index_tip": {
+            "count": 1585,
+            "mean": 41.321083824816924,
+            "median": 32.506613495792415,
+            "p95": 97.2197599200913,
+            "max": 144.25098789154305,
+            "rmse": 49.98295242778392
+          },
+          "index_base": {
+            "count": 1585,
+            "mean": 31.45775874940264,
+            "median": 26.98681815692736,
+            "p95": 56.66416084208897,
+            "max": 88.76944206848955,
+            "rmse": 33.945780923339086
+          },
+          "middle_tip": {
+            "count": 1585,
+            "mean": 47.83554784539759,
+            "median": 40.01545865191948,
+            "p95": 110.67417165699719,
+            "max": 136.00647612866481,
+            "rmse": 55.58124730393612
+          },
+          "middle_base": {
+            "count": 1585,
+            "mean": 19.339425991709135,
+            "median": 15.34261382254581,
+            "p95": 53.21422980276563,
+            "max": 77.15888672828432,
+            "rmse": 23.389787701011116
+          },
+          "ring_tip": {
+            "count": 1585,
+            "mean": 44.62297800828125,
+            "median": 37.829587351632675,
+            "p95": 95.3155050952464,
+            "max": 122.00736640305247,
+            "rmse": 50.23970660526621
+          },
+          "ring_base": {
+            "count": 1585,
+            "mean": 27.530738373447267,
+            "median": 25.26939274354183,
+            "p95": 50.06339181100836,
+            "max": 66.1802800680847,
+            "rmse": 29.00136148221863
+          },
+          "pinky_tip": {
+            "count": 1585,
+            "mean": 54.49460654258745,
+            "median": 54.694829661989424,
+            "p95": 82.4554185657492,
+            "max": 114.97710174958486,
+            "rmse": 56.92601800824094
+          },
+          "pinky_base": {
+            "count": 1585,
+            "mean": 37.47872567754676,
+            "median": 37.12248054456791,
+            "p95": 52.56805274503452,
+            "max": 68.62814804971927,
+            "rmse": 38.41391994034766
+          }
+        },
+        "five_tip_epe_mm": {
+          "count": 7925,
+          "mean": 57.067798915102976,
+          "median": 51.22668544392402,
+          "p95": 117.24046577221749,
+          "max": 144.25098789154305,
+          "rmse": 65.02917253194873
+        },
+        "five_base_epe_mm": {
+          "count": 7925,
+          "mean": 35.150439219099795,
+          "median": 31.361761027463913,
+          "p95": 64.4801347175258,
+          "max": 88.76944206848955,
+          "rmse": 39.07373497024918
+        }
+      },
+      "evaluation_strict_20ms_camera_valid_subset": {
+        "frame_count": 1088,
+        "pooled_joint_epe_mm": {
+          "count": 10880,
+          "mean": 45.92066511986965,
+          "median": 39.02822252081849,
+          "p95": 103.78475920415868,
+          "max": 144.0580781156278,
+          "rmse": 53.47104716263257
+        },
+        "frame_mpjpe_mm": {
+          "count": 1088,
+          "mean": 45.92066511986965,
+          "median": 43.549994401924586,
+          "p95": 68.75310807571178,
+          "max": 92.73081360336144,
+          "rmse": 47.05273367598773
+        },
+        "per_joint_epe_mm": {
+          "thumb_tip": {
+            "count": 1088,
+            "mean": 97.26616706363063,
+            "median": 93.70834210511876,
+            "p95": 129.1812342264161,
+            "max": 141.4052335659802,
+            "rmse": 99.15009821124237
+          },
+          "thumb_base": {
+            "count": 1088,
+            "mean": 59.94695580652215,
+            "median": 59.5548136153476,
+            "p95": 67.37539118434776,
+            "max": 74.33666831181334,
+            "rmse": 60.14473550233096
+          },
+          "index_tip": {
+            "count": 1088,
+            "mean": 40.50289208968191,
+            "median": 31.991267429272916,
+            "p95": 95.97260639953645,
+            "max": 144.0580781156278,
+            "rmse": 49.10622918492875
+          },
+          "index_base": {
+            "count": 1088,
+            "mean": 31.135314224440695,
+            "median": 26.77263413574856,
+            "p95": 56.003083624898565,
+            "max": 88.76944206848955,
+            "rmse": 33.591108889709425
+          },
+          "middle_tip": {
+            "count": 1088,
+            "mean": 47.33519505877263,
+            "median": 39.95552310394184,
+            "p95": 109.8934067207425,
+            "max": 136.00647612866481,
+            "rmse": 54.92662850136852
+          },
+          "middle_base": {
+            "count": 1088,
+            "mean": 19.121256848863286,
+            "median": 15.258404687916332,
+            "p95": 52.913176114204155,
+            "max": 77.15888672828432,
+            "rmse": 23.101252875523222
+          },
+          "ring_tip": {
+            "count": 1088,
+            "mean": 44.493721803842575,
+            "median": 37.5213928536685,
+            "p95": 94.50173796954674,
+            "max": 121.34908040980037,
+            "rmse": 50.090445960946184
+          },
+          "ring_base": {
+            "count": 1088,
+            "mean": 27.49910382701857,
+            "median": 25.32070231225318,
+            "p95": 49.386590430289694,
+            "max": 66.1802800680847,
+            "rmse": 28.92589886237871
+          },
+          "pinky_tip": {
+            "count": 1088,
+            "mean": 54.38075118448946,
+            "median": 54.52512306061055,
+            "p95": 81.54415073833401,
+            "max": 114.97710174958486,
+            "rmse": 56.816063603648416
+          },
+          "pinky_base": {
+            "count": 1088,
+            "mean": 37.52529329143465,
+            "median": 37.22751687403435,
+            "p95": 52.85503302623627,
+            "max": 68.62814804971927,
+            "rmse": 38.460179843758866
+          }
+        },
+        "five_tip_epe_mm": {
+          "count": 5440,
+          "mean": 56.79574544008344,
+          "median": 50.83441645863786,
+          "p95": 117.23992409671878,
+          "max": 144.0580781156278,
+          "rmse": 64.80156803437613
+        },
+        "five_base_epe_mm": {
+          "count": 5440,
+          "mean": 35.04558479965587,
+          "median": 31.1309347398972,
+          "p95": 64.45093140364884,
+          "max": 88.76944206848955,
+          "rmse": 38.97515297754551
+        }
+      }
+    },
+    "right": {
+      "fixed_coordinate_registration": {
+        "scale": 0.8390902964990012,
+        "rotation_mocap_from_solver": [
+          [
+            0.4923622270028976,
+            0.7793903699575832,
+            -0.3874662419335768
+          ],
+          [
+            -0.8702118043264869,
+            0.4317774537485293,
+            -0.23727546448227124
+          ],
+          [
+            -0.01763102468910319,
+            0.4540031736142587,
+            0.8908256088127426
+          ]
+        ],
+        "input_frames": 279,
+        "retained_frames": 275,
+        "fit_base_residual_median_mm": 38.022526506155955,
+        "fit_base_residual_p95_mm": 64.36582345363628
+      },
+      "solver_sample_age_ms_all_displayed_frames": {
+        "count": 1981,
+        "mean": 8.07912204013124,
+        "median": 3.51731299997482,
+        "p95": 28.932080000004134,
+        "max": 54.02443666662293,
+        "rmse": 12.461875918983736
+      },
+      "evaluation_all_displayed_frames_not_scientific_gate": {
+        "frame_count": 1585,
+        "pooled_joint_epe_mm": {
+          "count": 15850,
+          "mean": 49.528391668467386,
+          "median": 41.37916791709162,
+          "p95": 111.18821678717643,
+          "max": 213.21026895295756,
+          "rmse": 58.12536788609326
+        },
+        "frame_mpjpe_mm": {
+          "count": 1585,
+          "mean": 49.52839166846739,
+          "median": 44.28344461687608,
+          "p95": 86.01382133824208,
+          "max": 135.17699114652493,
+          "rmse": 52.33966754782123
+        },
+        "per_joint_epe_mm": {
+          "thumb_tip": {
+            "count": 1585,
+            "mean": 96.62863890446943,
+            "median": 98.55727212795811,
+            "p95": 125.96341977863418,
+            "max": 150.5420052121874,
+            "rmse": 98.49888071069505
+          },
+          "thumb_base": {
+            "count": 1585,
+            "mean": 59.685378185167316,
+            "median": 59.841774228790854,
+            "p95": 68.26989551305856,
+            "max": 79.55088047307476,
+            "rmse": 59.963926155199744
+          },
+          "index_tip": {
+            "count": 1585,
+            "mean": 49.96633631617369,
+            "median": 38.615357659500766,
+            "p95": 122.48403906817093,
+            "max": 183.21322812375905,
+            "rmse": 60.17800830470578
+          },
+          "index_base": {
+            "count": 1585,
+            "mean": 34.959488324468,
+            "median": 30.3938192113816,
+            "p95": 77.11138242946006,
+            "max": 104.08338596844133,
+            "rmse": 38.98562010855904
+          },
+          "middle_tip": {
+            "count": 1585,
+            "mean": 56.25879944541774,
+            "median": 44.02939752987648,
+            "p95": 137.30544495403933,
+            "max": 213.21026895295756,
+            "rmse": 67.4457889462424
+          },
+          "middle_base": {
+            "count": 1585,
+            "mean": 25.518438834602826,
+            "median": 19.23135201934212,
+            "p95": 67.77590583658875,
+            "max": 106.14588338445287,
+            "rmse": 31.17740827925558
+          },
+          "ring_tip": {
+            "count": 1585,
+            "mean": 54.242733938100365,
+            "median": 46.168873348409214,
+            "p95": 122.40029015352188,
+            "max": 210.40164660736485,
+            "rmse": 62.538900787977724
+          },
+          "ring_base": {
+            "count": 1585,
+            "mean": 28.339749180081924,
+            "median": 25.325278062780686,
+            "p95": 56.53278496212193,
+            "max": 106.67534699739055,
+            "rmse": 31.313846962713505
+          },
+          "pinky_tip": {
+            "count": 1585,
+            "mean": 53.80283768660277,
+            "median": 50.02610651174727,
+            "p95": 95.76859170665962,
+            "max": 192.6129752171582,
+            "rmse": 59.33398613719413
+          },
+          "pinky_base": {
+            "count": 1585,
+            "mean": 35.88151586958987,
+            "median": 36.30293542287742,
+            "p95": 52.50710867613385,
+            "max": 100.46616162600652,
+            "rmse": 37.595910031102356
+          }
+        },
+        "five_tip_epe_mm": {
+          "count": 7925,
+          "mean": 62.1798692581528,
+          "median": 52.86831313969446,
+          "p95": 124.34511713803364,
+          "max": 213.21026895295756,
+          "rmse": 71.13928964230568
+        },
+        "five_base_epe_mm": {
+          "count": 7925,
+          "mean": 36.87691407878199,
+          "median": 31.5233844056977,
+          "p95": 67.66480499844012,
+          "max": 106.67534699739055,
+          "rmse": 41.186384315396054
+        }
+      },
+      "evaluation_strict_20ms_camera_valid_subset": {
+        "frame_count": 1088,
+        "pooled_joint_epe_mm": {
+          "count": 10880,
+          "mean": 49.256876753804626,
+          "median": 41.106280410055696,
+          "p95": 110.3778865417506,
+          "max": 209.71285424599634,
+          "rmse": 57.74868814294649
+        },
+        "frame_mpjpe_mm": {
+          "count": 1088,
+          "mean": 49.25687675380463,
+          "median": 44.242488143282586,
+          "p95": 85.83114765536516,
+          "max": 133.63713413718088,
+          "rmse": 51.98179093089608
+        },
+        "per_joint_epe_mm": {
+          "thumb_tip": {
+            "count": 1088,
+            "mean": 96.74649293834901,
+            "median": 98.84108539874299,
+            "p95": 127.19920729610185,
+            "max": 150.5420052121874,
+            "rmse": 98.63299854779167
+          },
+          "thumb_base": {
+            "count": 1088,
+            "mean": 59.68185286447803,
+            "median": 59.82807482735285,
+            "p95": 68.19496376643184,
+            "max": 79.55088047307476,
+            "rmse": 59.9646224046855
+          },
+          "index_tip": {
+            "count": 1088,
+            "mean": 48.89258409380707,
+            "median": 37.399853636895074,
+            "p95": 120.99363221697622,
+            "max": 181.909424958572,
+            "rmse": 58.878797793950916
+          },
+          "index_base": {
+            "count": 1088,
+            "mean": 34.49791033310035,
+            "median": 30.10486922760887,
+            "p95": 76.42936326987082,
+            "max": 104.08338596844133,
+            "rmse": 38.4803413589324
+          },
+          "middle_tip": {
+            "count": 1088,
+            "mean": 55.285623159416446,
+            "median": 42.552235260762444,
+            "p95": 136.10893532961236,
+            "max": 209.71285424599634,
+            "rmse": 66.18704640443595
+          },
+          "middle_base": {
+            "count": 1088,
+            "mean": 25.185878618461807,
+            "median": 19.045692851143656,
+            "p95": 65.85869464150868,
+            "max": 103.75131564510008,
+            "rmse": 30.69634937476887
+          },
+          "ring_tip": {
+            "count": 1088,
+            "mean": 54.19624604965203,
+            "median": 46.34142748051072,
+            "p95": 122.04393650564532,
+            "max": 206.7197754238165,
+            "rmse": 62.215509421914206
+          },
+          "ring_base": {
+            "count": 1088,
+            "mean": 28.33127918552049,
+            "median": 25.634367156607922,
+            "p95": 55.175691397285426,
+            "max": 106.03997788517515,
+            "rmse": 31.148394225718647
+          },
+          "pinky_tip": {
+            "count": 1088,
+            "mean": 53.776730633441595,
+            "median": 50.32291085750035,
+            "p95": 95.23226678343592,
+            "max": 192.543474100164,
+            "rmse": 59.1440858425128
+          },
+          "pinky_base": {
+            "count": 1088,
+            "mean": 35.97416966181943,
+            "median": 36.50914264484085,
+            "p95": 50.879183756097795,
+            "max": 100.38167857057998,
+            "rmse": 37.622201378844714
+          }
+        },
+        "five_tip_epe_mm": {
+          "count": 5440,
+          "mean": 61.77953537493323,
+          "median": 52.6595417155669,
+          "p95": 123.35418604451299,
+          "max": 209.71285424599634,
+          "rmse": 70.63242718002462
+        },
+        "five_base_epe_mm": {
+          "count": 5440,
+          "mean": 36.73421813267603,
+          "median": 31.48610922018767,
+          "p95": 67.53730961555723,
+          "max": 106.03997788517515,
+          "rmse": 40.99856332996432
+        }
+      }
+    }
+  },
+  "source_assets": {
+    "rgb_video": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/RGB.mp4",
+      "bytes": 103916022,
+      "sha256": "314f4e7981c75a5c487a62ebb869201249df30699bda555c094afa512dcc3d0d"
+    },
+    "cmm_markers": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/mocap/Take_007/Take_007.cmm",
+      "bytes": 25078909,
+      "sha256": "25bebdbb079d233b7c71ba94402531a9ed09b87ac690def05b012065b5748a08"
+    },
+    "camera_alignment": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/mocap/Take_007/alignment/camera_cmavatar_alignment.csv",
+      "bytes": 181083,
+      "sha256": "b3333a8dd9f704d3754006ea9c3154980877a211d15db80574e552954adc8360"
+    },
+    "glove_validity_summary": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/aligned/primary/aligned_frame_summary.csv",
+      "bytes": 156355,
+      "sha256": "6273fc5eeaf5b50d3c8c0da0a409b0c131dc223ffebbadef58ae3dff7734ec33"
+    },
+    "left_glove_solver_keypoints": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/solved/primary/left_hand_keypoints.csv",
+      "bytes": 15018285,
+      "sha256": "3b6971e49b9f1e3267fed02355199da4398bf871a62962e97d6f1f869c584bb8"
+    },
+    "right_glove_solver_keypoints": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/solved/primary/right_hand_keypoints.csv",
+      "bytes": 15201430,
+      "sha256": "e269f48aa7341d62034513a9fe8cf9fbdb0392b2cf51bb75794232f08780e327"
+    },
+    "manual_profile": {
+      "path": "calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json",
+      "bytes": 4344,
+      "sha256": "2eaf48440999a1efe8a27bb259a98e9305da5132f4783605ede7601f7e3c78d8"
+    }
+  },
+  "claim_boundary": "CMM reflectors are glove-surface points rather than anatomical joint centers. The virtual wrist translation is conditioned on CMM, so this is an articulation/surface-correspondence comparison, not independent glove wrist or absolute 6DoF accuracy."
+}

@@ -1,0 +1,176 @@
+{
+  "schema": "gt_calib.imu_solved_pose_mocap_comparison_delivery.v1",
+  "generated_at_utc": "2026-09-01T10:50:36.268243+00:00",
+  "status": "pass",
+  "comparison_count": 4,
+  "canonical_final_nine_unchanged": true,
+  "videos": [
+    {
+      "order": 1,
+      "id": "take01-imu-solved-vs-bvh",
+      "label": "Take 01 · IMU solved pose vs BVH MOCAP",
+      "source": "01_210814_Take_000",
+      "filename": "01_take01_imu_solved_vs_bvh_mocap.mp4",
+      "poster": "posters/01_take01_imu_solved_vs_bvh_mocap.jpg",
+      "metrics": "metrics/01_take01_imu_solved_vs_bvh_mocap.json",
+      "frame_map": "frame_maps/take01_imu_vs_mocap.csv",
+      "summary": {
+        "left": {
+          "strict_frames": 1275,
+          "joint_median_mm": 32.61822341111818,
+          "joint_p95_mm": 121.19492919617498,
+          "tip_median_mm": 54.092143904384244
+        },
+        "right": {
+          "strict_frames": 1275,
+          "joint_median_mm": 30.73545806259983,
+          "joint_p95_mm": 125.35065871698426,
+          "tip_median_mm": 51.43009278862165
+        }
+      },
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1747,
+      "duration_s": 58.233333,
+      "bytes": 14672589,
+      "sha256": "9900d33f85e2a91e2d11d9183032759abcc446f7b7b7d1bf720b29df2a5ecad4",
+      "poster_sha256": "972197aa83b6dcec299e9351d89ddaf444d0a41c43cdbd105538b58c3006625d",
+      "metrics_sha256": "4dc49619d2979c67fff1c59f5a99faf52887c677f676ca00c591738a94737a47",
+      "frame_map_sha256": "57260ae5401210078cbc4d8456322c3970c0412046d98c1cf4213f39111c7a1b",
+      "faststart": true
+    },
+    {
+      "order": 2,
+      "id": "take02-imu-solved-vs-bvh",
+      "label": "Take 02 · IMU solved pose vs BVH MOCAP",
+      "source": "02_210955_Take_001",
+      "filename": "02_take02_imu_solved_vs_bvh_mocap.mp4",
+      "poster": "posters/02_take02_imu_solved_vs_bvh_mocap.jpg",
+      "metrics": "metrics/02_take02_imu_solved_vs_bvh_mocap.json",
+      "frame_map": "frame_maps/take02_imu_vs_mocap.csv",
+      "summary": {
+        "left": {
+          "strict_frames": 1324,
+          "joint_median_mm": 31.97375561211145,
+          "joint_p95_mm": 137.6674261439938,
+          "tip_median_mm": 52.06440991667676
+        },
+        "right": {
+          "strict_frames": 1324,
+          "joint_median_mm": 40.120100612209214,
+          "joint_p95_mm": 153.72746173454036,
+          "tip_median_mm": 62.34699581722657
+        }
+      },
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1805,
+      "duration_s": 60.166667,
+      "bytes": 15910077,
+      "sha256": "9ac35c2f6e2b7f7e3fdaece58228c591c821d25b56eaaf80bda6a711ede8e57f",
+      "poster_sha256": "f2b42715173e1c4ef95edd37d52ad1b40beeacbec8f7a33d0f6c4eb7c7285fe8",
+      "metrics_sha256": "e5f3411f98ce0a4fb1b82a1d6fee37bf20a2486ddb217a873df72fe788205b13",
+      "frame_map_sha256": "b6358c5958bfca9cbc8ba9eff18cbedda51ff19257154d9ce6565bfc8713dab0",
+      "faststart": true
+    },
+    {
+      "order": 3,
+      "id": "take03-imu-solved-vs-bvh",
+      "label": "Take 03 · IMU solved pose vs BVH MOCAP",
+      "source": "03_211139_Take_002",
+      "filename": "03_take03_imu_solved_vs_bvh_mocap.mp4",
+      "poster": "posters/03_take03_imu_solved_vs_bvh_mocap.jpg",
+      "metrics": "metrics/03_take03_imu_solved_vs_bvh_mocap.json",
+      "frame_map": "frame_maps/take03_imu_vs_mocap.csv",
+      "summary": {
+        "left": {
+          "strict_frames": 1218,
+          "joint_median_mm": 43.48428266047853,
+          "joint_p95_mm": 191.89767151261333,
+          "tip_median_mm": 65.949371718268
+        },
+        "right": {
+          "strict_frames": 1218,
+          "joint_median_mm": 66.31561976396429,
+          "joint_p95_mm": 200.65003638219278,
+          "tip_median_mm": 101.91792649474564
+        }
+      },
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1799,
+      "duration_s": 59.966667,
+      "bytes": 16713800,
+      "sha256": "648fdbbec1b8312fe4f394a3b202d7e56f129ae631d26e0b9a9f28c89b52ddd9",
+      "poster_sha256": "a87163913e6f11f42c66c356ea3f6aa778449e1ec75f75f74c0e7d7af0348867",
+      "metrics_sha256": "9ecec20ceb18c3856631922194268ad90ce7ae8cf2a6c91f344f45176322b191",
+      "frame_map_sha256": "78317649a793254cf0e3e5dc9bfbc9293f1fed1a0bd3775c3a85841e3ff37329",
+      "faststart": true
+    },
+    {
+      "order": 4,
+      "id": "take007-imu-solved-vs-cmm",
+      "label": "Take_007 · IMU solved pose vs CMM MOCAP markers",
+      "source": "camera_glove_recording_20260831_161912/Take_007",
+      "filename": "04_take007_imu_solved_vs_cmm_mocap.mp4",
+      "poster": "posters/04_take007_imu_solved_vs_cmm_mocap.jpg",
+      "metrics": "metrics/04_take007_imu_solved_vs_cmm_mocap.json",
+      "frame_map": "frame_maps/take007_imu_vs_mocap.csv",
+      "summary": {
+        "left": {
+          "strict_frames": 1088,
+          "joint_median_mm": 39.02822252081849,
+          "joint_p95_mm": 103.78475920415868,
+          "tip_median_mm": 50.83441645863786
+        },
+        "right": {
+          "strict_frames": 1088,
+          "joint_median_mm": 41.106280410055696,
+          "joint_p95_mm": 110.3778865417506,
+          "tip_median_mm": 52.6595417155669
+        }
+      },
+      "codec": "h264",
+      "pixel_format": "yuv420p",
+      "width": 960,
+      "height": 540,
+      "fps": 30.0,
+      "frame_count": 1981,
+      "duration_s": 66.033333,
+      "bytes": 14699618,
+      "sha256": "10bdcf6b473d53f7767e7a12824c37f53ebdb172e65d3739dbaec96f06edaf16",
+      "poster_sha256": "552fc67ae6c9ce658a4286910857152b8997c1be75dce4585999ed08d2592872",
+      "metrics_sha256": "9f7b024bf8ae353c0bdb968bf86e1790b03babbe7c12a0e27de52618ac1d1828",
+      "frame_map_sha256": "9581aa85da999af25078c46ebef7314f94538b5de712ca6ffd591708f6f40453",
+      "faststart": true
+    }
+  ],
+  "display_policy": {
+    "sampling": "nearest observed solver row",
+    "pose_interpolation": false,
+    "pose_smoothing": false,
+    "validity_gate_hides_pose": false,
+    "stale_pose_is_drawn": true,
+    "stale_pose_in_strict_metrics": false
+  },
+  "manual_profile": {
+    "path": "calibration/applied_manual_profile.json",
+    "bytes": 4344,
+    "sha256": "2eaf48440999a1efe8a27bb259a98e9305da5132f4783605ede7601f7e3c78d8",
+    "source": {
+      "path": "calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json",
+      "bytes": 4344,
+      "sha256": "2eaf48440999a1efe8a27bb259a98e9305da5132f4783605ede7601f7e3c78d8"
+    }
+  },
+  "claim_boundary": "Supplemental conditioned articulation comparison, separate from the canonical nine-video package; not independent absolute wrist/6DoF GT accuracy."
+}

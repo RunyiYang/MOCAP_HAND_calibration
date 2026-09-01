@@ -7,6 +7,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import os
 from pathlib import Path, PurePosixPath
 import re
@@ -25,6 +26,44 @@ FINAL_DELIVERY_SCHEMA = "gt_calib.final_nine_video_delivery.v1"
 FINAL_DELIVERY_SOURCE = PROJECT_ROOT / "final_9_video_delivery"
 FINAL_DELIVERY_PUBLIC = PUBLIC_ROOT / "downloads/final-nine"
 FINAL_DELIVERY_WEB_PREFIX = "downloads/final-nine/"
+IMU_COMPARISON_SCHEMA = "gt_calib.imu_solved_pose_mocap_comparison_delivery.v1"
+IMU_COMPARISON_SOURCE = PROJECT_ROOT / "imu_mocap_comparison_delivery"
+IMU_COMPARISON_PUBLIC = PUBLIC_ROOT / "downloads/imu-mocap"
+IMU_COMPARISON_WEB_PREFIX = "downloads/imu-mocap/"
+IMU_COMPARISON_VIDEO_CONTRACTS = (
+    (
+        1,
+        "take01-imu-solved-vs-bvh",
+        "01_take01_imu_solved_vs_bvh_mocap.mp4",
+        1747,
+        "gt_calib.imu_solved_pose_vs_skeleton_bvh.v1",
+    ),
+    (
+        2,
+        "take02-imu-solved-vs-bvh",
+        "02_take02_imu_solved_vs_bvh_mocap.mp4",
+        1805,
+        "gt_calib.imu_solved_pose_vs_skeleton_bvh.v1",
+    ),
+    (
+        3,
+        "take03-imu-solved-vs-bvh",
+        "03_take03_imu_solved_vs_bvh_mocap.mp4",
+        1799,
+        "gt_calib.imu_solved_pose_vs_skeleton_bvh.v1",
+    ),
+    (
+        4,
+        "take007-imu-solved-vs-cmm",
+        "04_take007_imu_solved_vs_cmm_mocap.mp4",
+        1981,
+        "gt_calib.imu_solved_pose_vs_cmm_markers.v1",
+    ),
+)
+GENERATED_DELIVERY_WEB_PREFIXES = (
+    FINAL_DELIVERY_WEB_PREFIX,
+    IMU_COMPARISON_WEB_PREFIX,
+)
 ASSET_MANIFEST_RELATIVE = "data/asset-manifest.json"
 AUTHORED_PUBLIC_ASSETS = (
     "index.html",
@@ -332,6 +371,59 @@ def _delivery_artifact(
     return artifact
 
 
+def _validate_faststart_mp4_structure(path: Path) -> None:
+    """Check the top-level ISO-BMFF boxes without requiring ffprobe.
+
+    This is intentionally a minimum clean-clone check, not a codec decoder.  It
+    prevents arbitrary text files from satisfying a self-reported MP4 contract
+    and independently verifies that the metadata box precedes media payload.
+    """
+
+    size = path.stat().st_size
+    offset = 0
+    boxes: list[tuple[bytes, int]] = []
+    with path.open("rb") as handle:
+        while offset < size:
+            remaining = size - offset
+            if remaining < 8:
+                raise ValueError(f"Truncated MP4 box header: {path}")
+            handle.seek(offset)
+            header = handle.read(8)
+            box_size = int.from_bytes(header[:4], "big")
+            box_type = header[4:8]
+            header_size = 8
+            if box_size == 1:
+                extended = handle.read(8)
+                if len(extended) != 8:
+                    raise ValueError(f"Truncated extended MP4 box header: {path}")
+                box_size = int.from_bytes(extended, "big")
+                header_size = 16
+            elif box_size == 0:
+                box_size = remaining
+            if box_size < header_size or box_size > remaining:
+                raise ValueError(f"Invalid top-level MP4 box size in {path}")
+            boxes.append((box_type, offset))
+            offset += box_size
+
+    offsets: dict[bytes, list[int]] = {}
+    for box_type, box_offset in boxes:
+        offsets.setdefault(box_type, []).append(box_offset)
+    if b"ftyp" not in offsets or b"moov" not in offsets or b"mdat" not in offsets:
+        raise ValueError(f"MP4 is missing ftyp/moov/mdat top-level boxes: {path}")
+    if min(offsets[b"moov"]) > min(offsets[b"mdat"]):
+        raise ValueError(f"MP4 moov box does not precede mdat: {path}")
+
+
+def _load_json_object(path: Path, *, label: str) -> dict:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"{label} is not valid UTF-8 JSON") from exc
+    if not isinstance(payload, dict):
+        raise ValueError(f"{label} must be a JSON object")
+    return payload
+
+
 def validate_final_delivery_for_web(source: Path) -> list[dict]:
     """Validate the tracked nine-video delivery using only the standard library.
 
@@ -580,6 +672,371 @@ def mirror_final_delivery(source: Path, destination: Path) -> list[dict]:
             shutil.rmtree(staging_root)
 
 
+def validate_imu_comparison_for_web(source: Path) -> list[dict]:
+    """Validate the tracked four-video supplemental comparison bundle."""
+
+    source_input = Path(source).expanduser()
+    if source_input.is_symlink():
+        raise ValueError(f"IMU comparison delivery is a symlink: {source_input}")
+    source = source_input.resolve()
+    if not source.is_dir():
+        raise ValueError(f"IMU comparison delivery is missing: {source}")
+    if (source.with_name(source.name + ".staging")).exists():
+        raise ValueError("IMU comparison staging directory is still present")
+
+    files: dict[str, Path] = {}
+    for path in source.rglob("*"):
+        if path.is_symlink():
+            raise ValueError(f"Symlinks are forbidden in IMU comparison: {path}")
+        if path.is_dir():
+            continue
+        if not path.is_file():
+            raise ValueError(f"Non-regular IMU comparison entry: {path}")
+        ensure_cloudflare_size(path)
+        files[path.relative_to(source).as_posix()] = path
+
+    required = {
+        "README.md",
+        "index.html",
+        "styles.css",
+        "manifest.json",
+        "validation.json",
+        "SHA256SUMS.txt",
+    }
+    missing = sorted(required - set(files))
+    if missing:
+        raise ValueError(f"IMU comparison delivery is missing files: {missing}")
+    manifest = _load_json_object(
+        files["manifest.json"], label="IMU comparison manifest"
+    )
+    videos = manifest.get("videos")
+    if (
+        manifest.get("schema") != IMU_COMPARISON_SCHEMA
+        or manifest.get("status") != "pass"
+        or manifest.get("comparison_count") != 4
+        or not isinstance(videos, list)
+        or len(videos) != 4
+        or manifest.get("canonical_final_nine_unchanged") is not True
+    ):
+        raise ValueError("IMU comparison manifest must be a clean four-video supplement")
+    policy = manifest.get("display_policy", {})
+    if not (
+        policy.get("sampling") == "nearest observed solver row"
+        and policy.get("pose_interpolation") is False
+        and policy.get("pose_smoothing") is False
+        and policy.get("validity_gate_hides_pose") is False
+        and policy.get("stale_pose_is_drawn") is True
+        and policy.get("stale_pose_in_strict_metrics") is False
+    ):
+        raise ValueError("IMU comparison display/scientific-mask separation is invalid")
+
+    manual_profile = manifest.get("manual_profile")
+    if not isinstance(manual_profile, dict):
+        raise ValueError("IMU comparison packaged manual profile is missing")
+    if manual_profile.get("path") != "calibration/applied_manual_profile.json":
+        raise ValueError("IMU comparison packaged manual profile path is not canonical")
+    packaged_profile = _delivery_artifact(
+        source,
+        manual_profile.get("path"),
+        field="imu.manual_profile.path",
+        expected_hash=manual_profile.get("sha256"),
+        expected_bytes=manual_profile.get("bytes"),
+    )
+    profile_payload = _load_json_object(
+        packaged_profile, label="IMU comparison packaged manual profile"
+    )
+    if profile_payload.get("schema") != "gt_calib.final_nine_manual_xyz.v1":
+        raise ValueError("IMU comparison packaged manual profile schema is invalid")
+    profile_source = manual_profile.get("source")
+    if not isinstance(profile_source, dict):
+        raise ValueError("IMU comparison manual profile source provenance is missing")
+    source_path = _safe_delivery_relative_path(
+        profile_source.get("path"), field="imu.manual_profile.source.path"
+    )
+    if (
+        source_path.suffix.lower() != ".json"
+        or profile_source.get("bytes") != manual_profile.get("bytes")
+        or profile_source.get("sha256") != manual_profile.get("sha256")
+    ):
+        raise ValueError("IMU comparison manual profile source provenance is invalid")
+
+    orders: list[int] = []
+    names: list[str] = []
+    for index, (item, contract) in enumerate(
+        zip(videos, IMU_COMPARISON_VIDEO_CONTRACTS, strict=True)
+    ):
+        if not isinstance(item, dict):
+            raise ValueError(f"IMU comparison video entry {index} is not an object")
+        (
+            expected_order,
+            expected_id,
+            expected_filename,
+            expected_frame_count,
+            expected_metrics_schema,
+        ) = contract
+        order = item.get("order")
+        video_id = item.get("id")
+        filename = item.get("filename")
+        if (
+            type(order) is not int
+            or order != expected_order
+            or video_id != expected_id
+            or filename != expected_filename
+        ):
+            raise ValueError(f"Canonical IMU comparison identity mismatch at index {index}")
+        name = _safe_delivery_relative_path(
+            filename, field=f"imu.videos[{index}].filename"
+        )
+        if len(name.parts) != 1 or name.suffix.lower() != ".mp4":
+            raise ValueError(f"IMU comparison filename must be one MP4 basename: {filename}")
+        video = _delivery_artifact(
+            source,
+            f"videos/{name.name}",
+            field=f"imu.videos[{index}].filename",
+            expected_hash=item.get("sha256"),
+            expected_bytes=item.get("bytes"),
+        )
+        _validate_faststart_mp4_structure(video)
+        if (
+            item.get("codec") != "h264"
+            or item.get("pixel_format") != "yuv420p"
+            or item.get("faststart") is not True
+            or item.get("frame_count") != expected_frame_count
+        ):
+            raise ValueError(f"IMU comparison browser media contract failed: {video}")
+        _delivery_artifact(
+            source,
+            item.get("poster"),
+            field=f"imu.videos[{index}].poster",
+            expected_hash=item.get("poster_sha256"),
+        )
+        metrics = _delivery_artifact(
+            source,
+            item.get("metrics"),
+            field=f"imu.videos[{index}].metrics",
+            expected_hash=item.get("metrics_sha256"),
+        )
+        frame_map = _delivery_artifact(
+            source,
+            item.get("frame_map"),
+            field=f"imu.videos[{index}].frame_map",
+            expected_hash=item.get("frame_map_sha256"),
+        )
+
+        metrics_payload = _load_json_object(
+            metrics, label=f"IMU comparison metrics for {expected_id}"
+        )
+        if (
+            metrics_payload.get("schema") != expected_metrics_schema
+            or metrics_payload.get("status") != "comparison_complete"
+        ):
+            raise ValueError(f"IMU comparison metrics contract failed: {expected_id}")
+        metrics_sides = metrics_payload.get("sides")
+        manifest_summary = item.get("summary")
+        if (
+            not isinstance(metrics_sides, dict)
+            or set(metrics_sides) != {"left", "right"}
+            or not isinstance(manifest_summary, dict)
+            or set(manifest_summary) != {"left", "right"}
+        ):
+            raise ValueError(f"IMU comparison side metrics are incomplete: {expected_id}")
+        strict_metric_key = (
+            "strict_25ms_scientific_subset"
+            if expected_metrics_schema
+            == "gt_calib.imu_solved_pose_vs_skeleton_bvh.v1"
+            else "evaluation_strict_20ms_camera_valid_subset"
+        )
+        tip_metric_key = (
+            "non_thumb_fingertip_epe_mm"
+            if expected_metrics_schema
+            == "gt_calib.imu_solved_pose_vs_skeleton_bvh.v1"
+            else "five_tip_epe_mm"
+        )
+        strict_frame_counts: dict[str, int] = {}
+        for side in ("left", "right"):
+            side_metrics = metrics_sides[side]
+            side_summary = manifest_summary[side]
+            if not isinstance(side_metrics, dict) or not isinstance(side_summary, dict):
+                raise ValueError(f"IMU comparison {side} metrics are invalid: {expected_id}")
+            strict_metrics = side_metrics.get(strict_metric_key)
+            if not isinstance(strict_metrics, dict):
+                raise ValueError(f"IMU comparison strict metrics are missing: {expected_id}")
+            pooled = strict_metrics.get("pooled_joint_epe_mm")
+            tips = strict_metrics.get(tip_metric_key)
+            if not isinstance(pooled, dict) or not isinstance(tips, dict):
+                raise ValueError(f"IMU comparison strict distributions are missing: {expected_id}")
+            strict_frames = strict_metrics.get("frame_count")
+            if type(strict_frames) is not int or not 0 <= strict_frames <= expected_frame_count:
+                raise ValueError(f"IMU comparison strict frame count is invalid: {expected_id}")
+            expected_summary = {
+                "strict_frames": strict_frames,
+                "joint_median_mm": pooled.get("median"),
+                "joint_p95_mm": pooled.get("p95"),
+                "tip_median_mm": tips.get("median"),
+            }
+            if side_summary != expected_summary:
+                raise ValueError(f"IMU comparison manifest summary mismatch: {expected_id} {side}")
+            strict_frame_counts[side] = strict_frames
+
+        with frame_map.open("r", encoding="utf-8", newline="") as handle:
+            reader = csv.DictReader(handle)
+            required_columns = {
+                "output_frame",
+                "side",
+                "solver_sample_index",
+                "solver_sample_age_ms",
+                "strict_timing_valid",
+            }
+            if reader.fieldnames is None or not required_columns.issubset(reader.fieldnames):
+                raise ValueError(f"IMU comparison frame-map columns are invalid: {expected_id}")
+            frame_rows = list(reader)
+        if len(frame_rows) != expected_frame_count * 2:
+            raise ValueError(f"IMU comparison frame-map row count mismatch: {expected_id}")
+        frame_keys: set[tuple[int, str]] = set()
+        observed_strict_counts = {"left": 0, "right": 0}
+        last_sample_index = {"left": -1, "right": -1}
+        take007 = expected_metrics_schema == "gt_calib.imu_solved_pose_vs_cmm_markers.v1"
+        calibration_stop = round(expected_frame_count * 0.20)
+        for row in frame_rows:
+            try:
+                output_frame = int(row["output_frame"])
+                side = row["side"]
+                sample_index = int(row["solver_sample_index"])
+                sample_age_ms = float(row["solver_sample_age_ms"])
+                strict_value = int(row["strict_timing_valid"])
+            except (KeyError, TypeError, ValueError) as exc:
+                raise ValueError(f"IMU comparison frame-map row is malformed: {expected_id}") from exc
+            if (
+                not 0 <= output_frame < expected_frame_count
+                or side not in observed_strict_counts
+                or sample_index < 0
+                or not math.isfinite(sample_age_ms)
+                or sample_age_ms < 0.0
+                or strict_value not in (0, 1)
+            ):
+                raise ValueError(f"IMU comparison frame-map row is invalid: {expected_id}")
+            if sample_index < last_sample_index[side]:
+                raise ValueError(f"IMU comparison solver sample order regressed: {expected_id}")
+            last_sample_index[side] = sample_index
+            key = (output_frame, side)
+            if key in frame_keys:
+                raise ValueError(f"Duplicate IMU comparison frame-map row: {expected_id} {key}")
+            frame_keys.add(key)
+            if take007:
+                expected_phase = (
+                    "calibration" if output_frame < calibration_stop else "evaluation"
+                )
+                if row.get("phase") != expected_phase:
+                    raise ValueError(f"IMU comparison frame-map phase is invalid: {expected_id}")
+                scored_strict = strict_value and expected_phase == "evaluation"
+                if strict_value and sample_age_ms > 20.0 + 1e-6:
+                    raise ValueError(f"IMU comparison strict sample is stale: {expected_id}")
+            else:
+                scored_strict = strict_value
+                if strict_value and sample_age_ms > 12.5 + 1e-6:
+                    raise ValueError(f"IMU comparison strict sample is stale: {expected_id}")
+            if scored_strict:
+                observed_strict_counts[side] += 1
+        if observed_strict_counts != strict_frame_counts:
+            raise ValueError(f"IMU comparison strict CSV counts mismatch: {expected_id}")
+        orders.append(order)
+        names.append(name.name)
+    if orders != [1, 2, 3, 4] or len(set(names)) != 4:
+        raise ValueError("IMU comparison orders and filenames must be canonical 1..4")
+    actual_names = {
+        path.name
+        for path in (source / "videos").iterdir()
+        if path.is_file() and not path.is_symlink() and path.suffix.lower() == ".mp4"
+    }
+    if actual_names != set(names):
+        raise ValueError("IMU comparison videos directory disagrees with manifest")
+
+    validation = _load_json_object(
+        files["validation.json"], label="IMU comparison validation"
+    )
+    if (
+        validation.get("schema")
+        != "gt_calib.imu_mocap_comparison_validation.v1"
+        or validation.get("status") != "pass"
+        or validation.get("comparison_count") != 4
+        or validation.get("full_decode") is not True
+        or validation.get("failures") != []
+    ):
+        raise ValueError("IMU comparison validation is not a clean full-decode pass")
+
+    checksum_entries: dict[str, str] = {}
+    for line_number, line in enumerate(
+        files["SHA256SUMS.txt"].read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        match = re.fullmatch(r"([0-9a-f]{64})  (.+)", line)
+        if match is None:
+            raise ValueError(f"Malformed IMU comparison checksum line {line_number}")
+        digest, value = match.groups()
+        relative = _safe_delivery_relative_path(
+            value, field=f"imu.SHA256SUMS.txt:{line_number}"
+        ).as_posix()
+        if relative in checksum_entries:
+            raise ValueError(f"Duplicate IMU comparison checksum entry: {relative}")
+        checksum_entries[relative] = digest
+    expected_paths = set(files) - {"SHA256SUMS.txt"}
+    if set(checksum_entries) != expected_paths:
+        raise ValueError("IMU comparison checksum inventory mismatch")
+    for relative, expected_hash in checksum_entries.items():
+        if sha256(files[relative]) != expected_hash:
+            raise ValueError(f"IMU comparison checksum mismatch: {relative}")
+
+    return [
+        {
+            "path": f"downloads/imu-mocap/{relative}",
+            "source": f"imu_mocap_comparison_delivery/{relative}",
+            "bytes": path.stat().st_size,
+            "sha256": sha256(path),
+        }
+        for relative, path in sorted(files.items())
+    ]
+
+
+def mirror_imu_comparison(source: Path, destination: Path) -> list[dict]:
+    """Atomically publish the independently validated comparison supplement."""
+
+    source = Path(source).expanduser()
+    destination_input = Path(destination).expanduser()
+    if destination_input.is_symlink():
+        raise ValueError(f"Unsafe IMU comparison web destination: {destination_input}")
+    destination = destination_input.resolve()
+    source_entries = validate_imu_comparison_for_web(source)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.exists() and not destination.is_dir():
+        raise ValueError(f"Unsafe IMU comparison web destination: {destination}")
+
+    staging_root = Path(
+        tempfile.mkdtemp(prefix=".imu-mocap-publish-", dir=destination.parent)
+    )
+    staged = staging_root / "imu-mocap"
+    backup = staging_root / "previous-imu-mocap"
+    moved_previous = False
+    try:
+        shutil.copytree(source, staged, symlinks=False)
+        staged_entries = validate_imu_comparison_for_web(staged)
+        if source_entries != staged_entries:
+            raise ValueError("Staged IMU comparison differs from validated source")
+        if destination.exists():
+            destination.rename(backup)
+            moved_previous = True
+        try:
+            staged.rename(destination)
+        except Exception:
+            if moved_previous and backup.exists() and not destination.exists():
+                backup.rename(destination)
+            raise
+        if backup.exists():
+            shutil.rmtree(backup)
+        return staged_entries
+    finally:
+        if staging_root.exists():
+            shutil.rmtree(staging_root)
+
+
 def validate_tracked_public_assets(public_root: Path) -> tuple[dict, list[dict]]:
     """Validate every checked-in public asset recorded by asset-manifest.
 
@@ -618,7 +1075,10 @@ def validate_tracked_public_assets(public_root: Path) -> tuple[dict, list[dict]]
         ).as_posix()
         if relative in checked_paths:
             raise ValueError(f"Duplicate tracked asset path: {relative}")
-        if relative.startswith(FINAL_DELIVERY_WEB_PREFIX):
+        if any(
+            relative.startswith(prefix)
+            for prefix in GENERATED_DELIVERY_WEB_PREFIXES
+        ):
             continue
         if relative == ASSET_MANIFEST_RELATIVE:
             raise ValueError("Asset manifest must not recursively inventory itself")
@@ -648,8 +1108,9 @@ def validate_tracked_public_assets(public_root: Path) -> tuple[dict, list[dict]]
             raise ValueError(f"Non-regular public-tree entry: {path}")
         relative = path.relative_to(public_root).as_posix()
         ensure_cloudflare_size(path)
-        if relative == ASSET_MANIFEST_RELATIVE or relative.startswith(
-            FINAL_DELIVERY_WEB_PREFIX
+        if relative == ASSET_MANIFEST_RELATIVE or any(
+            relative.startswith(prefix)
+            for prefix in GENERATED_DELIVERY_WEB_PREFIXES
         ):
             continue
         actual_paths.add(relative)
@@ -686,6 +1147,7 @@ def _atomic_write_json(path: Path, payload: object) -> None:
 def assemble_deploy_site(
     public_root: Path = PUBLIC_ROOT,
     final_source: Path = FINAL_DELIVERY_SOURCE,
+    imu_comparison_source: Path = IMU_COMPARISON_SOURCE,
 ) -> Path:
     """Assemble a clean-clone deploy tree from tracked, prebuilt artifacts."""
 
@@ -693,8 +1155,13 @@ def assemble_deploy_site(
     payload, tracked_entries = validate_tracked_public_assets(public_root)
     final_destination = public_root / "downloads/final-nine"
     final_entries = mirror_final_delivery(final_source, final_destination)
+    comparison_destination = public_root / "downloads/imu-mocap"
+    comparison_entries = mirror_imu_comparison(
+        imu_comparison_source,
+        comparison_destination,
+    )
 
-    combined_entries = tracked_entries + final_entries
+    combined_entries = tracked_entries + final_entries + comparison_entries
     combined_paths = [str(item["path"]) for item in combined_entries]
     if len(combined_paths) != len(set(combined_paths)):
         raise ValueError("Deployment assembly produced duplicate asset paths")
@@ -721,12 +1188,17 @@ def assemble_deploy_site(
     delivery_manifest = json.loads(
         (Path(final_source) / "manifest.json").read_text(encoding="utf-8")
     )
+    comparison_manifest = json.loads(
+        (Path(imu_comparison_source) / "manifest.json").read_text(encoding="utf-8")
+    )
     assembled_manifest = dict(payload)
     assembled_manifest["cloudflareMaxAssetBytes"] = MAX_STATIC_ASSET_BYTES
     assembled_manifest["deploymentAssembly"] = {
-        "mode": "tracked_public_plus_tracked_final_delivery",
+        "mode": "tracked_public_plus_two_tracked_deliveries",
         "finalDeliverySchema": FINAL_DELIVERY_SCHEMA,
         "finalDeliveryGeneratedAt": delivery_manifest.get("generated_at_utc"),
+        "imuComparisonSchema": IMU_COMPARISON_SCHEMA,
+        "imuComparisonGeneratedAt": comparison_manifest.get("generated_at_utc"),
     }
     assembled_manifest["assets"] = sorted(
         combined_entries, key=lambda item: str(item["path"])
@@ -1731,6 +2203,9 @@ def build_source_site() -> int:
     # Cloudflare asset manifest.
     manifest.extend(
         mirror_final_delivery(FINAL_DELIVERY_SOURCE, FINAL_DELIVERY_PUBLIC)
+    )
+    manifest.extend(
+        mirror_imu_comparison(IMU_COMPARISON_SOURCE, IMU_COMPARISON_PUBLIC)
     )
 
     manifest_path = data_dir / "asset-manifest.json"

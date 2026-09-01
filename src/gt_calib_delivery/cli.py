@@ -17,6 +17,10 @@ from .delivery import (
     write_checksums,
 )
 from .new_capture import render_new_three
+from .imu_mocap_comparison import (
+    build_comparison_delivery,
+    validate_comparison_delivery,
+)
 
 
 def project_root() -> Path:
@@ -24,12 +28,11 @@ def project_root() -> Path:
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    root = project_root()
     parser = argparse.ArgumentParser(
         prog="gt-calib-delivery",
         description="Build and verify the final nine-video GT-calibration delivery.",
     )
-    parser.add_argument("--project-root", type=Path, default=root)
+    parser.add_argument("--project-root", type=Path, default=project_root())
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("inspect", help="Check all source inputs and system tools.")
@@ -38,7 +41,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "render-new", help="Render only Take_007 marker/pose and no-glove videos."
     )
     render_new.add_argument(
-        "--destination", type=Path, default=root / "outputs" / "new_capture_review"
+        "--destination", type=Path
     )
     render_new.add_argument(
         "--manual-profile",
@@ -52,8 +55,34 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
     build = subparsers.add_parser("build", help="Build the complete nine-video folder.")
     build.add_argument(
-        "--destination", type=Path, default=root / "final_9_video_delivery"
+        "--destination", type=Path
     )
+
+    comparison = subparsers.add_parser(
+        "build-imu-comparison",
+        help=(
+            "Build four supplemental always-visible IMU-solved pose vs MOCAP "
+            "comparison videos without changing the canonical nine-video contract."
+        ),
+    )
+    comparison.add_argument(
+        "--destination",
+        type=Path,
+    )
+    comparison.add_argument(
+        "--manual-profile",
+        type=Path,
+    )
+
+    validate_comparison = subparsers.add_parser(
+        "validate-imu-comparison",
+        help="Validate the supplemental IMU-solved pose vs MOCAP delivery.",
+    )
+    validate_comparison.add_argument(
+        "--destination",
+        type=Path,
+    )
+    validate_comparison.add_argument("--full-decode", action="store_true")
     build.add_argument(
         "--manual-profile",
         type=Path,
@@ -66,7 +95,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
     validate = subparsers.add_parser("validate", help="Validate the delivery manifest and media.")
     validate.add_argument(
-        "--destination", type=Path, default=root / "final_9_video_delivery"
+        "--destination", type=Path
     )
     validate.add_argument("--full-decode", action="store_true")
 
@@ -74,12 +103,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "publish-web", help="Copy a validated delivery into web/public/downloads."
     )
     publish.add_argument(
-        "--source", type=Path, default=root / "final_9_video_delivery"
+        "--source", type=Path
     )
     publish.add_argument(
         "--destination",
         type=Path,
-        default=root / "web" / "public" / "downloads" / "final-nine",
     )
 
     refresh = subparsers.add_parser(
@@ -87,7 +115,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Refresh poster/metrics/frame-map hashes after approved visual QA repairs.",
     )
     refresh.add_argument(
-        "--destination", type=Path, default=root / "final_9_video_delivery"
+        "--destination", type=Path
     )
 
     normalize = subparsers.add_parser(
@@ -95,14 +123,21 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Replace machine-local paths in delivery metrics with project:// URIs.",
     )
     normalize.add_argument(
-        "--destination", type=Path, default=root / "final_9_video_delivery"
+        "--destination", type=Path
     )
 
     serve = subparsers.add_parser("serve", help="Serve the final review website with MP4 ranges.")
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8811)
-    serve.add_argument("--directory", type=Path, default=root / "web" / "public")
+    serve.add_argument("--directory", type=Path)
     return parser.parse_args(argv)
+
+
+def _project_path(value: Path | None, default: Path) -> Path:
+    """Resolve a CLI path relative to the selected project-root contract."""
+
+    selected = default if value is None else value
+    return selected.expanduser().resolve()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -115,7 +150,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "render-new":
         outputs = render_new_three(
             root,
-            args.destination.expanduser().resolve(),
+            _project_path(args.destination, root / "outputs" / "new_capture_review"),
             manual_profile=(
                 args.manual_profile.expanduser().resolve()
                 if args.manual_profile is not None
@@ -127,7 +162,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "build":
         output = build_delivery(
             root,
-            args.destination.expanduser().resolve(),
+            _project_path(args.destination, root / "final_9_video_delivery"),
             manual_profile=(
                 args.manual_profile.expanduser().resolve()
                 if args.manual_profile is not None
@@ -136,8 +171,29 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(output)
         return 0
+    if args.command == "build-imu-comparison":
+        comparison_profile = _project_path(
+            args.manual_profile,
+            root
+            / "calibration_profiles"
+            / "operator_y_minus_44_all_hand_overlays.v1.json",
+        )
+        output = build_comparison_delivery(
+            root,
+            _project_path(args.destination, root / "imu_mocap_comparison_delivery"),
+            manual_profile=comparison_profile,
+        )
+        print(output)
+        return 0
+    if args.command == "validate-imu-comparison":
+        result = validate_comparison_delivery(
+            _project_path(args.destination, root / "imu_mocap_comparison_delivery"),
+            full_decode=args.full_decode,
+        )
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0 if result["status"] == "pass" else 2
     if args.command == "validate":
-        destination = args.destination.expanduser().resolve()
+        destination = _project_path(args.destination, root / "final_9_video_delivery")
         result = validate_delivery(destination, full_decode=args.full_decode)
         validation_path = destination / "validation.json"
         validation_path.write_text(
@@ -149,17 +205,22 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if result["status"] == "pass" else 2
     if args.command == "publish-web":
         output = publish_web_delivery(
-            args.source.expanduser().resolve(),
-            args.destination.expanduser().resolve(),
+            _project_path(args.source, root / "final_9_video_delivery"),
+            _project_path(
+                args.destination,
+                root / "web" / "public" / "downloads" / "final-nine",
+            ),
         )
         print(output)
         return 0
     if args.command == "refresh-aux-hashes":
-        output = refresh_auxiliary_hashes(args.destination.expanduser().resolve())
+        output = refresh_auxiliary_hashes(
+            _project_path(args.destination, root / "final_9_video_delivery")
+        )
         print(output)
         return 0
     if args.command == "normalize-provenance":
-        destination = args.destination.expanduser().resolve()
+        destination = _project_path(args.destination, root / "final_9_video_delivery")
         changed = normalize_delivery_provenance(root, destination)
         if changed:
             # Keep the package valid at command completion.  This refreshes
@@ -175,7 +236,7 @@ def main(argv: list[str] | None = None) -> int:
             str(root / "local_review_server.py"),
             "--host", args.host,
             "--port", str(args.port),
-            "--directory", str(args.directory.expanduser().resolve()),
+            "--directory", str(_project_path(args.directory, root / "web" / "public")),
         ]
         return subprocess.run(command).returncode
     raise AssertionError(args.command)

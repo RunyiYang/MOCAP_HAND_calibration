@@ -53,6 +53,22 @@ uv run gt-calib-delivery normalize-provenance
 uv run gt-calib-delivery refresh-aux-hashes
 ```
 
+The supplemental IMU-solved pose vs MOCAP review is intentionally outside the
+canonical nine-video manifest. It keeps the nearest observed solver pose visible
+without interpolation or smoothing and retains the old timing mask only for
+strict metrics:
+
+```bash
+uv run gt-calib-delivery build-imu-comparison \
+  --destination rebuilt_imu_mocap_comparison_delivery
+uv run gt-calib-delivery validate-imu-comparison \
+  --destination rebuilt_imu_mocap_comparison_delivery --full-decode
+```
+
+Open `http://127.0.0.1:8811/downloads/imu-mocap/`, or download the standalone
+`imu_mocap_comparison_delivery/` folder. See
+`docs/calibration/IMU_SOLVED_VS_MOCAP_V1.md` for joint mappings and results.
+
 The same page contains the final-nine manual XYZ workbench. It lets the operator
 select all nine videos, records a per-video XYZ residual, and exports
 `gt_calib.final_nine_manual_xyz.v1`. Videos 07/08 additionally support live
@@ -124,6 +140,8 @@ data.
 ## Code map
 
 - `src/gt_calib_delivery/`: package CLI, delivery builder, new-capture adapter.
+- `src/gt_calib_delivery/imu_mocap_comparison.py`: always-visible nearest-row
+  IMU-solved pose vs MOCAP supplemental renderer, metrics, and validator.
 - `gt_calib_viz.py`: old-take MOCAP / solved-pose preparation and renderer.
 - `local_review_server.py`: path-safe, read-only HTTP Range server.
 - `web/public/final-nine/`: final review UI and manual XYZ workbench; reads the

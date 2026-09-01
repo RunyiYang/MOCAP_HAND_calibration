@@ -21,6 +21,7 @@
       <nav aria-label="页面导航">
         <a href="#manual-calibration">手动标定</a>
         <a href="#review">九视频</a>
+        <a href="#imu-comparison">IMU vs MOCAP</a>
         <a href="#boundary">结论边界</a>
         <a href="/downloads/final-nine/README.md">交付说明</a>
       </nav>
@@ -37,6 +38,7 @@
             <div class="hero-actions">
               <a class="button primary" href="#manual-calibration">打开 XYZ 标定台 <span aria-hidden="true">↓</span></a>
               <a class="button secondary" href="#review">逐组检查九视频</a>
+              <a class="button secondary" href="/downloads/imu-mocap/">打开 IMU vs MOCAP 同屏</a>
               <a class="button secondary" href="/downloads/final-nine/SHA256SUMS.txt" download>下载校验和</a>
             </div>
           </div>
@@ -397,6 +399,19 @@
             </div>
           </article>
         </section>
+      </section>
+
+      <section class="download-section" id="imu-comparison" aria-labelledby="imu-comparison-title">
+        <div>
+          <p class="eyebrow">SUPPLEMENTAL · NOT PART OF FINAL 9</p>
+          <h2 id="imu-comparison-title">IMU-solved pose 与 MOCAP 的同帧 3D 差异</h2>
+          <p>新增 4 段同屏视频：每个 RGB 帧直接选择最近的真实 glove solver row，不做 pose 插值、不平滑，也不再因 20/25 ms 门控隐藏。超时样本仍显示，但明确标成 stale 并排除在 strict 指标之外。旧三段先用 Take01 BVH-FK 非拇指 MCP 拟合固定 rotation + scale，再冻结到 Take02/03，并只条件化 wrist translation；Take_007 使用照片确认的 CMM surface markers。</p>
+        </div>
+        <div class="download-links">
+          <a href="/downloads/imu-mocap/">打开 4 段同屏网页 <span>↗</span></a>
+          <a href="/downloads/imu-mocap/manifest.json">打开 comparison manifest <span>↗</span></a>
+          <a href="/downloads/imu-mocap/SHA256SUMS.txt" download>下载 comparison SHA256 <span>↓</span></a>
+        </div>
       </section>
 
       <section class="download-section" aria-labelledby="download-title">

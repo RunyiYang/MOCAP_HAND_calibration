@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f"><title>IMU solved pose vs MOCAP</title><link rel="stylesheet" href="styles.css"></head>
+<body><header class="top"><a href="/final-nine/">← 返回最终九视频</a><a href="manifest.json">manifest.json</a></header>
+<main><section class="hero"><p>SUPPLEMENTAL · NOT PART OF FINAL 9</p><h1>IMU-solved pose<br><em>vs MOCAP reference</em></h1>
+<div class="notice"><b>绿色/黄色：IMU solver 20 joints；空心骨架/标记：MOCAP。</b> 每帧直接选择最近的真实 solver row，不插值、不平滑、不过门控隐藏。橙色只表示 stale display，并从 strict 指标排除。</div></section>
+<section class="grid">
+      <article class="card">
+        <header><span>01</span><div><h2>Take 01 · IMU solved pose vs BVH MOCAP</h2><p>01_210814_Take_000</p></div></header>
+        <video controls playsinline preload="metadata" poster="posters/01_take01_imu_solved_vs_bvh_mocap.jpg">
+          <source src="videos/01_take01_imu_solved_vs_bvh_mocap.mp4" type="video/mp4">
+        </video>
+        <div class="stats">
+          <div><b>32.62 / 121.19 mm</b><span>Left strict median / P95</span></div>
+          <div><b>30.74 / 125.35 mm</b><span>Right strict median / P95</span></div>
+          <div><b>1275 / 1747</b><span>strict timing frames</span></div>
+        </div>
+        <nav><a href="videos/01_take01_imu_solved_vs_bvh_mocap.mp4" download>下载 MP4</a><a href="metrics/01_take01_imu_solved_vs_bvh_mocap.json">完整 metrics</a><a href="frame_maps/take01_imu_vs_mocap.csv">逐帧 CSV</a></nav>
+      </article>
+      <article class="card">
+        <header><span>02</span><div><h2>Take 02 · IMU solved pose vs BVH MOCAP</h2><p>02_210955_Take_001</p></div></header>
+        <video controls playsinline preload="metadata" poster="posters/02_take02_imu_solved_vs_bvh_mocap.jpg">
+          <source src="videos/02_take02_imu_solved_vs_bvh_mocap.mp4" type="video/mp4">
+        </video>
+        <div class="stats">
+          <div><b>31.97 / 137.67 mm</b><span>Left strict median / P95</span></div>
+          <div><b>40.12 / 153.73 mm</b><span>Right strict median / P95</span></div>
+          <div><b>1324 / 1805</b><span>strict timing frames</span></div>
+        </div>
+        <nav><a href="videos/02_take02_imu_solved_vs_bvh_mocap.mp4" download>下载 MP4</a><a href="metrics/02_take02_imu_solved_vs_bvh_mocap.json">完整 metrics</a><a href="frame_maps/take02_imu_vs_mocap.csv">逐帧 CSV</a></nav>
+      </article>
+      <article class="card">
+        <header><span>03</span><div><h2>Take 03 · IMU solved pose vs BVH MOCAP</h2><p>03_211139_Take_002</p></div></header>
+        <video controls playsinline preload="metadata" poster="posters/03_take03_imu_solved_vs_bvh_mocap.jpg">
+          <source src="videos/03_take03_imu_solved_vs_bvh_mocap.mp4" type="video/mp4">
+        </video>
+        <div class="stats">
+          <div><b>43.48 / 191.90 mm</b><span>Left strict median / P95</span></div>
+          <div><b>66.32 / 200.65 mm</b><span>Right strict median / P95</span></div>
+          <div><b>1218 / 1799</b><span>strict timing frames</span></div>
+        </div>
+        <nav><a href="videos/03_take03_imu_solved_vs_bvh_mocap.mp4" download>下载 MP4</a><a href="metrics/03_take03_imu_solved_vs_bvh_mocap.json">完整 metrics</a><a href="frame_maps/take03_imu_vs_mocap.csv">逐帧 CSV</a></nav>
+      </article>
+      <article class="card">
+        <header><span>04</span><div><h2>Take_007 · IMU solved pose vs CMM MOCAP markers</h2><p>camera_glove_recording_20260831_161912/Take_007</p></div></header>
+        <video controls playsinline preload="metadata" poster="posters/04_take007_imu_solved_vs_cmm_mocap.jpg">
+          <source src="videos/04_take007_imu_solved_vs_cmm_mocap.mp4" type="video/mp4">
+        </video>
+        <div class="stats">
+          <div><b>39.03 / 103.78 mm</b><span>Left strict median / P95</span></div>
+          <div><b>41.11 / 110.38 mm</b><span>Right strict median / P95</span></div>
+          <div><b>1088 / 1981</b><span>strict timing frames</span></div>
+        </div>
+        <nav><a href="videos/04_take007_imu_solved_vs_cmm_mocap.mp4" download>下载 MP4</a><a href="metrics/04_take007_imu_solved_vs_cmm_mocap.json">完整 metrics</a><a href="frame_maps/take007_imu_vs_mocap.csv">逐帧 CSV</a></nav>
+      </article></section>
+<section class="boundary"><h2>这些数字是什么</h2><p>旧三段报告 wrist-root-normalized 的 16 个非拇指关节 3D EPE；Take_007 报告 CMM surface-marker 对应残差。腕部平移由 MOCAP 条件化，所以不是独立 absolute wrist / 6DoF GT 精度。</p><a href="README.md">读取完整 README</a></section></main>
+<footer>GT_CALIB · raw display continuity + strict metric separation</footer></body></html>
