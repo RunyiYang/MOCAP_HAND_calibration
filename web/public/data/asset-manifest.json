@@ -1,6 +1,6 @@
 {
   "schema": "gt-calib.asset-manifest.v1",
-  "generatedAt": "2026-09-01T11:10:36+00:00",
+  "generatedAt": "2026-09-01T11:12:32+00:00",
   "cloudflareMaxAssetBytes": 26214400,
   "assets": [
     {
@@ -157,7 +157,7 @@
       "path": "data/site-data.json",
       "source": "generated from MOCAP/video + raw-depth/MOCAP alignment + fusion + diagnostic strict metrics and request CSV",
       "bytes": 38389,
-      "sha256": "523e8e964cc3a6326af7f570a529f3450e89c65650a00305d5ea3c0ed7b2ff1c"
+      "sha256": "da1e7ef35f1d145fd3488fe4fcf3148cffd49e398bb5774ba1856c6cce1fe750"
     },
     {
       "path": "downloads/BVH_LOCAL_VIEWER_V1.md",
@@ -252,8 +252,8 @@
     {
       "path": "downloads/daily-2026-09-01.md",
       "source": "docs/daily/2026/2026-09-01.md",
-      "bytes": 9974,
-      "sha256": "9164528260dede869faafe10f1e67a55a53188f6eb53af5ccb3d8651ade3ddf7"
+      "bytes": 9975,
+      "sha256": "d2d8f6803d43555ba69437aa992f6caeedc95fa6484412f9ad2679e745b54cc6"
     },
     {
       "path": "downloads/dataset-inventory.csv",
@@ -522,8 +522,8 @@
     {
       "path": "downloads/gt-calib-evidence-2026-08-31.zip",
       "source": "generated allow-listed evidence bundle (videos excluded)",
-      "bytes": 3306555,
-      "sha256": "c410e64e0151f4293f1aa79a1223997eed411b79b0666fb25012193a6f4b0bbd"
+      "bytes": 3306532,
+      "sha256": "521c92a2a569f0b821179e9e90f42c8755a1106c5356a709639d508b4002117e"
     },
     {
       "path": "downloads/imu-mocap/README.md",
