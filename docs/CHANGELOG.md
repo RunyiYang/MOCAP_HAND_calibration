@@ -2,6 +2,59 @@
 
 ## 2026-09-01
 
+### IMU → MOCAP seven-method visualization lab
+
+- 将 `imu_mocap_visualization_lab/` 的发布范围改为
+  **`thor_new4_20260831_processed` only**：`Take_005` full、
+  `Take_006 A/B` 两个无重叠窗口和 `Take_007` full，共
+  4 segments × 7 methods = 28 个独立视频。旧 Take 01/02/03 已从该
+  visual lab 移出；canonical final-nine 与原始 IMU comparison 均不覆盖。
+- `Take_006 A=[0,1309)` 与 `B=[1309,2619)` 恰好覆盖 2619 帧
+  同步发布区间，无重叠、无丢帧；它们仍是同一 recording，不宣称为
+  两个 independent capture。
+- `camera_glove_recording_20260831_155410` 盘点为 98 帧
+  calibration-only evidence，`0` glove packets、无 solved pose、无 CMM；
+  因此不伪装为第四个动作段。
+- Take_005/006/007 的 #1..#11 对应固化为用户提供的 marker
+  编号表与实物照片，这是 authoritative mapping，不是根据空间距离
+  推断。Take_007 左 thumb-tip 使用 `11781→12503` logical re-ID
+  alias；#11 只构造向后 20 mm 的 virtual wrist。
+- 四个动作 recording 在各自 MOCAP world 中应用 operator
+  `X=0, Y=-44, Z=0 mm` 手部 display correction；155410 不应用。
+- 三个 IMU-only 对照为 true-timestamp S² continuous、对称 S² Gaussian 和
+  constant-velocity Kalman + RTS；所有 RGB 帧均输出 pose，不再按 20/25 ms
+  validity gate 隐藏。
+- 保留 75%/98% MOCAP-guided tangent-space posterior；posterior98 四段平均
+  CMM surface-marker median/P95 为 `0.540/1.638 mm`；这是同帧监督
+  adherence，不是独立 IMU accuracy。
+- 新增 full-sequence RBF neural IMU pose+velocity → MOCAP mapping；按明确请求
+  不划测试集，全部渲染帧都是训练帧，结果严格标为 same-sequence teacher-fit。
+- 将会产生 PIP/DIP 镜像分支的 nested sphere-intersection IK 替换为
+  fixed-phalanx exact constant-curvature anatomical IK：
+  `q_DIP=0.65*q_PIP`、PIP≤110°、DIP≤75°、thumb≤115°，并用 previous
+  bend-normal 锁定时间连续 hemisphere。它现在是网页默认 visual oracle。
+- Take_005/006/007 六只手的 non-thumb opposite-bend fraction 从旧版
+  `35%–69%` 降为 `0`；PIP/DIP/thumb、固定骨长、endpoint 和 bend-plane
+  temporal diagnostics 全部写入 metrics 并 fail closed。
+- 独立 proper-SO(3)/reflection 审计排除全局 Z 翻转：显式翻 solver Z 会将
+  all-10 CMM `35.9/91.3 mm` 恶化到 `80.0/179.3 mm`，RGB projection
+  `43.2/118.4 px` 恶化到 `130.4/302.0 px`。问题是旧 IK 局部 branch，
+  不是 world/camera axis 符号。
+- 渲染删除全部 residual connector、stale 变色和逐帧误差文字；MOCAP 用
+  粗空心边缘，方法结果用细实线，即使完全重合也能辨认两层。
+- 网页增加与 video currentTime 同步的 3D Canvas，可查看 MOCAP
+  left/right 和 method left/right 四层，并支持 orbit/pan/zoom/reset/timeline。
+- `build-imu-visual-lab` / `validate-imu-visual-lab` 继续实施 fail-closed
+  4×7 matrix、motion JSON、atomic Cloudflare mirror 与路径/篡改检查。
+- 新数据 only 包已完成 28/28 full decode（45,269 帧）、119 files / 118
+  checksums / 361,055,098 bytes、全帧双手 RESULT 可见性和 28 份 62-joint
+  motion JSON 验收；manifest SHA-256 为
+  `a0cbc268d94b91751c0aaf41b1a78f0aa7eec14cae6800d643b543ef912d79d6`。
+- 本地与 Quick Tunnel 页面均由 Chrome 加载至
+  `3D ready · 62 joints · 1981 frames`，页面 HTTP 200、MP4 Range HTTP 206；
+  上一个旧混合数据包的数字已 superseded。
+- 当前仓库全量回归：`199 passed in 157.93s`。
+
 ### IMU-solved pose vs MOCAP supplemental review
 
 - 新增独立 `imu_mocap_comparison_delivery/`，包含 Take 01/02/03 对

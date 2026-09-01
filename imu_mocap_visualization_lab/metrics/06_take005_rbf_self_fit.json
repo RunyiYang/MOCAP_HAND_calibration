@@ -1,0 +1,747 @@
+{
+  "schema": "gt_calib.imu_mocap_visualization_method_metrics.v1",
+  "status": "complete",
+  "take_id": "take005",
+  "take_label": "Take_005",
+  "source": "camera_glove_recording_20260831_161402/Take_005",
+  "source_first": 0,
+  "method_id": "rbf_self_fit",
+  "method_label": "Same-sequence RBF neural IMU-to-MOCAP fit",
+  "supervision": "same_sequence_teacher_fit",
+  "method_description": "Full-sequence RBF network maps IMU pose and velocity to the same sequence's MOCAP target.",
+  "interpretation_boundary": "No holdout by explicit request; demonstrates memorization/visual fit, not generalization.",
+  "rendered_frames": 1867,
+  "display_contract": {
+    "pose_drawn_on_every_frame": true,
+    "validity_gate_hides_pose": false,
+    "stale_color_change": false,
+    "connector_or_error_lines": false,
+    "per_frame_error_text": false
+  },
+  "pooled_sides": {
+    "primary_reference_epe_mm": {
+      "count": 37340,
+      "mean": 0.06097111947422751,
+      "median": 0.04382246516975902,
+      "p95": 0.1644636367444563,
+      "max": 1.1045503710054643,
+      "rmse": 0.08687689411713422
+    },
+    "root_relative_high_frequency_residual_mm": {
+      "count": 70946,
+      "mean": 0.05856246596477631,
+      "median": 0.0398513460845344,
+      "p95": 0.16688603955925582,
+      "max": 1.0025938686720604,
+      "rmse": 0.08551966446742354
+    }
+  },
+  "sides": {
+    "left": {
+      "finite_frames": 1867,
+      "total_frames": 1867,
+      "primary_reference": "ten photographed CMM surface-marker correspondences",
+      "primary_reference_epe_mm_all_frames": {
+        "count": 18670,
+        "mean": 0.06224941176762616,
+        "median": 0.04569588495762921,
+        "p95": 0.16465852588277188,
+        "max": 0.970118359946523,
+        "rmse": 0.08685593166111095
+      },
+      "primary_reference_epe_mm_original_strict_subset": {
+        "count": 12840,
+        "mean": 0.06253445322151789,
+        "median": 0.0454558031371772,
+        "p95": 0.16945495821594692,
+        "max": 0.970118359946523,
+        "rmse": 0.0876326208747458
+      },
+      "primary_fingertip_epe_mm_all_frames": {
+        "count": 9335,
+        "mean": 0.08013339104081277,
+        "median": 0.058602171315154,
+        "p95": 0.21568394149741954,
+        "max": 0.970118359946523,
+        "rmse": 0.11044796664111828
+      },
+      "full_19_joint_pseudo_target_epe_mm": {
+        "count": 35473,
+        "mean": 6.684921285524819e-07,
+        "median": 5.476376143612816e-07,
+        "p95": 1.3231842951471773e-06,
+        "max": 8.280871154234203e-05,
+        "rmse": 1.4317949222351126e-06
+      },
+      "deviation_from_continuous_imu_mm": {
+        "count": 35473,
+        "mean": 32.580139315592035,
+        "median": 29.87692965643506,
+        "p95": 72.53794302491005,
+        "max": 104.39227012018023,
+        "rmse": 38.18691651045837
+      },
+      "root_relative_high_frequency_residual_mm": {
+        "count": 35473,
+        "mean": 0.06056969370295971,
+        "median": 0.04177862019839342,
+        "p95": 0.16872362817075137,
+        "max": 0.9782065299540226,
+        "rmse": 0.08700482084371236
+      },
+      "root_relative_jerk_mm_s3": {
+        "count": 35416,
+        "mean": 3913.4062387955805,
+        "median": 2834.2322896359574,
+        "p95": 10584.425700112944,
+        "max": 67060.79762958517,
+        "rmse": 5477.2370723671165
+      },
+      "bone_lengths": {
+        "maximum_coefficient_of_variation": 0.06291347950998363,
+        "median_coefficient_of_variation": 8.204811356015506e-09,
+        "median_lengths_mm": [
+          80.84222893063263,
+          40.156736496527465,
+          31.089086319699152,
+          91.98392701246499,
+          36.8610116780571,
+          22.116607015758458,
+          16.587455248344597,
+          83.53082094037707,
+          41.46863814329092,
+          25.802708184167457,
+          18.430505837271514,
+          76.41730663854034,
+          39.62558756119369,
+          23.95965760203902,
+          17.508980546608807,
+          71.36618962168109,
+          29.48880936003353,
+          16.587455265431256,
+          13.822879386839766
+        ]
+      },
+      "algorithm_diagnostics": {
+        "network": "Gaussian RBF neural network / kernel ridge output layer",
+        "input": "root-relative IMU 19x3 position plus finite-difference velocity; no time index",
+        "training_frames": 1867,
+        "rbf_centers": 1867,
+        "active_input_dimensions": 114,
+        "sigma": 0.19372408922251758,
+        "ridge": 1e-08,
+        "test_frames": 0,
+        "training_and_render_sequence_are_identical": true,
+        "training_epe_mm": {
+          "count": 35473,
+          "mean": 6.684921285524819e-07,
+          "median": 5.476376143612816e-07,
+          "p95": 1.3231842951471773e-06,
+          "max": 8.280871154234203e-05,
+          "rmse": 1.4317949222351126e-06
+        },
+        "finite_frames": 1867,
+        "total_frames": 1867
+      }
+    },
+    "right": {
+      "finite_frames": 1867,
+      "total_frames": 1867,
+      "primary_reference": "ten photographed CMM surface-marker correspondences",
+      "primary_reference_epe_mm_all_frames": {
+        "count": 18670,
+        "mean": 0.05969282718082884,
+        "median": 0.041779466379590055,
+        "p95": 0.16418334466194287,
+        "max": 1.1045503710054643,
+        "rmse": 0.0868978515163633
+      },
+      "primary_reference_epe_mm_original_strict_subset": {
+        "count": 12840,
+        "mean": 0.060247149037659466,
+        "median": 0.04192502899298814,
+        "p95": 0.16668580613971296,
+        "max": 1.1045503710054643,
+        "rmse": 0.08799948704710842
+      },
+      "primary_fingertip_epe_mm_all_frames": {
+        "count": 9335,
+        "mean": 0.0792341142660984,
+        "median": 0.05543923530206272,
+        "p95": 0.22218674373130812,
+        "max": 1.1045503710054643,
+        "rmse": 0.11268560976645708
+      },
+      "full_19_joint_pseudo_target_epe_mm": {
+        "count": 35473,
+        "mean": 7.975264536301002e-07,
+        "median": 5.844573694174707e-07,
+        "p95": 1.4263557995168083e-06,
+        "max": 0.00026928099046190975,
+        "rmse": 4.315013729353734e-06
+      },
+      "deviation_from_continuous_imu_mm": {
+        "count": 35473,
+        "mean": 33.32202238694053,
+        "median": 28.00334498401253,
+        "p95": 76.00526427277984,
+        "max": 114.74988397641698,
+        "rmse": 39.42280923161076
+      },
+      "root_relative_high_frequency_residual_mm": {
+        "count": 35473,
+        "mean": 0.05655523822659291,
+        "median": 0.03786810569412926,
+        "p95": 0.16442526590900675,
+        "max": 1.0025938686720604,
+        "rmse": 0.08400825656561935
+      },
+      "root_relative_jerk_mm_s3": {
+        "count": 35416,
+        "mean": 3651.140419041778,
+        "median": 2546.521479194256,
+        "p95": 10225.486703098039,
+        "max": 64620.59863836194,
+        "rmse": 5316.54565151462
+      },
+      "bone_lengths": {
+        "maximum_coefficient_of_variation": 0.06061302351256189,
+        "median_coefficient_of_variation": 7.295959132473991e-09,
+        "median_lengths_mm": [
+          81.55888749207342,
+          39.642832892103044,
+          30.691225463082585,
+          95.61145545040955,
+          37.394163209039505,
+          22.43649792539267,
+          16.82737344112427,
+          90.32977634079633,
+          42.068433610299465,
+          26.175914247307905,
+          18.69708160338647,
+          79.60900001087207,
+          40.19872545181989,
+          24.306206087172693,
+          17.76222752423797,
+          73.47996363856161,
+          29.915330570673074,
+          16.82737344639013,
+          14.022811204526999
+        ]
+      },
+      "algorithm_diagnostics": {
+        "network": "Gaussian RBF neural network / kernel ridge output layer",
+        "input": "root-relative IMU 19x3 position plus finite-difference velocity; no time index",
+        "training_frames": 1867,
+        "rbf_centers": 1867,
+        "active_input_dimensions": 114,
+        "sigma": 0.20650328978416901,
+        "ridge": 1e-08,
+        "test_frames": 0,
+        "training_and_render_sequence_are_identical": true,
+        "training_epe_mm": {
+          "count": 35473,
+          "mean": 7.975264536301008e-07,
+          "median": 5.844573694174707e-07,
+          "p95": 1.4263557995168083e-06,
+          "max": 0.00026928099046190975,
+          "rmse": 4.315013729353819e-06
+        },
+        "finite_frames": 1867,
+        "total_frames": 1867
+      }
+    }
+  },
+  "take_preparation": {
+    "solver_resampling": {
+      "left": {
+        "source_rows": 5793,
+        "source_rate_hz_median": 176.793845382032,
+        "maximum_source_bracket_ms": 147.64843600005406,
+        "nearest_sample_age_median_ms": 3.933956500077329,
+        "nearest_sample_age_p95_ms": 31.582105800043767,
+        "finite_output_frames": 1867
+      },
+      "right": {
+        "source_rows": 5793,
+        "source_rate_hz_median": 176.793845382032,
+        "maximum_source_bracket_ms": 147.64843600005406,
+        "nearest_sample_age_median_ms": 3.933956500077329,
+        "nearest_sample_age_p95_ms": 31.582105800043767,
+        "finite_output_frames": 1867
+      }
+    },
+    "fixed_first_20_percent_registration": {
+      "left": {
+        "scale": 0.9215252965634179,
+        "rotation_mocap_from_solver": [
+          [
+            0.27153698299963414,
+            -0.24969767883061708,
+            0.9294722890167614
+          ],
+          [
+            0.9358157298714138,
+            -0.15703548811073004,
+            -0.3155768926887039
+          ],
+          [
+            0.22475895218809278,
+            0.955505585886564,
+            0.19103007289660923
+          ]
+        ],
+        "input_frames": 253,
+        "retained_frames": 253,
+        "base_residual_median_mm": 9.46495107572932,
+        "base_residual_p95_mm": 19.926763335218443
+      },
+      "right": {
+        "scale": 0.934854084661999,
+        "rotation_mocap_from_solver": [
+          [
+            0.38092750462253705,
+            -0.0580242299452223,
+            -0.9227824364178764
+          ],
+          [
+            -0.6968871427149902,
+            0.6378900053651848,
+            -0.32778750948402874
+          ],
+          [
+            0.60765331114097,
+            0.7679384934970175,
+            0.20255350815265316
+          ]
+        ],
+        "input_frames": 253,
+        "retained_frames": 253,
+        "base_residual_median_mm": 9.702411236109945,
+        "base_residual_p95_mm": 17.8347887734879
+      }
+    },
+    "cmm_guided_ik": {
+      "left": {
+        "endpoint_smoothing_kernel": [
+          0.25,
+          0.5,
+          0.25
+        ],
+        "guide_smoothing_kernel": [
+          0.015625,
+          0.09375,
+          0.234375,
+          0.3125,
+          0.234375,
+          0.09375,
+          0.015625
+        ],
+        "alternating_smoothing_projection_rounds": 4,
+        "fixed_phalanx_lengths_mm": [
+          [
+            40.15673667118529,
+            31.08908645511119
+          ],
+          [
+            36.86101186253671,
+            22.116607117522037,
+            16.587455338141535
+          ],
+          [
+            41.4686383453538,
+            25.802708303775688,
+            18.430505931268367
+          ],
+          [
+            39.62558775222697,
+            23.959657710648866,
+            17.50898063470493
+          ],
+          [
+            29.48880949002937,
+            16.587455338141517,
+            13.822879448451266
+          ]
+        ],
+        "phalanx_length_provenance": {
+          "source": "per-segment median of the calibrated IMU solver pose",
+          "endpoint_feasibility": "uniformly scale only when needed so sum(lengths) is max smoothed CMM base-tip span + 0.5 mm",
+          "maximum_smoothed_cmm_base_tip_span_mm": [
+            70.74582312629649,
+            59.179874928871214,
+            61.90229912215041,
+            60.88739887378304,
+            41.80667916234515
+          ]
+        },
+        "anatomical_validation": {
+          "solver": "constant-curvature exact endpoint IK",
+          "dip_to_pip_flexion_ratio": 0.65,
+          "active_bend_threshold_deg": 5.0,
+          "opposite_bend_count": 0,
+          "active_bend_pair_count": 7468,
+          "opposite_bend_fraction_active_gt_5deg": 0.0,
+          "pip_flexion_deg": {
+            "count": 7468,
+            "mean": 75.99145359745027,
+            "median": 77.79299733155133,
+            "p95": 86.61157708985169,
+            "max": 90.20996474078738,
+            "rmse": 76.2972490307016
+          },
+          "dip_flexion_deg": {
+            "count": 7468,
+            "mean": 49.394444838342686,
+            "median": 50.56544826550822,
+            "p95": 56.29752510840357,
+            "max": 58.63647708151195,
+            "rmse": 49.59321186995605
+          },
+          "thumb_flexion_deg": {
+            "count": 1867,
+            "mean": 51.27439422369129,
+            "median": 49.76344452167228,
+            "p95": 77.81941074794442,
+            "max": 87.93487561396329,
+            "rmse": 53.16435055546869
+          },
+          "fixed_bone_length_drift_mm": {
+            "count": 26138,
+            "mean": 1.0192678185645809e-14,
+            "median": 7.105427357601002e-15,
+            "p95": 2.4868995751603507e-14,
+            "max": 6.394884621840902e-14,
+            "rmse": 1.3100488137204964e-14
+          },
+          "smoothed_cmm_base_tip_endpoint_epe_mm": {
+            "count": 18670,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "max": 0.0,
+            "rmse": 0.0
+          },
+          "bend_plane_temporal_delta_deg": {
+            "count": 9330,
+            "mean": 0.9439833339249664,
+            "median": 0.6149618365003442,
+            "p95": 2.9375028952899376,
+            "max": 5.504626914188291,
+            "rmse": 1.3389058026303484
+          },
+          "limits": {
+            "pip_max_deg": 110.0,
+            "dip_max_deg": 75.0,
+            "thumb_max_deg": 115.0,
+            "endpoint_p95_max_mm": 0.7,
+            "bend_plane_temporal_p95_max_deg": 8.0,
+            "bend_plane_temporal_max_deg": 45.0
+          },
+          "acceptance": {
+            "no_opposite_active_bends": true,
+            "pip_within_limit": true,
+            "dip_within_limit": true,
+            "thumb_within_limit": true,
+            "fixed_bone_lengths": true,
+            "endpoint_p95_within_0_7_mm": true,
+            "bend_plane_temporal_p95_within_8_deg": true,
+            "bend_plane_temporal_max_within_45_deg": true
+          }
+        },
+        "marker_epe_to_raw_cmm_mm": {
+          "count": 18670,
+          "mean": 0.062249395596827295,
+          "median": 0.04569589352411105,
+          "p95": 0.16465839414804082,
+          "max": 0.9701182859695113,
+          "rmse": 0.08685591394213106
+        }
+      },
+      "right": {
+        "endpoint_smoothing_kernel": [
+          0.25,
+          0.5,
+          0.25
+        ],
+        "guide_smoothing_kernel": [
+          0.015625,
+          0.09375,
+          0.234375,
+          0.3125,
+          0.234375,
+          0.09375,
+          0.015625
+        ],
+        "alternating_smoothing_projection_rounds": 4,
+        "fixed_phalanx_lengths_mm": [
+          [
+            39.64283307476805,
+            30.691225606272045
+          ],
+          [
+            37.39416338647998,
+            22.436498031887986,
+            16.827373523916
+          ],
+          [
+            42.06843380978998,
+            26.175914370535974,
+            18.697081693239998
+          ],
+          [
+            40.19872564046597,
+            24.306206201212003,
+            17.762227608577977
+          ],
+          [
+            29.915330709183987,
+            16.827373523916,
+            14.022811269929987
+          ]
+        ],
+        "phalanx_length_provenance": {
+          "source": "per-segment median of the calibrated IMU solver pose",
+          "endpoint_feasibility": "uniformly scale only when needed so sum(lengths) is max smoothed CMM base-tip span + 0.5 mm",
+          "maximum_smoothed_cmm_base_tip_span_mm": [
+            69.83405868104009,
+            59.95944654808566,
+            63.49029209306638,
+            61.50432430356265,
+            41.49278098209939
+          ]
+        },
+        "anatomical_validation": {
+          "solver": "constant-curvature exact endpoint IK",
+          "dip_to_pip_flexion_ratio": 0.65,
+          "active_bend_threshold_deg": 5.0,
+          "opposite_bend_count": 0,
+          "active_bend_pair_count": 7468,
+          "opposite_bend_fraction_active_gt_5deg": 0.0,
+          "pip_flexion_deg": {
+            "count": 7468,
+            "mean": 75.528986950163,
+            "median": 75.80390697580606,
+            "p95": 86.78219800157305,
+            "max": 93.22817574651175,
+            "rmse": 75.80739085620645
+          },
+          "dip_flexion_deg": {
+            "count": 7468,
+            "mean": 49.09384151760596,
+            "median": 49.27253953427392,
+            "p95": 56.40842870102249,
+            "max": 60.598314235232635,
+            "rmse": 49.27480405653421
+          },
+          "thumb_flexion_deg": {
+            "count": 1867,
+            "mean": 52.142086067223104,
+            "median": 48.51976177889489,
+            "p95": 84.1425185614344,
+            "max": 94.65084969046744,
+            "rmse": 55.019931556209904
+          },
+          "fixed_bone_length_drift_mm": {
+            "count": 26138,
+            "mean": 9.319247238367058e-15,
+            "median": 7.105427357601002e-15,
+            "p95": 2.4868995751603507e-14,
+            "max": 6.039613253960852e-14,
+            "rmse": 1.1990893820039839e-14
+          },
+          "smoothed_cmm_base_tip_endpoint_epe_mm": {
+            "count": 18670,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "max": 0.0,
+            "rmse": 0.0
+          },
+          "bend_plane_temporal_delta_deg": {
+            "count": 9330,
+            "mean": 0.639302881791039,
+            "median": 0.4187556472920002,
+            "p95": 2.22921577698618,
+            "max": 5.685164797725855,
+            "rmse": 0.926995291129582
+          },
+          "limits": {
+            "pip_max_deg": 110.0,
+            "dip_max_deg": 75.0,
+            "thumb_max_deg": 115.0,
+            "endpoint_p95_max_mm": 0.7,
+            "bend_plane_temporal_p95_max_deg": 8.0,
+            "bend_plane_temporal_max_deg": 45.0
+          },
+          "acceptance": {
+            "no_opposite_active_bends": true,
+            "pip_within_limit": true,
+            "dip_within_limit": true,
+            "thumb_within_limit": true,
+            "fixed_bone_lengths": true,
+            "endpoint_p95_within_0_7_mm": true,
+            "bend_plane_temporal_p95_within_8_deg": true,
+            "bend_plane_temporal_max_within_45_deg": true
+          }
+        },
+        "marker_epe_to_raw_cmm_mm": {
+          "count": 18670,
+          "mean": 0.05969283551209218,
+          "median": 0.04177941875558783,
+          "p95": 0.1641835848454324,
+          "max": 1.1045502337466642,
+          "rmse": 0.08689787869826675
+        }
+      }
+    },
+    "original_strict_validity": {
+      "valid_frames": 1284,
+      "total_frames": 1867,
+      "coverage_percent": 68.77343331547938,
+      "nearest_solver_sample_error_ms": {
+        "left": {
+          "median": 2.5392538332198455,
+          "p95": 14.91747351667527,
+          "max": 19.849970499990377
+        },
+        "right": {
+          "median": 2.5392538332198455,
+          "p95": 14.91747351667527,
+          "max": 19.849970499990377
+        }
+      }
+    },
+    "marker_track_semantics": {
+      "source": "user-supplied Take_005/006/007 #1..#11 marker-ID table and placement photographs; only Take_007 left #1 11781->12503 alias is trajectory-continuity inferred",
+      "tracks": {
+        "left": [
+          [
+            "11781"
+          ],
+          [
+            "11777"
+          ],
+          [
+            "11773"
+          ],
+          [
+            "11780"
+          ],
+          [
+            "11772"
+          ],
+          [
+            "11779"
+          ],
+          [
+            "11609"
+          ],
+          [
+            "11782"
+          ],
+          [
+            "11787"
+          ],
+          [
+            "11786"
+          ],
+          [
+            "11785"
+          ]
+        ],
+        "right": [
+          [
+            "11769"
+          ],
+          [
+            "11622"
+          ],
+          [
+            "11619"
+          ],
+          [
+            "11614"
+          ],
+          [
+            "11616"
+          ],
+          [
+            "11678"
+          ],
+          [
+            "11625"
+          ],
+          [
+            "11685"
+          ],
+          [
+            "11627"
+          ],
+          [
+            "11630"
+          ],
+          [
+            "11629"
+          ]
+        ]
+      }
+    },
+    "manual_world_translation": {
+      "global_world_xyz_mm": [
+        0.0,
+        -44.0,
+        0.0
+      ],
+      "left_world_xyz_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "right_world_xyz_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rear_offset_mm": 20.0
+    }
+  },
+  "source_assets": {
+    "rgb_video": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161402/rgbd_unpack/RGB.mp4",
+      "bytes": 92351374,
+      "sha256": "565069616829cf27244cc1f224f0306fe7bb8bf46f56bf8354c68b9181bc69d2"
+    },
+    "camera_intrinsics": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161402/rgbd_unpack/camera_1_intrinsics.json",
+      "bytes": 2814,
+      "sha256": "05090e1bd9d3f66a29010de6a43afddc99ac9ab07873761fb0c6b295874a642b"
+    },
+    "cmm_markers": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161402/mocap/Take_005/Take_005.cmm",
+      "bytes": 25299122,
+      "sha256": "55717dce173104a1c3fd8d1325a0f73da876651917fa109b16483e885cb71b35"
+    },
+    "camera_alignment": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161402/mocap/Take_005/alignment/camera_cmavatar_alignment.csv",
+      "bytes": 169434,
+      "sha256": "9e4f92a8883591f81d7fe9688fd786ae690117743f2eaf81c6dbbccad9584442"
+    },
+    "glove_validity_summary": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161402/glove_processing/aligned/primary/aligned_frame_summary.csv",
+      "bytes": 148738,
+      "sha256": "58c3bc8cee777a0ba3b281a31b701bd71727311e586253a7223403ceacd52404"
+    },
+    "left_glove_solver_keypoints": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161402/glove_processing/solved/primary/left_hand_keypoints.csv",
+      "bytes": 14098316,
+      "sha256": "9afe1ae25b70883a98a98f0d57ec5156335ac127ec12f68eeb0da2631eee092b"
+    },
+    "right_glove_solver_keypoints": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161402/glove_processing/solved/primary/right_hand_keypoints.csv",
+      "bytes": 14210618,
+      "sha256": "d446afd8e6c906adae35c9f05bafebabb4983de764abb6007d21451a38e685a2"
+    }
+  },
+  "claim_boundary": "MOCAP-conditioned and same-sequence teacher-fit methods optimize this recording's visual adherence and are not independent IMU accuracy or generalization evidence."
+}

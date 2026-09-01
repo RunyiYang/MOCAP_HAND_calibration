@@ -39,6 +39,7 @@ outputs/mocap_root_fusion_review/*
 # The website mirror is reproduced atomically by `publish-web`.
 web/public/downloads/final-nine/
 web/public/downloads/imu-mocap/
+web/public/downloads/imu-visual-lab/
 final_9_video_delivery/_render_scratch/
 
 # Editor, OS, and temporary files

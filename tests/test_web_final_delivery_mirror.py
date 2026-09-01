@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -297,6 +298,263 @@ def _refresh_imu_comparison_hashes(root: Path) -> None:
     (root / "SHA256SUMS.txt").write_text("\n".join(checksum_lines) + "\n")
 
 
+def _synthetic_anatomical_ik_receipt() -> dict:
+    def distribution(*, maximum: float, p95: float | None = None) -> dict:
+        selected_p95 = maximum if p95 is None else p95
+        return {
+            "count": 100,
+            "mean": selected_p95 / 2.0,
+            "median": selected_p95 / 2.0,
+            "p95": selected_p95,
+            "max": maximum,
+            "rmse": selected_p95 / 2.0,
+        }
+
+    validation = {
+        "solver": build_site.IMU_VISUAL_LAB_ANATOMICAL_SOLVER,
+        "dip_to_pip_flexion_ratio": build_site.IMU_VISUAL_LAB_ANATOMICAL_RATIO,
+        "active_bend_threshold_deg": (
+            build_site.IMU_VISUAL_LAB_ANATOMICAL_THRESHOLD_DEG
+        ),
+        "opposite_bend_count": 0,
+        "active_bend_pair_count": 100,
+        "opposite_bend_fraction_active_gt_5deg": 0.0,
+        "pip_flexion_deg": distribution(maximum=90.0, p95=85.0),
+        "dip_flexion_deg": distribution(maximum=60.0, p95=55.0),
+        "thumb_flexion_deg": distribution(maximum=100.0, p95=95.0),
+        "fixed_bone_length_drift_mm": distribution(maximum=1e-10, p95=1e-11),
+        "smoothed_cmm_base_tip_endpoint_epe_mm": distribution(
+            maximum=0.1, p95=0.05
+        ),
+        "bend_plane_temporal_delta_deg": distribution(maximum=10.0, p95=5.0),
+        "limits": dict(build_site.IMU_VISUAL_LAB_ANATOMICAL_LIMITS),
+        "acceptance": dict(build_site.IMU_VISUAL_LAB_ANATOMICAL_ACCEPTANCE),
+    }
+    return {
+        side: {"anatomical_validation": copy.deepcopy(validation)}
+        for side in ("left", "right")
+    }
+
+
+def _synthetic_imu_visual_lab(root: Path) -> Path:
+    root.mkdir(parents=True)
+    method_ids = build_site.IMU_VISUAL_LAB_METHOD_IDS
+    videos: list[dict] = []
+    order = 0
+    for take_id, source, source_first, frame_count in build_site.IMU_VISUAL_LAB_SEGMENTS:
+        for method_id in method_ids:
+            order += 1
+            stem = f"{order:02d}_{take_id}_{method_id}"
+            filename = f"{stem}.mp4"
+            video = _write(root / "videos" / filename, _syntactic_faststart_mp4())
+            poster_rel = f"posters/{stem}.jpg"
+            metrics_rel = f"metrics/{stem}.json"
+            poster = _write(root / poster_rel, f"poster:{stem}\n")
+            reference_median = float(order)
+            reference_p95 = float(order) + 0.5
+            jitter_p95 = float(order) / 10.0
+            metrics = _write(
+                root / metrics_rel,
+                json.dumps(
+                    {
+                        "schema": build_site.IMU_VISUAL_LAB_METRICS_SCHEMA,
+                        "status": "complete",
+                        "take_id": take_id,
+                        "method_id": method_id,
+                        "source": source,
+                        "source_first": source_first,
+                        "rendered_frames": frame_count,
+                        "source_assets": {
+                            "camera_intrinsics": (
+                                build_site.IMU_VISUAL_LAB_CAMERA_INTRINSICS[take_id]
+                            ),
+                        },
+                        "take_preparation": {
+                            "cmm_guided_ik": _synthetic_anatomical_ik_receipt(),
+                        },
+                        "display_contract": build_site.IMU_VISUAL_LAB_DISPLAY_CONTRACT,
+                        "pooled_sides": {
+                            "primary_reference_epe_mm": {
+                                "median": reference_median,
+                                "p95": reference_p95,
+                            },
+                            "root_relative_high_frequency_residual_mm": {
+                                "p95": jitter_p95,
+                            },
+                        },
+                    }
+                )
+                + "\n",
+            )
+            motion_rel = f"motions/{stem}.json"
+            joint_count = 62
+            values_per_frame = joint_count * 3
+            motion = _write(
+                root / motion_rel,
+                json.dumps(
+                    {
+                        "schema": build_site.IMU_VISUAL_LAB_MOTION_SCHEMA,
+                        "take_id": take_id,
+                        "method_id": method_id,
+                        "frame_count": frame_count,
+                        "fps": 30.0,
+                        "units": "mm",
+                        "encoding": {
+                            "kind": "frame-major-flat-int32-json",
+                            "components": "XYZ",
+                            "quantum_mm": 0.1,
+                            "origin_mm": [0.0, 0.0, 0.0],
+                            "joint_count": joint_count,
+                            "values_per_frame": values_per_frame,
+                        },
+                        "layers": build_site.IMU_VISUAL_LAB_MOTION_LAYERS,
+                        "view": {
+                            "focus": "per-frame midpoint of MOCAP left/right wrists",
+                            "reference_extent_mm": float(frame_count * 100),
+                            "fixed_across_methods_for_take": True,
+                        },
+                        "frames": [
+                            [0] * values_per_frame for _frame in range(frame_count)
+                        ],
+                        "validation": {
+                            "finite_frames": frame_count,
+                            "maximum_quantization_error_mm": 0.05,
+                            "status": "pass",
+                        },
+                    },
+                    separators=(",", ":"),
+                )
+                + "\n",
+            )
+            videos.append(
+                {
+                    "order": order,
+                    "id": f"{take_id}-{method_id}",
+                    "take_id": take_id,
+                    "method_id": method_id,
+                    "source": source,
+                    "source_first": source_first,
+                    "filename": filename,
+                    "poster": poster_rel,
+                    "metrics": metrics_rel,
+                    "motion": motion_rel,
+                    "summary": {
+                        "reference_median_mm": reference_median,
+                        "reference_p95_mm": reference_p95,
+                        "jitter_p95_mm": jitter_p95,
+                        "finite_frames": frame_count,
+                    },
+                    "frame_count": frame_count,
+                    "codec": "h264",
+                    "pixel_format": "yuv420p",
+                    "width": 960,
+                    "height": 540,
+                    "fps": 30,
+                    "bytes": video.stat().st_size,
+                    "sha256": _sha256(video),
+                    "poster_sha256": _sha256(poster),
+                    "metrics_sha256": _sha256(metrics),
+                    "motion_bytes": motion.stat().st_size,
+                    "motion_sha256": _sha256(motion),
+                    "faststart": True,
+                }
+            )
+
+    _write(root / "README.md", "synthetic IMU visualization lab\n")
+    _write(root / "index.html", "<html></html>\n")
+    _write(root / "styles.css", "body{}\n")
+    _write(root / "app.js", "'use strict';\n")
+    _write(
+        root / "manifest.json",
+        json.dumps(
+            {
+                "schema": build_site.IMU_VISUAL_LAB_SCHEMA,
+                "status": "pass",
+                "take_count": 4,
+                "method_count": 7,
+                "video_count": 28,
+                "dataset_scope": build_site.IMU_VISUAL_LAB_DATASET_SCOPE,
+                "methods": [{"id": method_id} for method_id in method_ids],
+                "videos": videos,
+            }
+        )
+        + "\n",
+    )
+    _write(
+        root / "validation.json",
+        json.dumps(
+            {
+                "schema": build_site.IMU_VISUAL_LAB_VALIDATION_SCHEMA,
+                "status": "pass",
+                "video_count": 28,
+                "full_decode": True,
+                "failures": [],
+            }
+        )
+        + "\n",
+    )
+    _refresh_imu_visual_lab_hashes(root)
+    return root
+
+
+def _refresh_imu_visual_lab_hashes(
+    root: Path,
+    *,
+    refresh_receipt: bool = True,
+) -> None:
+    """Refresh declared asset hashes and the exact checksum closure."""
+
+    manifest_path = root / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    for item in manifest["videos"]:
+        video = root / "videos" / item["filename"]
+        poster = root / item["poster"]
+        metrics = root / item["metrics"]
+        motion = root / item["motion"]
+        item["bytes"] = video.stat().st_size
+        item["sha256"] = _sha256(video)
+        item["poster_sha256"] = _sha256(poster)
+        item["metrics_sha256"] = _sha256(metrics)
+        item["motion_bytes"] = motion.stat().st_size
+        item["motion_sha256"] = _sha256(motion)
+    manifest_path.write_text(json.dumps(manifest) + "\n")
+    if refresh_receipt:
+        _write(
+            root / "validation.json",
+            json.dumps(
+                {
+                    "schema": build_site.IMU_VISUAL_LAB_VALIDATION_SCHEMA,
+                    "status": "pass",
+                    "video_count": 28,
+                    "full_decode": True,
+                    "manifest_sha256": _sha256(manifest_path),
+                    "videos": [
+                        {
+                            "id": item["id"],
+                            "sha256": item["sha256"],
+                            "frame_count": item["frame_count"],
+                            "codec": item["codec"],
+                            "pixel_format": item["pixel_format"],
+                            "width": item["width"],
+                            "height": item["height"],
+                            "fps": float(item["fps"]),
+                            "decoded": True,
+                        }
+                        for item in manifest["videos"]
+                    ],
+                    "failures": [],
+                }
+            )
+            + "\n",
+        )
+    checksum_lines = [
+        f"{_sha256(path)}  {path.relative_to(root).as_posix()}"
+        for path in sorted(root.rglob("*"))
+        if path.is_file() and path.name != "SHA256SUMS.txt"
+    ]
+    _write(root / "SHA256SUMS.txt", "\n".join(checksum_lines) + "\n")
+
+
 def _synthetic_public(root: Path) -> Path:
     entries: list[dict] = []
     for relative in build_site.AUTHORED_PUBLIC_ASSETS:
@@ -475,6 +733,311 @@ class FinalDeliveryWebMirrorTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "strict CSV counts mismatch"):
                 build_site.validate_imu_comparison_for_web(source)
 
+    def test_visual_lab_validates_and_atomically_replaces_existing_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary_path = Path(temporary)
+            source = _synthetic_imu_visual_lab(temporary_path / "lab")
+            destination = temporary_path / "public/downloads/imu-visual-lab"
+            _write(destination / "stale.txt", "stale\n")
+
+            entries = build_site.mirror_imu_visual_lab(source, destination)
+
+            self.assertFalse((destination / "stale.txt").exists())
+            self.assertEqual(len(list((destination / "videos").glob("*.mp4"))), 28)
+            self.assertEqual(len(entries), 119)
+            self.assertEqual(
+                {entry["path"] for entry in entries},
+                {
+                    f"downloads/imu-visual-lab/{path.relative_to(source).as_posix()}"
+                    for path in source.rglob("*")
+                    if path.is_file()
+                },
+            )
+            self.assertFalse(any(path.is_symlink() for path in destination.rglob("*")))
+            self.assertEqual(
+                list(destination.parent.glob(".imu-visual-lab-publish-*")), []
+            )
+
+    def test_visual_lab_rejects_unreferenced_file_even_when_checksummed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            _write(source / "unreferenced.json", "{}\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "file inventory mismatch"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_rejects_incomplete_matrix_and_wrong_media_contract(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][1]["method_id"] = manifest["videos"][0]["method_id"]
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+            with self.assertRaisesRegex(ValueError, "canonical.*identity"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][0]["width"] = 959
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+            with self.assertRaisesRegex(ValueError, "browser media contract"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_rejects_noncanonical_manifest_methods_and_entry_id(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["methods"][0], manifest["methods"][1] = (
+                manifest["methods"][1],
+                manifest["methods"][0],
+            )
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+            with self.assertRaisesRegex(ValueError, "manifest methods.*canonical"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][0]["id"] = "take005-not-the-method"
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+            with self.assertRaisesRegex(ValueError, "canonical.*identity"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][0]["take_id"] = "take99"
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+            with self.assertRaisesRegex(ValueError, "canonical.*identity"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_rejects_metrics_contract_and_summary_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest = json.loads((source / "manifest.json").read_text())
+            metrics_path = source / manifest["videos"][0]["metrics"]
+            metrics = json.loads(metrics_path.read_text())
+            metrics["display_contract"]["connector_or_error_lines"] = True
+            metrics_path.write_text(json.dumps(metrics) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+            with self.assertRaisesRegex(ValueError, "metrics contract failed"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][0]["summary"]["reference_p95_mm"] += 1.0
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+            with self.assertRaisesRegex(ValueError, "summary mismatch"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_rejects_missing_or_tampered_anatomical_ik_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest = json.loads((source / "manifest.json").read_text())
+            metrics_path = source / manifest["videos"][0]["metrics"]
+            metrics = json.loads(metrics_path.read_text())
+            del metrics["take_preparation"]["cmm_guided_ik"]["left"]
+            metrics_path.write_text(json.dumps(metrics) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "anatomical IK contract missing"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest = json.loads((source / "manifest.json").read_text())
+            metrics_path = source / manifest["videos"][0]["metrics"]
+            metrics = json.loads(metrics_path.read_text())
+            validation = metrics["take_preparation"]["cmm_guided_ik"]["right"][
+                "anatomical_validation"
+            ]
+            validation["acceptance"]["no_opposite_active_bends"] = False
+            metrics_path.write_text(json.dumps(metrics) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "anatomical IK acceptance failed"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_symlink_and_tamper_fail_without_replacing_mirror(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary_path = Path(temporary)
+            source = _synthetic_imu_visual_lab(temporary_path / "lab")
+            destination = temporary_path / "public/downloads/imu-visual-lab"
+            sentinel = _write(destination / "sentinel.txt", "previous-complete\n")
+            (source / "unexpected-link").symlink_to(source / "README.md")
+            with self.assertRaisesRegex(ValueError, "Symlinks are forbidden"):
+                build_site.mirror_imu_visual_lab(source, destination)
+            self.assertEqual(sentinel.read_text(), "previous-complete\n")
+
+            (source / "unexpected-link").unlink()
+            manifest = json.loads((source / "manifest.json").read_text())
+            video = source / "videos" / manifest["videos"][0]["filename"]
+            payload = bytearray(video.read_bytes())
+            payload[-1] ^= 0x01
+            video.write_bytes(payload)
+            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                build_site.mirror_imu_visual_lab(source, destination)
+            self.assertEqual(sentinel.read_text(), "previous-complete\n")
+
+    def test_visual_lab_rejects_motion_tamper_and_invalid_frames(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest = json.loads((source / "manifest.json").read_text())
+            motion = source / manifest["videos"][0]["motion"]
+            payload = bytearray(motion.read_bytes())
+            payload[-1] = 0x20
+            motion.write_bytes(payload)
+            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest = json.loads((source / "manifest.json").read_text())
+            motion = source / manifest["videos"][0]["motion"]
+            payload = json.loads(motion.read_text())
+            payload["frames"][0].pop()
+            motion.write_text(json.dumps(payload) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+            with self.assertRaisesRegex(ValueError, "motion frames contract failed"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_rejects_dataset_scope_and_source_window_tamper(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["dataset_scope"]["policy"] = "mixed legacy and new datasets"
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "dataset_scope.*canonical"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][0]["source_first"] += 1
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "canonical.*identity"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_rejects_motion_units_and_topology_tamper(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest = json.loads((source / "manifest.json").read_text())
+            motion_path = source / manifest["videos"][0]["motion"]
+            motion = json.loads(motion_path.read_text())
+            motion["units"] = "cm"
+            motion_path.write_text(json.dumps(motion) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "motion identity contract"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest = json.loads((source / "manifest.json").read_text())
+            motion_path = source / manifest["videos"][0]["motion"]
+            motion = json.loads(motion_path.read_text())
+            motion["encoding"]["joint_count"] = 61
+            motion["encoding"]["values_per_frame"] = 61 * 3
+            motion["frames"] = [frame[: 61 * 3] for frame in motion["frames"]]
+            motion_path.write_text(json.dumps(motion) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "motion encoding contract"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest = json.loads((source / "manifest.json").read_text())
+            motion_path = source / manifest["videos"][0]["motion"]
+            motion = json.loads(motion_path.read_text())
+            motion["layers"][0]["chains"][0] = [0, 1]
+            motion_path.write_text(json.dumps(motion) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "motion layers contract"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_rejects_frame_count_and_canonical_path_tamper(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][0]["frame_count"] += 1
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "canonical.*identity"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][0]["poster"] = manifest["videos"][1]["poster"]
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            _refresh_imu_visual_lab_hashes(source)
+
+            with self.assertRaisesRegex(ValueError, "poster path"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_rejects_refreshed_video_with_stale_decode_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest = json.loads((source / "manifest.json").read_text())
+            video_path = source / "videos" / manifest["videos"][0]["filename"]
+            payload = bytearray(video_path.read_bytes())
+            payload[-1] ^= 0x01
+            video_path.write_bytes(payload)
+            _refresh_imu_visual_lab_hashes(source, refresh_receipt=False)
+
+            with self.assertRaisesRegex(ValueError, "validation receipt is stale"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+    def test_visual_lab_path_escape_and_oversized_asset_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][0]["poster"] = "../escape.jpg"
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            with self.assertRaisesRegex(ValueError, "Unsafe final-delivery path"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            manifest_path = source / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["videos"][0]["motion"] = manifest["videos"][0]["metrics"]
+            manifest_path.write_text(json.dumps(manifest) + "\n")
+            with self.assertRaisesRegex(ValueError, "Invalid.*motion path"):
+                build_site.validate_imu_visual_lab_for_web(source)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            source = _synthetic_imu_visual_lab(Path(temporary) / "lab")
+            with mock.patch.object(build_site, "MAX_STATIC_ASSET_BYTES", 4):
+                with self.assertRaisesRegex(ValueError, "limit exceeded"):
+                    build_site.validate_imu_visual_lab_for_web(source)
+
     def test_clean_clone_assembly_needs_only_tracked_public_and_delivery(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             temporary_path = Path(temporary)
@@ -483,8 +1046,13 @@ class FinalDeliveryWebMirrorTests(unittest.TestCase):
             comparison = _synthetic_imu_comparison(
                 temporary_path / "imu_mocap_comparison_delivery"
             )
+            visual_lab = _synthetic_imu_visual_lab(
+                temporary_path / "imu_mocap_visualization_lab"
+            )
 
-            output = build_site.assemble_deploy_site(public, source, comparison)
+            output = build_site.assemble_deploy_site(
+                public, source, comparison, visual_lab
+            )
 
             self.assertEqual(output, public.resolve())
             mirror = public / "downloads/final-nine"
@@ -493,12 +1061,20 @@ class FinalDeliveryWebMirrorTests(unittest.TestCase):
             self.assertEqual(
                 len(list((comparison_mirror / "videos").glob("*.mp4"))), 4
             )
+            visual_lab_mirror = public / "downloads/imu-visual-lab"
+            self.assertEqual(
+                len(list((visual_lab_mirror / "videos").glob("*.mp4"))), 28
+            )
             payload = json.loads(
                 (public / build_site.ASSET_MANIFEST_RELATIVE).read_text()
             )
             self.assertEqual(
                 payload["deploymentAssembly"]["mode"],
-                "tracked_public_plus_two_tracked_deliveries",
+                "tracked_public_plus_three_tracked_deliveries",
+            )
+            self.assertEqual(
+                payload["deploymentAssembly"]["imuVisualLabSchema"],
+                build_site.IMU_VISUAL_LAB_SCHEMA,
             )
             inventoried = {item["path"] for item in payload["assets"]}
             actual = {
@@ -518,13 +1094,19 @@ class FinalDeliveryWebMirrorTests(unittest.TestCase):
             comparison = _synthetic_imu_comparison(
                 temporary_path / "imu_mocap_comparison_delivery"
             )
+            visual_lab = _synthetic_imu_visual_lab(
+                temporary_path / "imu_mocap_visualization_lab"
+            )
             (public / "index.html").write_text("tampered\n")
 
             with self.assertRaisesRegex(ValueError, "byte mismatch|SHA-256 mismatch"):
-                build_site.assemble_deploy_site(public, source, comparison)
+                build_site.assemble_deploy_site(
+                    public, source, comparison, visual_lab
+                )
 
             self.assertFalse((public / "downloads/final-nine").exists())
             self.assertFalse((public / "downloads/imu-mocap").exists())
+            self.assertFalse((public / "downloads/imu-visual-lab").exists())
 
 
 if __name__ == "__main__":

@@ -1,0 +1,714 @@
+{
+  "schema": "gt_calib.imu_mocap_visualization_method_metrics.v1",
+  "status": "complete",
+  "take_id": "take007",
+  "take_label": "Take_007",
+  "source": "camera_glove_recording_20260831_161912/Take_007",
+  "source_first": 0,
+  "method_id": "kalman_rts",
+  "method_label": "IMU-articulation constant-velocity Kalman RTS",
+  "supervision": "imu_only",
+  "method_description": "Forward Kalman filtering plus backward Rauch-Tung-Striebel smoothing and kinematic projection.",
+  "interpretation_boundary": "No MOCAP finger joint is a per-frame observation; spatial calibration is MOCAP-derived.",
+  "rendered_frames": 1981,
+  "display_contract": {
+    "pose_drawn_on_every_frame": true,
+    "validity_gate_hides_pose": false,
+    "stale_color_change": false,
+    "connector_or_error_lines": false,
+    "per_frame_error_text": false
+  },
+  "pooled_sides": {
+    "primary_reference_epe_mm": {
+      "count": 39620,
+      "mean": 49.37859343680204,
+      "median": 43.20673829432278,
+      "p95": 107.0323959077025,
+      "max": 213.2836440110938,
+      "rmse": 57.03572810652246
+    },
+    "root_relative_high_frequency_residual_mm": {
+      "count": 75278,
+      "mean": 0.08090741261893057,
+      "median": 0.04701360513433594,
+      "p95": 0.2697843329956649,
+      "max": 2.0259360230249053,
+      "rmse": 0.12905888041807165
+    }
+  },
+  "sides": {
+    "left": {
+      "finite_frames": 1981,
+      "total_frames": 1981,
+      "primary_reference": "ten photographed CMM surface-marker correspondences",
+      "primary_reference_epe_mm_all_frames": {
+        "count": 19810,
+        "mean": 47.6522925737874,
+        "median": 41.889353252339674,
+        "p95": 102.6942276361437,
+        "max": 143.79343111183223,
+        "rmse": 54.82444367202764
+      },
+      "primary_reference_epe_mm_original_strict_subset": {
+        "count": 13670,
+        "mean": 47.53549661616984,
+        "median": 41.76476287521767,
+        "p95": 102.45739634042091,
+        "max": 143.79343111183223,
+        "rmse": 54.71705263531487
+      },
+      "primary_fingertip_epe_mm_all_frames": {
+        "count": 9905,
+        "mean": 59.23507148577711,
+        "median": 55.561944061980775,
+        "p95": 116.26561419721074,
+        "max": 143.79343111183223,
+        "rmse": 66.56440499446074
+      },
+      "full_19_joint_pseudo_target_epe_mm": {
+        "count": 37639,
+        "mean": 48.40996678767254,
+        "median": 45.41152615162862,
+        "p95": 95.02408407119943,
+        "max": 143.62603519446986,
+        "rmse": 54.58856441924919
+      },
+      "deviation_from_continuous_imu_mm": {
+        "count": 37639,
+        "mean": 0.5817574881285372,
+        "median": 0.3276942899325973,
+        "p95": 1.9557429992924866,
+        "max": 15.782015073230767,
+        "rmse": 0.9583136621807875
+      },
+      "root_relative_high_frequency_residual_mm": {
+        "count": 37639,
+        "mean": 0.07877271267385509,
+        "median": 0.047120753464588494,
+        "p95": 0.25028328889328033,
+        "max": 1.8057222874556176,
+        "rmse": 0.12078344095375076
+      },
+      "root_relative_jerk_mm_s3": {
+        "count": 37582,
+        "mean": 1300.5389576978575,
+        "median": 790.9413152976117,
+        "p95": 4147.583030730449,
+        "max": 33397.40763572531,
+        "rmse": 2080.2883773247636
+      },
+      "bone_lengths": {
+        "maximum_coefficient_of_variation": 1.00766762238016e-15,
+        "median_coefficient_of_variation": 4.619668131665383e-16,
+        "median_lengths_mm": [
+          32.84621907427728,
+          25.45581978256489,
+          19.707731444566363,
+          73.21986854807189,
+          32.846219074277265,
+          19.707731444566374,
+          14.780798583424785,
+          76.37321406515007,
+          36.951996458561936,
+          22.99235335199408,
+          16.423109537138647,
+          69.71861877489268,
+          35.30968550484807,
+          21.35004239828023,
+          15.601954060281699,
+          66.83499538323349,
+          26.276975259421825,
+          14.78079858342477,
+          12.317332152853977
+        ]
+      },
+      "algorithm_diagnostics": {
+        "finite_frames": 1981,
+        "total_frames": 1981
+      }
+    },
+    "right": {
+      "finite_frames": 1981,
+      "total_frames": 1981,
+      "primary_reference": "ten photographed CMM surface-marker correspondences",
+      "primary_reference_epe_mm_all_frames": {
+        "count": 19810,
+        "mean": 51.10489429981669,
+        "median": 44.591406764025145,
+        "p95": 110.40640805565292,
+        "max": 213.2836440110938,
+        "rmse": 59.16442290206995
+      },
+      "primary_reference_epe_mm_original_strict_subset": {
+        "count": 13670,
+        "mean": 50.926391051948535,
+        "median": 44.36753847596841,
+        "p95": 109.96278341764481,
+        "max": 209.1264243610969,
+        "rmse": 58.89251504021931
+      },
+      "primary_fingertip_epe_mm_all_frames": {
+        "count": 9905,
+        "mean": 64.16301820211321,
+        "median": 57.46453797422752,
+        "p95": 122.45544791283238,
+        "max": 213.2836440110938,
+        "rmse": 72.34132116580643
+      },
+      "full_19_joint_pseudo_target_epe_mm": {
+        "count": 37639,
+        "mean": 50.66257234589066,
+        "median": 45.3185480400255,
+        "p95": 107.45369656824063,
+        "max": 212.59547831361053,
+        "rmse": 58.55314247690133
+      },
+      "deviation_from_continuous_imu_mm": {
+        "count": 37639,
+        "mean": 0.6216628656786795,
+        "median": 0.3401418106615664,
+        "p95": 2.2111323073849953,
+        "max": 13.133405184279596,
+        "rmse": 1.036307708786459
+      },
+      "root_relative_high_frequency_residual_mm": {
+        "count": 37639,
+        "mean": 0.08304211256400607,
+        "median": 0.04688974626928205,
+        "p95": 0.29309554265790266,
+        "max": 2.0259360230249053,
+        "rmse": 0.13683475297198455
+      },
+      "root_relative_jerk_mm_s3": {
+        "count": 37582,
+        "mean": 1379.2040934515705,
+        "median": 774.2271086911212,
+        "p95": 4820.056088215793,
+        "max": 21865.437020299687,
+        "rmse": 2247.397444018817
+      },
+      "bone_lengths": {
+        "maximum_coefficient_of_variation": 9.302529250775564e-16,
+        "median_coefficient_of_variation": 4.4387041628884576e-16,
+        "median_lengths_mm": [
+          33.56226692565212,
+          26.01075686738039,
+          20.137360155391274,
+          77.48806367763449,
+          33.56226692565211,
+          20.137360155391267,
+          15.103020116543458,
+          80.93282114986475,
+          37.757550291358626,
+          23.493586847956465,
+          16.781133462826066,
+          73.50141809757336,
+          36.07943694507601,
+          21.815473501673885,
+          15.94207678968474,
+          69.91301642078204,
+          26.84981354052169,
+          15.103020116543457,
+          12.585850097119534
+        ]
+      },
+      "algorithm_diagnostics": {
+        "finite_frames": 1981,
+        "total_frames": 1981
+      }
+    }
+  },
+  "take_preparation": {
+    "solver_resampling": {
+      "left": {
+        "source_rows": 6162,
+        "source_rate_hz_median": 177.4266779794318,
+        "maximum_source_bracket_ms": 116.76709399989704,
+        "nearest_sample_age_median_ms": 3.51731299997482,
+        "nearest_sample_age_p95_ms": 28.932080000004134,
+        "finite_output_frames": 1981
+      },
+      "right": {
+        "source_rows": 6162,
+        "source_rate_hz_median": 177.4266779794318,
+        "maximum_source_bracket_ms": 116.76709399989704,
+        "nearest_sample_age_median_ms": 3.51731299997482,
+        "nearest_sample_age_p95_ms": 28.932080000004134,
+        "finite_output_frames": 1981
+      }
+    },
+    "fixed_first_20_percent_registration": {
+      "left": {
+        "scale": 0.821155476856932,
+        "rotation_mocap_from_solver": [
+          [
+            0.1221223149409741,
+            -0.7846339307133072,
+            0.6078122530575063
+          ],
+          [
+            0.992390408615288,
+            0.08682648791159216,
+            -0.08730657412428586
+          ],
+          [
+            0.015729497189635937,
+            0.6138491311147412,
+            0.7892666388159568
+          ]
+        ],
+        "input_frames": 279,
+        "retained_frames": 269,
+        "base_residual_median_mm": 34.63063546103449,
+        "base_residual_p95_mm": 60.0145522958541
+      },
+      "right": {
+        "scale": 0.8390566731413032,
+        "rotation_mocap_from_solver": [
+          [
+            0.49207800226967313,
+            0.7798057302462382,
+            -0.3869912954543265
+          ],
+          [
+            -0.8703683406091451,
+            0.43158302899316686,
+            -0.23705493192584162
+          ],
+          [
+            -0.017837918812735512,
+            0.45347448898500753,
+            0.8910907341523735
+          ]
+        ],
+        "input_frames": 279,
+        "retained_frames": 275,
+        "base_residual_median_mm": 38.01510353043838,
+        "base_residual_p95_mm": 64.33236972050015
+      }
+    },
+    "cmm_guided_ik": {
+      "left": {
+        "endpoint_smoothing_kernel": [
+          0.25,
+          0.5,
+          0.25
+        ],
+        "guide_smoothing_kernel": [
+          0.015625,
+          0.09375,
+          0.234375,
+          0.3125,
+          0.234375,
+          0.09375,
+          0.015625
+        ],
+        "alternating_smoothing_projection_rounds": 4,
+        "fixed_phalanx_lengths_mm": [
+          [
+            39.07079538182393,
+            30.248357714960452
+          ],
+          [
+            32.846219074277265,
+            19.707731444566374,
+            14.780798583424785
+          ],
+          [
+            36.951996458561936,
+            22.99235335199408,
+            16.423109537138647
+          ],
+          [
+            35.30968550484807,
+            21.35004239828023,
+            15.601954060281699
+          ],
+          [
+            26.276975259421825,
+            14.78079858342477,
+            12.317332152853977
+          ]
+        ],
+        "phalanx_length_provenance": {
+          "source": "per-segment median of the calibrated IMU solver pose",
+          "endpoint_feasibility": "uniformly scale only when needed so sum(lengths) is max smoothed CMM base-tip span + 0.5 mm",
+          "maximum_smoothed_cmm_base_tip_span_mm": [
+            68.81915309678438,
+            59.455464324926645,
+            66.58900572019846,
+            62.991778311348654,
+            50.11869019420498
+          ]
+        },
+        "anatomical_validation": {
+          "solver": "constant-curvature exact endpoint IK",
+          "dip_to_pip_flexion_ratio": 0.65,
+          "active_bend_threshold_deg": 5.0,
+          "opposite_bend_count": 0,
+          "active_bend_pair_count": 7924,
+          "opposite_bend_fraction_active_gt_5deg": 0.0,
+          "pip_flexion_deg": {
+            "count": 7924,
+            "mean": 65.12693986857352,
+            "median": 66.16065885768364,
+            "p95": 76.64302610889969,
+            "max": 84.27210840046548,
+            "rmse": 65.64145618949523
+          },
+          "dip_flexion_deg": {
+            "count": 7924,
+            "mean": 42.332510914572794,
+            "median": 43.00442825749443,
+            "p95": 49.81796697078477,
+            "max": 54.77687046030265,
+            "rmse": 42.666946523171916
+          },
+          "thumb_flexion_deg": {
+            "count": 1981,
+            "mean": 77.28735874966748,
+            "median": 79.96969034711158,
+            "p95": 97.02264189031015,
+            "max": 113.40344741534254,
+            "rmse": 78.95782731966862
+          },
+          "fixed_bone_length_drift_mm": {
+            "count": 27734,
+            "mean": 1.0593322650251901e-14,
+            "median": 7.105427357601002e-15,
+            "p95": 2.842170943040401e-14,
+            "max": 6.750155989720952e-14,
+            "rmse": 1.37203259780928e-14
+          },
+          "smoothed_cmm_base_tip_endpoint_epe_mm": {
+            "count": 19810,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "max": 0.0,
+            "rmse": 0.0
+          },
+          "bend_plane_temporal_delta_deg": {
+            "count": 9900,
+            "mean": 2.2001477529178217,
+            "median": 1.7463051298953376,
+            "p95": 5.629870259652267,
+            "max": 10.620456359746028,
+            "rmse": 2.832954942841885
+          },
+          "limits": {
+            "pip_max_deg": 110.0,
+            "dip_max_deg": 75.0,
+            "thumb_max_deg": 115.0,
+            "endpoint_p95_max_mm": 0.7,
+            "bend_plane_temporal_p95_max_deg": 8.0,
+            "bend_plane_temporal_max_deg": 45.0
+          },
+          "acceptance": {
+            "no_opposite_active_bends": true,
+            "pip_within_limit": true,
+            "dip_within_limit": true,
+            "thumb_within_limit": true,
+            "fixed_bone_lengths": true,
+            "endpoint_p95_within_0_7_mm": true,
+            "bend_plane_temporal_p95_within_8_deg": true,
+            "bend_plane_temporal_max_within_45_deg": true
+          }
+        },
+        "marker_epe_to_raw_cmm_mm": {
+          "count": 19810,
+          "mean": 0.1762130725233521,
+          "median": 0.10727670578041483,
+          "p95": 0.5242238364446054,
+          "max": 3.4341900563718926,
+          "rmse": 0.2923084272686891
+        }
+      },
+      "right": {
+        "endpoint_smoothing_kernel": [
+          0.25,
+          0.5,
+          0.25
+        ],
+        "guide_smoothing_kernel": [
+          0.015625,
+          0.09375,
+          0.234375,
+          0.3125,
+          0.234375,
+          0.09375,
+          0.015625
+        ],
+        "alternating_smoothing_projection_rounds": 4,
+        "fixed_phalanx_lengths_mm": [
+          [
+            39.75403541800143,
+            30.777317742968854
+          ],
+          [
+            33.56226692565211,
+            20.137360155391267,
+            15.103020116543457
+          ],
+          [
+            37.757550291358626,
+            23.493586847956465,
+            16.781133462826066
+          ],
+          [
+            36.07943694507601,
+            21.815473501673885,
+            15.94207678968474
+          ],
+          [
+            26.84981354052169,
+            15.103020116543457,
+            12.585850097119534
+          ]
+        ],
+        "phalanx_length_provenance": {
+          "source": "per-segment median of the calibrated IMU solver pose",
+          "endpoint_feasibility": "uniformly scale only when needed so sum(lengths) is max smoothed CMM base-tip span + 0.5 mm",
+          "maximum_smoothed_cmm_base_tip_span_mm": [
+            70.03135316097028,
+            60.767278652887086,
+            66.19290566868446,
+            64.04075446868507,
+            54.01549414850973
+          ]
+        },
+        "anatomical_validation": {
+          "solver": "constant-curvature exact endpoint IK",
+          "dip_to_pip_flexion_ratio": 0.65,
+          "active_bend_threshold_deg": 5.0,
+          "opposite_bend_count": 0,
+          "active_bend_pair_count": 7924,
+          "opposite_bend_fraction_active_gt_5deg": 0.0,
+          "pip_flexion_deg": {
+            "count": 7924,
+            "mean": 62.445335698073656,
+            "median": 65.14864285150995,
+            "p95": 76.22204459779049,
+            "max": 85.0720524846041,
+            "rmse": 63.35895544234327
+          },
+          "dip_flexion_deg": {
+            "count": 7924,
+            "mean": 40.589468203747884,
+            "median": 42.34661785348146,
+            "p95": 49.54432898856387,
+            "max": 55.296834114992734,
+            "rmse": 41.183321037523136
+          },
+          "thumb_flexion_deg": {
+            "count": 1981,
+            "mean": 74.46895972465923,
+            "median": 77.32699552453624,
+            "p95": 93.4996349433697,
+            "max": 111.44906275508022,
+            "rmse": 75.89950873773878
+          },
+          "fixed_bone_length_drift_mm": {
+            "count": 27734,
+            "mean": 8.944488940124237e-15,
+            "median": 7.105427357601002e-15,
+            "p95": 2.1316282072803006e-14,
+            "max": 6.039613253960852e-14,
+            "rmse": 1.1531063063646494e-14
+          },
+          "smoothed_cmm_base_tip_endpoint_epe_mm": {
+            "count": 19810,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0,
+            "max": 0.0,
+            "rmse": 0.0
+          },
+          "bend_plane_temporal_delta_deg": {
+            "count": 9900,
+            "mean": 2.0908774968247643,
+            "median": 1.6743548226597005,
+            "p95": 5.359419302061797,
+            "max": 12.169070414151742,
+            "rmse": 2.689155473749365
+          },
+          "limits": {
+            "pip_max_deg": 110.0,
+            "dip_max_deg": 75.0,
+            "thumb_max_deg": 115.0,
+            "endpoint_p95_max_mm": 0.7,
+            "bend_plane_temporal_p95_max_deg": 8.0,
+            "bend_plane_temporal_max_deg": 45.0
+          },
+          "acceptance": {
+            "no_opposite_active_bends": true,
+            "pip_within_limit": true,
+            "dip_within_limit": true,
+            "thumb_within_limit": true,
+            "fixed_bone_lengths": true,
+            "endpoint_p95_within_0_7_mm": true,
+            "bend_plane_temporal_p95_within_8_deg": true,
+            "bend_plane_temporal_max_within_45_deg": true
+          }
+        },
+        "marker_epe_to_raw_cmm_mm": {
+          "count": 19810,
+          "mean": 0.17494177303716638,
+          "median": 0.10472765438743778,
+          "p95": 0.5561408372988738,
+          "max": 3.0270098276597985,
+          "rmse": 0.2851746573816158
+        }
+      }
+    },
+    "original_strict_validity": {
+      "valid_frames": 1367,
+      "total_frames": 1981,
+      "coverage_percent": 69.0055527511358,
+      "nearest_solver_sample_error_ms": {
+        "left": {
+          "median": 2.3883040000782785,
+          "p95": 15.894094599980237,
+          "max": 19.938476499874014
+        },
+        "right": {
+          "median": 2.3883040000782785,
+          "p95": 15.894094599980237,
+          "max": 19.938476499874014
+        }
+      }
+    },
+    "marker_track_semantics": {
+      "source": "user-supplied Take_005/006/007 #1..#11 marker-ID table and placement photographs; only Take_007 left #1 11781->12503 alias is trajectory-continuity inferred",
+      "tracks": {
+        "left": [
+          [
+            "11781",
+            "12503"
+          ],
+          [
+            "11978"
+          ],
+          [
+            "12003"
+          ],
+          [
+            "12001"
+          ],
+          [
+            "12006"
+          ],
+          [
+            "12013"
+          ],
+          [
+            "12045"
+          ],
+          [
+            "12015"
+          ],
+          [
+            "12076"
+          ],
+          [
+            "12051"
+          ],
+          [
+            "12064"
+          ]
+        ],
+        "right": [
+          [
+            "12436"
+          ],
+          [
+            "12435"
+          ],
+          [
+            "11619"
+          ],
+          [
+            "11614"
+          ],
+          [
+            "11616"
+          ],
+          [
+            "12434"
+          ],
+          [
+            "11625"
+          ],
+          [
+            "11685"
+          ],
+          [
+            "11627"
+          ],
+          [
+            "11630"
+          ],
+          [
+            "12433"
+          ]
+        ]
+      }
+    },
+    "manual_world_translation": {
+      "global_world_xyz_mm": [
+        0.0,
+        -44.0,
+        0.0
+      ],
+      "left_world_xyz_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "right_world_xyz_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rear_offset_mm": 20.0
+    }
+  },
+  "source_assets": {
+    "rgb_video": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/RGB.mp4",
+      "bytes": 103916022,
+      "sha256": "314f4e7981c75a5c487a62ebb869201249df30699bda555c094afa512dcc3d0d"
+    },
+    "camera_intrinsics": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/rgbd_unpack/camera_1_intrinsics.json",
+      "bytes": 2814,
+      "sha256": "7298ba3d82904c6d6b386b8fd58a3e2f773ead4f388702adce06161ef81287b8"
+    },
+    "cmm_markers": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/mocap/Take_007/Take_007.cmm",
+      "bytes": 25078909,
+      "sha256": "25bebdbb079d233b7c71ba94402531a9ed09b87ac690def05b012065b5748a08"
+    },
+    "camera_alignment": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/mocap/Take_007/alignment/camera_cmavatar_alignment.csv",
+      "bytes": 181083,
+      "sha256": "b3333a8dd9f704d3754006ea9c3154980877a211d15db80574e552954adc8360"
+    },
+    "glove_validity_summary": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/aligned/primary/aligned_frame_summary.csv",
+      "bytes": 156355,
+      "sha256": "6273fc5eeaf5b50d3c8c0da0a409b0c131dc223ffebbadef58ae3dff7734ec33"
+    },
+    "left_glove_solver_keypoints": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/solved/primary/left_hand_keypoints.csv",
+      "bytes": 15018285,
+      "sha256": "3b6971e49b9f1e3267fed02355199da4398bf871a62962e97d6f1f869c584bb8"
+    },
+    "right_glove_solver_keypoints": {
+      "path": "thor_new4_20260831_processed/camera_glove_recording_20260831_161912/glove_processing/solved/primary/right_hand_keypoints.csv",
+      "bytes": 15201430,
+      "sha256": "e269f48aa7341d62034513a9fe8cf9fbdb0392b2cf51bb75794232f08780e327"
+    }
+  },
+  "claim_boundary": "MOCAP-conditioned and same-sequence teacher-fit methods optimize this recording's visual adherence and are not independent IMU accuracy or generalization evidence."
+}

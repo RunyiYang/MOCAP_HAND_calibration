@@ -30,6 +30,194 @@ IMU_COMPARISON_SCHEMA = "gt_calib.imu_solved_pose_mocap_comparison_delivery.v1"
 IMU_COMPARISON_SOURCE = PROJECT_ROOT / "imu_mocap_comparison_delivery"
 IMU_COMPARISON_PUBLIC = PUBLIC_ROOT / "downloads/imu-mocap"
 IMU_COMPARISON_WEB_PREFIX = "downloads/imu-mocap/"
+IMU_VISUAL_LAB_SCHEMA = "gt_calib.imu_mocap_visualization_lab.v1"
+IMU_VISUAL_LAB_VALIDATION_SCHEMA = (
+    "gt_calib.imu_mocap_visualization_lab_validation.v1"
+)
+IMU_VISUAL_LAB_METRICS_SCHEMA = (
+    "gt_calib.imu_mocap_visualization_method_metrics.v1"
+)
+IMU_VISUAL_LAB_MOTION_SCHEMA = "gt_calib.imu_mocap_visualization_motion.v1"
+IMU_VISUAL_LAB_SOURCE = PROJECT_ROOT / "imu_mocap_visualization_lab"
+IMU_VISUAL_LAB_PUBLIC = PUBLIC_ROOT / "downloads/imu-visual-lab"
+IMU_VISUAL_LAB_WEB_PREFIX = "downloads/imu-visual-lab/"
+IMU_VISUAL_LAB_TAKE_COUNT = 4
+IMU_VISUAL_LAB_METHOD_COUNT = 7
+IMU_VISUAL_LAB_VIDEO_COUNT = 28
+IMU_VISUAL_LAB_TAKE_IDS = ("take005", "take006a", "take006b", "take007")
+IMU_VISUAL_LAB_SEGMENTS = (
+    (
+        "take005",
+        "camera_glove_recording_20260831_161402/Take_005",
+        0,
+        1867,
+    ),
+    (
+        "take006a",
+        "camera_glove_recording_20260831_161610/Take_006",
+        0,
+        1309,
+    ),
+    (
+        "take006b",
+        "camera_glove_recording_20260831_161610/Take_006",
+        1309,
+        1310,
+    ),
+    (
+        "take007",
+        "camera_glove_recording_20260831_161912/Take_007",
+        0,
+        1981,
+    ),
+)
+IMU_VISUAL_LAB_CAMERA_INTRINSICS = {
+    "take005": {
+        "path": (
+            "thor_new4_20260831_processed/"
+            "camera_glove_recording_20260831_161402/"
+            "rgbd_unpack/camera_1_intrinsics.json"
+        ),
+        "bytes": 2814,
+        "sha256": "05090e1bd9d3f66a29010de6a43afddc99ac9ab07873761fb0c6b295874a642b",
+    },
+    "take006a": {
+        "path": (
+            "thor_new4_20260831_processed/"
+            "camera_glove_recording_20260831_161610/"
+            "rgbd_unpack/camera_1_intrinsics.json"
+        ),
+        "bytes": 2814,
+        "sha256": "8d650632f8f0de8460a4bade8766329b6924d76a2e89481b149b833e8d502d1c",
+    },
+    "take006b": {
+        "path": (
+            "thor_new4_20260831_processed/"
+            "camera_glove_recording_20260831_161610/"
+            "rgbd_unpack/camera_1_intrinsics.json"
+        ),
+        "bytes": 2814,
+        "sha256": "8d650632f8f0de8460a4bade8766329b6924d76a2e89481b149b833e8d502d1c",
+    },
+    "take007": {
+        "path": (
+            "thor_new4_20260831_processed/"
+            "camera_glove_recording_20260831_161912/"
+            "rgbd_unpack/camera_1_intrinsics.json"
+        ),
+        "bytes": 2814,
+        "sha256": "7298ba3d82904c6d6b386b8fd58a3e2f773ead4f388702adce06161ef81287b8",
+    },
+}
+IMU_VISUAL_LAB_METHOD_IDS = (
+    "s2_continuous",
+    "s2_gaussian",
+    "kalman_rts",
+    "posterior_75",
+    "posterior_98",
+    "rbf_self_fit",
+    "guided_ik",
+)
+IMU_VISUAL_LAB_DISPLAY_CONTRACT = {
+    "pose_drawn_on_every_frame": True,
+    "validity_gate_hides_pose": False,
+    "stale_color_change": False,
+    "connector_or_error_lines": False,
+    "per_frame_error_text": False,
+}
+IMU_VISUAL_LAB_ANATOMICAL_SOLVER = "constant-curvature exact endpoint IK"
+IMU_VISUAL_LAB_ANATOMICAL_RATIO = 0.65
+IMU_VISUAL_LAB_ANATOMICAL_THRESHOLD_DEG = 5.0
+IMU_VISUAL_LAB_ANATOMICAL_LIMITS = {
+    "pip_max_deg": 110.0,
+    "dip_max_deg": 75.0,
+    "thumb_max_deg": 115.0,
+    "endpoint_p95_max_mm": 0.7,
+    "bend_plane_temporal_p95_max_deg": 8.0,
+    "bend_plane_temporal_max_deg": 45.0,
+}
+IMU_VISUAL_LAB_ANATOMICAL_ACCEPTANCE = {
+    "no_opposite_active_bends": True,
+    "pip_within_limit": True,
+    "dip_within_limit": True,
+    "thumb_within_limit": True,
+    "fixed_bone_lengths": True,
+    "endpoint_p95_within_0_7_mm": True,
+    "bend_plane_temporal_p95_within_8_deg": True,
+    "bend_plane_temporal_max_within_45_deg": True,
+}
+IMU_VISUAL_LAB_ANATOMICAL_DISTRIBUTIONS = (
+    "pip_flexion_deg",
+    "dip_flexion_deg",
+    "thumb_flexion_deg",
+    "fixed_bone_length_drift_mm",
+    "smoothed_cmm_base_tip_endpoint_epe_mm",
+    "bend_plane_temporal_delta_deg",
+)
+IMU_VISUAL_LAB_MOCAP_CHAINS = [[0, 2, 1], [0, 4, 3], [0, 6, 5], [0, 8, 7], [0, 10, 9]]
+IMU_VISUAL_LAB_RESULT_CHAINS = [
+    [0, 1, 2, 3],
+    [0, 4, 5, 6, 7],
+    [0, 8, 9, 10, 11],
+    [0, 12, 13, 14, 15],
+    [0, 16, 17, 18, 19],
+]
+IMU_VISUAL_LAB_MOTION_LAYERS = [
+    {
+        "id": "mocap-left",
+        "kind": "mocap",
+        "side": "left",
+        "joint_offset": 0,
+        "joint_count": 11,
+        "chains": IMU_VISUAL_LAB_MOCAP_CHAINS,
+    },
+    {
+        "id": "mocap-right",
+        "kind": "mocap",
+        "side": "right",
+        "joint_offset": 11,
+        "joint_count": 11,
+        "chains": IMU_VISUAL_LAB_MOCAP_CHAINS,
+    },
+    {
+        "id": "imu-left",
+        "kind": "result",
+        "side": "left",
+        "joint_offset": 22,
+        "joint_count": 20,
+        "chains": IMU_VISUAL_LAB_RESULT_CHAINS,
+    },
+    {
+        "id": "imu-right",
+        "kind": "result",
+        "side": "right",
+        "joint_offset": 42,
+        "joint_count": 20,
+        "chains": IMU_VISUAL_LAB_RESULT_CHAINS,
+    },
+]
+IMU_VISUAL_LAB_DATASET_SCOPE = {
+    "root": "thor_new4_20260831_processed",
+    "policy": "new dataset only",
+    "published_segments": [
+        {
+            "take_id": take_id,
+            "source": source,
+            "source_first": source_first,
+            "frame_count": frame_count,
+        }
+        for take_id, source, source_first, frame_count in IMU_VISUAL_LAB_SEGMENTS
+    ],
+    "take006_split": {
+        "reason": (
+            "publish four action-review segments from three complete "
+            "synchronized action recordings"
+        ),
+        "windows_are_disjoint": True,
+        "source_output_frames": 2619,
+        "split_output_index": 1309,
+    },
+}
 IMU_COMPARISON_VIDEO_CONTRACTS = (
     (
         1,
@@ -63,6 +251,7 @@ IMU_COMPARISON_VIDEO_CONTRACTS = (
 GENERATED_DELIVERY_WEB_PREFIXES = (
     FINAL_DELIVERY_WEB_PREFIX,
     IMU_COMPARISON_WEB_PREFIX,
+    IMU_VISUAL_LAB_WEB_PREFIX,
 )
 ASSET_MANIFEST_RELATIVE = "data/asset-manifest.json"
 AUTHORED_PUBLIC_ASSETS = (
@@ -1037,13 +1226,778 @@ def mirror_imu_comparison(source: Path, destination: Path) -> list[dict]:
             shutil.rmtree(staging_root)
 
 
+def _validate_imu_visual_lab_anatomical_ik(
+    metrics: dict,
+    *,
+    video_id: str,
+) -> None:
+    """Independently reject missing, stale, or self-inconsistent IK acceptance."""
+
+    preparation = metrics.get("take_preparation")
+    guided = preparation.get("cmm_guided_ik") if isinstance(preparation, dict) else None
+    if not isinstance(guided, dict) or set(guided) != {"left", "right"}:
+        raise ValueError(
+            f"IMU visualization lab anatomical IK contract missing: {video_id}"
+        )
+    distribution_keys = {"count", "mean", "median", "p95", "max", "rmse"}
+    required_keys = {
+        "solver",
+        "dip_to_pip_flexion_ratio",
+        "active_bend_threshold_deg",
+        "opposite_bend_count",
+        "active_bend_pair_count",
+        "opposite_bend_fraction_active_gt_5deg",
+        *IMU_VISUAL_LAB_ANATOMICAL_DISTRIBUTIONS,
+        "limits",
+        "acceptance",
+    }
+    for side in ("left", "right"):
+        side_payload = guided.get(side)
+        validation = (
+            side_payload.get("anatomical_validation")
+            if isinstance(side_payload, dict)
+            else None
+        )
+        if not isinstance(validation, dict) or set(validation) != required_keys:
+            raise ValueError(
+                f"IMU visualization lab anatomical IK contract failed: {video_id}/{side}"
+            )
+        ratio = validation.get("dip_to_pip_flexion_ratio")
+        threshold = validation.get("active_bend_threshold_deg")
+        active_count = validation.get("active_bend_pair_count")
+        opposite_fraction = validation.get("opposite_bend_fraction_active_gt_5deg")
+        if (
+            validation.get("solver") != IMU_VISUAL_LAB_ANATOMICAL_SOLVER
+            or isinstance(ratio, bool)
+            or not isinstance(ratio, (int, float))
+            or float(ratio) != IMU_VISUAL_LAB_ANATOMICAL_RATIO
+            or isinstance(threshold, bool)
+            or not isinstance(threshold, (int, float))
+            or float(threshold) != IMU_VISUAL_LAB_ANATOMICAL_THRESHOLD_DEG
+            or type(validation.get("opposite_bend_count")) is not int
+            or validation.get("opposite_bend_count") != 0
+            or type(active_count) is not int
+            or active_count <= 0
+            or isinstance(opposite_fraction, bool)
+            or not isinstance(opposite_fraction, (int, float))
+            or float(opposite_fraction) != 0.0
+            or validation.get("limits") != IMU_VISUAL_LAB_ANATOMICAL_LIMITS
+            or validation.get("acceptance")
+            != IMU_VISUAL_LAB_ANATOMICAL_ACCEPTANCE
+        ):
+            raise ValueError(
+                f"IMU visualization lab anatomical IK acceptance failed: {video_id}/{side}"
+            )
+
+        distributions: dict[str, dict] = {}
+        for name in IMU_VISUAL_LAB_ANATOMICAL_DISTRIBUTIONS:
+            values = validation.get(name)
+            if (
+                not isinstance(values, dict)
+                or set(values) != distribution_keys
+                or type(values.get("count")) is not int
+                or values.get("count") <= 0
+                or any(
+                    isinstance(values.get(field), bool)
+                    or not isinstance(values.get(field), (int, float))
+                    or not math.isfinite(float(values[field]))
+                    or float(values[field]) < 0.0
+                    for field in ("mean", "median", "p95", "max", "rmse")
+                )
+            ):
+                raise ValueError(
+                    "IMU visualization lab anatomical IK distribution failed: "
+                    f"{video_id}/{side}/{name}"
+                )
+            distributions[name] = values
+        if (
+            float(distributions["pip_flexion_deg"]["max"])
+            > IMU_VISUAL_LAB_ANATOMICAL_LIMITS["pip_max_deg"] + 1e-7
+            or float(distributions["dip_flexion_deg"]["max"])
+            > IMU_VISUAL_LAB_ANATOMICAL_LIMITS["dip_max_deg"] + 1e-7
+            or float(distributions["thumb_flexion_deg"]["max"])
+            > IMU_VISUAL_LAB_ANATOMICAL_LIMITS["thumb_max_deg"] + 1e-7
+            or float(distributions["fixed_bone_length_drift_mm"]["max"]) > 1e-7
+            or float(
+                distributions["smoothed_cmm_base_tip_endpoint_epe_mm"]["p95"]
+            )
+            > IMU_VISUAL_LAB_ANATOMICAL_LIMITS["endpoint_p95_max_mm"]
+            or float(distributions["bend_plane_temporal_delta_deg"]["p95"])
+            > IMU_VISUAL_LAB_ANATOMICAL_LIMITS[
+                "bend_plane_temporal_p95_max_deg"
+            ]
+            or float(distributions["bend_plane_temporal_delta_deg"]["max"])
+            > IMU_VISUAL_LAB_ANATOMICAL_LIMITS[
+                "bend_plane_temporal_max_deg"
+            ]
+        ):
+            raise ValueError(
+                f"IMU visualization lab anatomical IK measured limits failed: {video_id}/{side}"
+            )
+
+
+def _validate_imu_visual_lab_metrics(
+    path: Path,
+    *,
+    video_id: str,
+    take_id: str,
+    method_id: str,
+    source: str,
+    source_first: int,
+    frame_count: int,
+    summary: object,
+) -> None:
+    """Validate formal metrics and the denormalized manifest summary."""
+
+    metrics = _load_json_object(
+        path, label=f"IMU visualization lab metrics for {video_id}"
+    )
+    if (
+        metrics.get("schema") != IMU_VISUAL_LAB_METRICS_SCHEMA
+        or metrics.get("status") != "complete"
+        or metrics.get("take_id") != take_id
+        or metrics.get("method_id") != method_id
+        or metrics.get("source") != source
+        or metrics.get("source_first") != source_first
+        or type(metrics.get("rendered_frames")) is not int
+        or metrics.get("rendered_frames") != frame_count
+        or metrics.get("display_contract") != IMU_VISUAL_LAB_DISPLAY_CONTRACT
+    ):
+        raise ValueError(
+            f"IMU visualization lab metrics contract failed: {video_id}"
+        )
+    source_assets = metrics.get("source_assets")
+    if (
+        not isinstance(source_assets, dict)
+        or source_assets.get("camera_intrinsics")
+        != IMU_VISUAL_LAB_CAMERA_INTRINSICS[take_id]
+    ):
+        raise ValueError(
+            "IMU visualization lab action camera intrinsics provenance failed: "
+            f"{video_id}"
+        )
+    _validate_imu_visual_lab_anatomical_ik(metrics, video_id=video_id)
+
+    pooled = metrics.get("pooled_sides")
+    primary = pooled.get("primary_reference_epe_mm") if isinstance(pooled, dict) else None
+    high_frequency = (
+        pooled.get("root_relative_high_frequency_residual_mm")
+        if isinstance(pooled, dict)
+        else None
+    )
+    primary_median = primary.get("median") if isinstance(primary, dict) else None
+    primary_p95 = primary.get("p95") if isinstance(primary, dict) else None
+    high_frequency_p95 = (
+        high_frequency.get("p95") if isinstance(high_frequency, dict) else None
+    )
+    pooled_values = (primary_median, primary_p95, high_frequency_p95)
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(float(value))
+        or float(value) < 0.0
+        for value in pooled_values
+    ):
+        raise ValueError(
+            f"IMU visualization lab metrics pooled contract failed: {video_id}"
+        )
+
+    expected_summary = {
+        "reference_median_mm": primary_median,
+        "reference_p95_mm": primary_p95,
+        "jitter_p95_mm": high_frequency_p95,
+        "finite_frames": frame_count,
+    }
+    if (
+        not isinstance(summary, dict)
+        or set(summary) != set(expected_summary)
+        or any(
+            isinstance(summary.get(field), bool)
+            or not isinstance(summary.get(field), (int, float))
+            or not math.isfinite(float(summary[field]))
+            for field in (
+                "reference_median_mm",
+                "reference_p95_mm",
+                "jitter_p95_mm",
+            )
+        )
+        or type(summary.get("finite_frames")) is not int
+        or summary != expected_summary
+    ):
+        raise ValueError(
+            f"IMU visualization lab manifest/metrics summary mismatch: {video_id}"
+        )
+
+
+def _validate_imu_visual_lab_motion(
+    path: Path,
+    *,
+    video_id: str,
+    take_id: str,
+    method_id: str,
+    frame_count: int,
+    fps: float,
+) -> float:
+    """Independently validate one browser-decodable dual-layer motion asset."""
+
+    motion = _load_json_object(
+        path, label=f"IMU visualization lab motion for {video_id}"
+    )
+    encoding = motion.get("encoding")
+    layers = motion.get("layers")
+    frames = motion.get("frames")
+    validation = motion.get("validation")
+    view = motion.get("view")
+    if (
+        motion.get("schema") != IMU_VISUAL_LAB_MOTION_SCHEMA
+        or motion.get("take_id") != take_id
+        or motion.get("method_id") != method_id
+        or motion.get("units") != "mm"
+        or type(motion.get("frame_count")) is not int
+        or motion.get("frame_count") != frame_count
+        or isinstance(motion.get("fps"), bool)
+        or not isinstance(motion.get("fps"), (int, float))
+        or not math.isfinite(float(motion["fps"]))
+        or float(motion["fps"]) != fps
+    ):
+        raise ValueError(
+            f"IMU visualization lab motion identity contract failed: {video_id}"
+        )
+
+    if not isinstance(encoding, dict):
+        raise ValueError(
+            f"IMU visualization lab motion encoding contract failed: {video_id}"
+        )
+    quantum_mm = encoding.get("quantum_mm")
+    origin_mm = encoding.get("origin_mm")
+    joint_count = encoding.get("joint_count")
+    values_per_frame = encoding.get("values_per_frame")
+    if (
+        encoding.get("kind") != "frame-major-flat-int32-json"
+        or encoding.get("components") != "XYZ"
+        or isinstance(quantum_mm, bool)
+        or not isinstance(quantum_mm, (int, float))
+        or not math.isfinite(float(quantum_mm))
+        or float(quantum_mm) <= 0.0
+        or not isinstance(origin_mm, list)
+        or len(origin_mm) != 3
+        or any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(float(value))
+            for value in origin_mm
+        )
+        or joint_count != 62
+        or type(values_per_frame) is not int
+        or values_per_frame != joint_count * 3
+    ):
+        raise ValueError(
+            f"IMU visualization lab motion encoding contract failed: {video_id}"
+        )
+
+    if layers != IMU_VISUAL_LAB_MOTION_LAYERS:
+        raise ValueError(
+            f"IMU visualization lab motion layers contract failed: {video_id}"
+        )
+
+    if (
+        not isinstance(frames, list)
+        or len(frames) != frame_count
+        or not all(
+            isinstance(frame, list)
+            and len(frame) == values_per_frame
+            and all(
+                type(value) is int and -(2**31) <= value < 2**31
+                for value in frame
+            )
+            for frame in frames
+        )
+    ):
+        raise ValueError(
+            f"IMU visualization lab motion frames contract failed: {video_id}"
+        )
+
+    if not isinstance(validation, dict):
+        raise ValueError(
+            f"IMU visualization lab motion validation contract failed: {video_id}"
+        )
+    if not isinstance(view, dict):
+        raise ValueError(
+            f"IMU visualization lab motion view contract failed: {video_id}"
+        )
+    reference_extent = view.get("reference_extent_mm")
+    if (
+        view.get("focus") != "per-frame midpoint of MOCAP left/right wrists"
+        or view.get("fixed_across_methods_for_take") is not True
+        or isinstance(reference_extent, bool)
+        or not isinstance(reference_extent, (int, float))
+        or not math.isfinite(float(reference_extent))
+        or float(reference_extent) <= 0.0
+    ):
+        raise ValueError(
+            f"IMU visualization lab motion view contract failed: {video_id}"
+        )
+    maximum_error = validation.get("maximum_quantization_error_mm")
+    if (
+        validation.get("status") != "pass"
+        or type(validation.get("finite_frames")) is not int
+        or validation.get("finite_frames") != frame_count
+        or isinstance(maximum_error, bool)
+        or not isinstance(maximum_error, (int, float))
+        or not math.isfinite(float(maximum_error))
+        or float(maximum_error) < 0.0
+        or float(maximum_error) > float(quantum_mm) / 2.0 + 1e-9
+    ):
+        raise ValueError(
+            f"IMU visualization lab motion validation contract failed: {video_id}"
+        )
+    return float(reference_extent)
+
+
+def validate_imu_visual_lab_for_web(source: Path) -> list[dict]:
+    """Validate the closed 4-take x 7-method visualization-lab bundle.
+
+    The prebuilt lab is intentionally its own trust boundary.  Cloudflare
+    assembly has no raw-data or media-decoder dependency, but it still checks
+    every declared byte/hash, MP4 fast-start structure, the complete method
+    matrix, the full-decode validation receipt, and the exact file inventory.
+    """
+
+    source_input = Path(source).expanduser()
+    if source_input.is_symlink():
+        raise ValueError(f"IMU visualization lab is a symlink: {source_input}")
+    source = source_input.resolve()
+    if not source.is_dir():
+        raise ValueError(f"IMU visualization lab is missing: {source}")
+    if (source.with_name(source.name + ".staging")).exists():
+        raise ValueError("IMU visualization lab staging directory is still present")
+
+    files: dict[str, Path] = {}
+    for path in source.rglob("*"):
+        if path.is_symlink():
+            raise ValueError(f"Symlinks are forbidden in IMU visualization lab: {path}")
+        if path.is_dir():
+            continue
+        if not path.is_file():
+            raise ValueError(f"Non-regular IMU visualization lab entry: {path}")
+        ensure_cloudflare_size(path)
+        files[path.relative_to(source).as_posix()] = path
+
+    required_files = {
+        "README.md",
+        "index.html",
+        "styles.css",
+        "app.js",
+        "manifest.json",
+        "validation.json",
+        "SHA256SUMS.txt",
+    }
+    missing = sorted(required_files - set(files))
+    if missing:
+        raise ValueError(f"IMU visualization lab is missing files: {missing}")
+
+    manifest = _load_json_object(
+        files["manifest.json"], label="IMU visualization lab manifest"
+    )
+    videos = manifest.get("videos")
+    methods = manifest.get("methods")
+    if (
+        manifest.get("schema") != IMU_VISUAL_LAB_SCHEMA
+        or manifest.get("status") != "pass"
+        or manifest.get("take_count") != IMU_VISUAL_LAB_TAKE_COUNT
+        or manifest.get("method_count") != IMU_VISUAL_LAB_METHOD_COUNT
+        or manifest.get("video_count") != IMU_VISUAL_LAB_VIDEO_COUNT
+        or not isinstance(videos, list)
+        or len(videos) != IMU_VISUAL_LAB_VIDEO_COUNT
+    ):
+        raise ValueError(
+            "IMU visualization lab manifest must be a clean 4-take x "
+            "7-method, 28-video pass"
+        )
+    if (
+        not isinstance(methods, list)
+        or [method.get("id") if isinstance(method, dict) else None for method in methods]
+        != list(IMU_VISUAL_LAB_METHOD_IDS)
+    ):
+        raise ValueError(
+            "IMU visualization lab manifest methods must match the canonical IDs"
+        )
+    if manifest.get("dataset_scope") != IMU_VISUAL_LAB_DATASET_SCOPE:
+        raise ValueError(
+            "IMU visualization lab dataset_scope must lock the canonical "
+            "thor_new4 source windows"
+        )
+    expected_segments = {
+        take_id: {
+            "source": source,
+            "source_first": source_first,
+            "frame_count": frame_count,
+        }
+        for take_id, source, source_first, frame_count in IMU_VISUAL_LAB_SEGMENTS
+    }
+
+    required_video_fields = {
+        "order",
+        "id",
+        "take_id",
+        "method_id",
+        "source",
+        "source_first",
+        "filename",
+        "poster",
+        "metrics",
+        "motion",
+        "summary",
+        "frame_count",
+        "codec",
+        "pixel_format",
+        "width",
+        "height",
+        "fps",
+        "bytes",
+        "sha256",
+        "poster_sha256",
+        "metrics_sha256",
+        "motion_bytes",
+        "motion_sha256",
+        "faststart",
+    }
+    orders: list[int] = []
+    video_ids: list[str] = []
+    take_ids: set[str] = set()
+    method_ids: set[str] = set()
+    take_method_pairs: set[tuple[str, str]] = set()
+    video_names: set[str] = set()
+    asset_paths: set[str] = set()
+    frame_counts_by_take: dict[str, int] = {}
+    reference_extents_by_take: dict[str, float] = {}
+    for index, item in enumerate(videos):
+        if not isinstance(item, dict):
+            raise ValueError(f"IMU visualization lab video entry {index} is not an object")
+        missing_fields = sorted(required_video_fields - set(item))
+        if missing_fields:
+            raise ValueError(
+                f"IMU visualization lab video entry {index} is missing fields: "
+                f"{missing_fields}"
+            )
+
+        order = item.get("order")
+        video_id = item.get("id")
+        take_id = item.get("take_id")
+        method_id = item.get("method_id")
+        frame_count = item.get("frame_count")
+        if (
+            type(order) is not int
+            or not isinstance(video_id, str)
+            or not video_id
+            or not isinstance(take_id, str)
+            or not take_id
+            or not isinstance(method_id, str)
+            or not method_id
+            or any("/" in value or "\\" in value for value in (video_id, take_id, method_id))
+            or type(frame_count) is not int
+            or frame_count <= 0
+        ):
+            raise ValueError(f"Invalid IMU visualization lab identity at index {index}")
+        expected_take_id = IMU_VISUAL_LAB_TAKE_IDS[
+            index // IMU_VISUAL_LAB_METHOD_COUNT
+        ]
+        expected_method_id = IMU_VISUAL_LAB_METHOD_IDS[
+            index % IMU_VISUAL_LAB_METHOD_COUNT
+        ]
+        expected_video_id = f"{expected_take_id}-{expected_method_id}"
+        expected_segment = expected_segments[expected_take_id]
+        if (
+            order != index + 1
+            or take_id != expected_take_id
+            or method_id != expected_method_id
+            or video_id != expected_video_id
+            or item.get("source") != expected_segment["source"]
+            or item.get("source_first") != expected_segment["source_first"]
+            or frame_count != expected_segment["frame_count"]
+        ):
+            raise ValueError(
+                "IMU visualization lab canonical take-major/method-minor identity "
+                f"failed at index {index}: expected {expected_video_id}"
+            )
+
+        filename = _safe_delivery_relative_path(
+            item.get("filename"), field=f"imu_visual_lab.videos[{index}].filename"
+        )
+        expected_stem = f"{index + 1:02d}_{expected_take_id}_{expected_method_id}"
+        if (
+            len(filename.parts) != 1
+            or filename.name != f"{expected_stem}.mp4"
+        ):
+            raise ValueError(
+                f"IMU visualization lab filename must be one MP4 basename: {filename}"
+            )
+        video_relative = f"videos/{filename.name}"
+        video = _delivery_artifact(
+            source,
+            video_relative,
+            field=f"imu_visual_lab.videos[{index}].filename",
+            expected_hash=item.get("sha256"),
+            expected_bytes=item.get("bytes"),
+        )
+        _validate_faststart_mp4_structure(video)
+
+        fps = item.get("fps")
+        if (
+            item.get("codec") != "h264"
+            or item.get("pixel_format") != "yuv420p"
+            or item.get("width") != 960
+            or item.get("height") != 540
+            or isinstance(fps, bool)
+            or not isinstance(fps, (int, float))
+            or float(fps) != 30.0
+            or item.get("faststart") is not True
+        ):
+            raise ValueError(
+                f"IMU visualization lab browser media contract failed: {video_id}"
+            )
+
+        poster_relative = _safe_delivery_relative_path(
+            item.get("poster"), field=f"imu_visual_lab.videos[{index}].poster"
+        )
+        metrics_relative = _safe_delivery_relative_path(
+            item.get("metrics"), field=f"imu_visual_lab.videos[{index}].metrics"
+        )
+        motion_relative = _safe_delivery_relative_path(
+            item.get("motion"), field=f"imu_visual_lab.videos[{index}].motion"
+        )
+        if (
+            poster_relative.as_posix() != f"posters/{expected_stem}.jpg"
+        ):
+            raise ValueError(f"Invalid IMU visualization lab poster path: {poster_relative}")
+        if (
+            metrics_relative.as_posix() != f"metrics/{expected_stem}.json"
+        ):
+            raise ValueError(f"Invalid IMU visualization lab metrics path: {metrics_relative}")
+        if (
+            motion_relative.as_posix() != f"motions/{expected_stem}.json"
+        ):
+            raise ValueError(f"Invalid IMU visualization lab motion path: {motion_relative}")
+        _delivery_artifact(
+            source,
+            poster_relative.as_posix(),
+            field=f"imu_visual_lab.videos[{index}].poster",
+            expected_hash=item.get("poster_sha256"),
+        )
+        metrics = _delivery_artifact(
+            source,
+            metrics_relative.as_posix(),
+            field=f"imu_visual_lab.videos[{index}].metrics",
+            expected_hash=item.get("metrics_sha256"),
+        )
+        _validate_imu_visual_lab_metrics(
+            metrics,
+            video_id=video_id,
+            take_id=take_id,
+            method_id=method_id,
+            source=expected_segment["source"],
+            source_first=expected_segment["source_first"],
+            frame_count=frame_count,
+            summary=item.get("summary"),
+        )
+        motion = _delivery_artifact(
+            source,
+            motion_relative.as_posix(),
+            field=f"imu_visual_lab.videos[{index}].motion",
+            expected_hash=item.get("motion_sha256"),
+            expected_bytes=item.get("motion_bytes"),
+        )
+        reference_extent = _validate_imu_visual_lab_motion(
+            motion,
+            video_id=video_id,
+            take_id=take_id,
+            method_id=method_id,
+            frame_count=frame_count,
+            fps=float(fps),
+        )
+        previous_extent = reference_extents_by_take.setdefault(
+            take_id, reference_extent
+        )
+        if previous_extent != reference_extent:
+            raise ValueError(
+                f"IMU visualization lab 3D extent changes across methods for {take_id}"
+            )
+
+        pair = (take_id, method_id)
+        if pair in take_method_pairs:
+            raise ValueError(f"Duplicate IMU visualization lab take/method pair: {pair}")
+        take_method_pairs.add(pair)
+        orders.append(order)
+        video_ids.append(video_id)
+        take_ids.add(take_id)
+        method_ids.add(method_id)
+        if filename.name in video_names:
+            raise ValueError(f"Duplicate IMU visualization lab filename: {filename.name}")
+        video_names.add(filename.name)
+        for relative in (
+            video_relative,
+            poster_relative.as_posix(),
+            metrics_relative.as_posix(),
+            motion_relative.as_posix(),
+        ):
+            if relative in asset_paths:
+                raise ValueError(f"Duplicate IMU visualization lab asset path: {relative}")
+            asset_paths.add(relative)
+        previous_frame_count = frame_counts_by_take.setdefault(take_id, frame_count)
+        if previous_frame_count != frame_count:
+            raise ValueError(
+                f"IMU visualization lab methods disagree on frame count for {take_id}"
+            )
+
+    expected_pairs = {
+        (take, method)
+        for take in IMU_VISUAL_LAB_TAKE_IDS
+        for method in IMU_VISUAL_LAB_METHOD_IDS
+    }
+    if (
+        orders != list(range(1, IMU_VISUAL_LAB_VIDEO_COUNT + 1))
+        or len(set(video_ids)) != IMU_VISUAL_LAB_VIDEO_COUNT
+        or take_ids != set(IMU_VISUAL_LAB_TAKE_IDS)
+        or method_ids != set(IMU_VISUAL_LAB_METHOD_IDS)
+        or take_method_pairs != expected_pairs
+    ):
+        raise ValueError(
+            "IMU visualization lab must contain one unique video for every "
+            "4-take x 7-method pair in canonical order"
+        )
+
+    actual_video_names = {
+        path.name
+        for path in (source / "videos").iterdir()
+        if path.is_file() and not path.is_symlink() and path.suffix.lower() == ".mp4"
+    }
+    if actual_video_names != video_names:
+        raise ValueError("IMU visualization lab videos directory disagrees with manifest")
+
+    validation = _load_json_object(
+        files["validation.json"], label="IMU visualization lab validation"
+    )
+    expected_validation = {
+        "schema": IMU_VISUAL_LAB_VALIDATION_SCHEMA,
+        "status": "pass",
+        "video_count": IMU_VISUAL_LAB_VIDEO_COUNT,
+        "full_decode": True,
+        "manifest_sha256": sha256(files["manifest.json"]),
+        "videos": [
+            {
+                "id": item["id"],
+                "sha256": item["sha256"],
+                "frame_count": item["frame_count"],
+                "codec": item["codec"],
+                "pixel_format": item["pixel_format"],
+                "width": item["width"],
+                "height": item["height"],
+                "fps": float(item["fps"]),
+                "decoded": True,
+            }
+            for item in videos
+        ],
+        "failures": [],
+    }
+    if validation != expected_validation:
+        raise ValueError(
+            "IMU visualization lab validation receipt is stale or does not bind "
+            "the current manifest/video set"
+        )
+
+    expected_file_paths = required_files | asset_paths
+    if set(files) != expected_file_paths:
+        missing_files = sorted(expected_file_paths - set(files))
+        extra_files = sorted(set(files) - expected_file_paths)
+        raise ValueError(
+            "IMU visualization lab file inventory mismatch: "
+            f"missing={missing_files}, extra={extra_files}"
+        )
+
+    checksum_entries: dict[str, str] = {}
+    for line_number, line in enumerate(
+        files["SHA256SUMS.txt"].read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        match = re.fullmatch(r"([0-9a-f]{64})  (.+)", line)
+        if match is None:
+            raise ValueError(
+                f"Malformed IMU visualization lab checksum line {line_number}"
+            )
+        digest, value = match.groups()
+        relative = _safe_delivery_relative_path(
+            value, field=f"imu_visual_lab.SHA256SUMS.txt:{line_number}"
+        ).as_posix()
+        if relative in checksum_entries:
+            raise ValueError(
+                f"Duplicate IMU visualization lab checksum entry: {relative}"
+            )
+        checksum_entries[relative] = digest
+    expected_checksum_paths = set(files) - {"SHA256SUMS.txt"}
+    if set(checksum_entries) != expected_checksum_paths:
+        raise ValueError("IMU visualization lab checksum inventory mismatch")
+    for relative, expected_hash in checksum_entries.items():
+        if sha256(files[relative]) != expected_hash:
+            raise ValueError(f"IMU visualization lab checksum mismatch: {relative}")
+
+    return [
+        {
+            "path": f"downloads/imu-visual-lab/{relative}",
+            "source": f"imu_mocap_visualization_lab/{relative}",
+            "bytes": path.stat().st_size,
+            "sha256": sha256(path),
+        }
+        for relative, path in sorted(files.items())
+    ]
+
+
+def mirror_imu_visual_lab(source: Path, destination: Path) -> list[dict]:
+    """Atomically publish the independently validated visualization lab."""
+
+    source = Path(source).expanduser()
+    destination_input = Path(destination).expanduser()
+    if destination_input.is_symlink():
+        raise ValueError(f"Unsafe IMU visualization lab destination: {destination_input}")
+    destination = destination_input.resolve()
+    source_entries = validate_imu_visual_lab_for_web(source)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.exists() and not destination.is_dir():
+        raise ValueError(f"Unsafe IMU visualization lab destination: {destination}")
+
+    staging_root = Path(
+        tempfile.mkdtemp(prefix=".imu-visual-lab-publish-", dir=destination.parent)
+    )
+    staged = staging_root / "imu-visual-lab"
+    backup = staging_root / "previous-imu-visual-lab"
+    moved_previous = False
+    try:
+        shutil.copytree(source, staged, symlinks=False)
+        staged_entries = validate_imu_visual_lab_for_web(staged)
+        if source_entries != staged_entries:
+            raise ValueError("Staged IMU visualization lab differs from validated source")
+        if destination.exists():
+            destination.rename(backup)
+            moved_previous = True
+        try:
+            staged.rename(destination)
+        except Exception:
+            if moved_previous and backup.exists() and not destination.exists():
+                backup.rename(destination)
+            raise
+        if backup.exists():
+            shutil.rmtree(backup)
+        return staged_entries
+    finally:
+        if staging_root.exists():
+            shutil.rmtree(staging_root)
+
+
 def validate_tracked_public_assets(public_root: Path) -> tuple[dict, list[dict]]:
     """Validate every checked-in public asset recorded by asset-manifest.
 
-    Entries under ``downloads/final-nine`` are intentionally skipped here:
-    that ignored mirror is rebuilt and independently validated from the
-    tracked delivery.  Every other regular file must have a one-to-one
-    manifest entry, exact byte count, and exact SHA-256.
+    Entries under the generated delivery prefixes are intentionally skipped
+    here: those ignored mirrors are rebuilt and independently validated from
+    their tracked source bundles.  Every other regular file must have a
+    one-to-one manifest entry, exact byte count, and exact SHA-256.
     """
 
     public_input = Path(public_root).expanduser()
@@ -1148,6 +2102,7 @@ def assemble_deploy_site(
     public_root: Path = PUBLIC_ROOT,
     final_source: Path = FINAL_DELIVERY_SOURCE,
     imu_comparison_source: Path = IMU_COMPARISON_SOURCE,
+    imu_visual_lab_source: Path = IMU_VISUAL_LAB_SOURCE,
 ) -> Path:
     """Assemble a clean-clone deploy tree from tracked, prebuilt artifacts."""
 
@@ -1160,8 +2115,15 @@ def assemble_deploy_site(
         imu_comparison_source,
         comparison_destination,
     )
+    visual_lab_destination = public_root / "downloads/imu-visual-lab"
+    visual_lab_entries = mirror_imu_visual_lab(
+        imu_visual_lab_source,
+        visual_lab_destination,
+    )
 
-    combined_entries = tracked_entries + final_entries + comparison_entries
+    combined_entries = (
+        tracked_entries + final_entries + comparison_entries + visual_lab_entries
+    )
     combined_paths = [str(item["path"]) for item in combined_entries]
     if len(combined_paths) != len(set(combined_paths)):
         raise ValueError("Deployment assembly produced duplicate asset paths")
@@ -1191,14 +2153,19 @@ def assemble_deploy_site(
     comparison_manifest = json.loads(
         (Path(imu_comparison_source) / "manifest.json").read_text(encoding="utf-8")
     )
+    visual_lab_manifest = json.loads(
+        (Path(imu_visual_lab_source) / "manifest.json").read_text(encoding="utf-8")
+    )
     assembled_manifest = dict(payload)
     assembled_manifest["cloudflareMaxAssetBytes"] = MAX_STATIC_ASSET_BYTES
     assembled_manifest["deploymentAssembly"] = {
-        "mode": "tracked_public_plus_two_tracked_deliveries",
+        "mode": "tracked_public_plus_three_tracked_deliveries",
         "finalDeliverySchema": FINAL_DELIVERY_SCHEMA,
         "finalDeliveryGeneratedAt": delivery_manifest.get("generated_at_utc"),
         "imuComparisonSchema": IMU_COMPARISON_SCHEMA,
         "imuComparisonGeneratedAt": comparison_manifest.get("generated_at_utc"),
+        "imuVisualLabSchema": IMU_VISUAL_LAB_SCHEMA,
+        "imuVisualLabGeneratedAt": visual_lab_manifest.get("generated_at_utc"),
     }
     assembled_manifest["assets"] = sorted(
         combined_entries, key=lambda item: str(item["path"])
@@ -2196,16 +3163,18 @@ def build_source_site() -> int:
             }
         )
 
-    # The downloadable final package is intentionally ignored under
-    # web/public so Git stores only one reviewed copy.  Recreate that mirror
-    # from the tracked delivery on every build, after all authored/source
-    # assets have passed their own checks and before emitting the aggregate
-    # Cloudflare asset manifest.
+    # The downloadable deliveries are intentionally ignored under web/public
+    # so Git stores only one reviewed copy of each.  Recreate those mirrors on
+    # every build after the authored/source assets pass their own checks and
+    # before emitting the aggregate Cloudflare asset manifest.
     manifest.extend(
         mirror_final_delivery(FINAL_DELIVERY_SOURCE, FINAL_DELIVERY_PUBLIC)
     )
     manifest.extend(
         mirror_imu_comparison(IMU_COMPARISON_SOURCE, IMU_COMPARISON_PUBLIC)
+    )
+    manifest.extend(
+        mirror_imu_visual_lab(IMU_VISUAL_LAB_SOURCE, IMU_VISUAL_LAB_PUBLIC)
     )
 
     manifest_path = data_dir / "asset-manifest.json"

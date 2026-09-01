@@ -1,6 +1,6 @@
 {
   "schema": "gt-calib.asset-manifest.v1",
-  "generatedAt": "2026-09-01T11:12:32+00:00",
+  "generatedAt": "2026-09-01T14:54:11+00:00",
   "cloudflareMaxAssetBytes": 26214400,
   "assets": [
     {
@@ -157,7 +157,7 @@
       "path": "data/site-data.json",
       "source": "generated from MOCAP/video + raw-depth/MOCAP alignment + fusion + diagnostic strict metrics and request CSV",
       "bytes": 38389,
-      "sha256": "da1e7ef35f1d145fd3488fe4fcf3148cffd49e398bb5774ba1856c6cce1fe750"
+      "sha256": "36978a1ad61bcf67e35868343dc4c4b265b4e154399fbc528050a3a297713040"
     },
     {
       "path": "downloads/BVH_LOCAL_VIEWER_V1.md",
@@ -252,8 +252,8 @@
     {
       "path": "downloads/daily-2026-09-01.md",
       "source": "docs/daily/2026/2026-09-01.md",
-      "bytes": 9975,
-      "sha256": "d2d8f6803d43555ba69437aa992f6caeedc95fa6484412f9ad2679e745b54cc6"
+      "bytes": 15884,
+      "sha256": "228c22c4800171c1263fffb2db08ec23ced150b81ce4a15d9a081c6cc097b5a1"
     },
     {
       "path": "downloads/dataset-inventory.csv",
@@ -270,8 +270,8 @@
     {
       "path": "downloads/evidence-index.csv",
       "source": "docs/evidence/index.csv",
-      "bytes": 16794,
-      "sha256": "bc9dd17398599222c9165f05d0ad91d0bf96f683999a6e3dcb1ba4e7cdbbc3b4"
+      "bytes": 17861,
+      "sha256": "a0dc6d2b32ad10a4965c9fc2f28dfc42e48827015c4838d2ef5c8797c43a7787"
     },
     {
       "path": "downloads/final-nine/README.md",
@@ -522,8 +522,8 @@
     {
       "path": "downloads/gt-calib-evidence-2026-08-31.zip",
       "source": "generated allow-listed evidence bundle (videos excluded)",
-      "bytes": 3306532,
-      "sha256": "521c92a2a569f0b821179e9e90f42c8755a1106c5356a709639d508b4002117e"
+      "bytes": 3309434,
+      "sha256": "c22c4bb92b4507d86e1142fda4c7edf00d95e8f10c76ab2ee5d117fa75387f77"
     },
     {
       "path": "downloads/imu-mocap/README.md",
@@ -662,6 +662,720 @@
       "source": "imu_mocap_comparison_delivery/videos/04_take007_imu_solved_vs_cmm_mocap.mp4",
       "bytes": 14699618,
       "sha256": "10bdcf6b473d53f7767e7a12824c37f53ebdb172e65d3739dbaec96f06edaf16"
+    },
+    {
+      "path": "downloads/imu-visual-lab/README.md",
+      "source": "imu_mocap_visualization_lab/README.md",
+      "bytes": 2767,
+      "sha256": "acafb67d10596f7f4057e4af83e3204b198c4e0adeac574aa8c97c3e21f3a04a"
+    },
+    {
+      "path": "downloads/imu-visual-lab/SHA256SUMS.txt",
+      "source": "imu_mocap_visualization_lab/SHA256SUMS.txt",
+      "bytes": 11893,
+      "sha256": "d91c1b7c493be655d67fbf1a15216cc7d357d82eb622e866c2c7836c4ed69186"
+    },
+    {
+      "path": "downloads/imu-visual-lab/app.js",
+      "source": "imu_mocap_visualization_lab/app.js",
+      "bytes": 12823,
+      "sha256": "ba07380a16eb39ac787d187dc4226ff42352747bbe12793557ebe89c40fbcfde"
+    },
+    {
+      "path": "downloads/imu-visual-lab/index.html",
+      "source": "imu_mocap_visualization_lab/index.html",
+      "bytes": 6277,
+      "sha256": "8c7fb13b12901d7cbc942fc93c97b522eea3c1d60c6a95ca318777ec6d8ce9ed"
+    },
+    {
+      "path": "downloads/imu-visual-lab/manifest.json",
+      "source": "imu_mocap_visualization_lab/manifest.json",
+      "bytes": 48479,
+      "sha256": "a0cbc268d94b91751c0aaf41b1a78f0aa7eec14cae6800d643b543ef912d79d6"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/01_take005_s2_continuous.json",
+      "source": "imu_mocap_visualization_lab/metrics/01_take005_s2_continuous.json",
+      "bytes": 21725,
+      "sha256": "4f2bbe7c68e5eb7f4a9dfc4ddad5bbcd911956f4e0cbbbed9d2edf9273290c9d"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/02_take005_s2_gaussian.json",
+      "source": "imu_mocap_visualization_lab/metrics/02_take005_s2_gaussian.json",
+      "bytes": 21869,
+      "sha256": "5429c407e0dc5c7fb71e5845d6371633f30c208002b75a2b6ce30b7f6a340bd9"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/03_take005_kalman_rts.json",
+      "source": "imu_mocap_visualization_lab/metrics/03_take005_kalman_rts.json",
+      "bytes": 21881,
+      "sha256": "8e2ee83ca0fa19d38e9712c4841bbd5f30e718cab77ce22ebf01890f2b3a7143"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/04_take005_posterior_75.json",
+      "source": "imu_mocap_visualization_lab/metrics/04_take005_posterior_75.json",
+      "bytes": 21835,
+      "sha256": "4fec030313cef8b3e45c43fe80d155b8237220668663bc9ee4da8bbad784b6de"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/05_take005_posterior_98.json",
+      "source": "imu_mocap_visualization_lab/metrics/05_take005_posterior_98.json",
+      "bytes": 21841,
+      "sha256": "51527e0a6f981269006932a48fffd32387e408d5ef61e7a1406d1552dea2a156"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/06_take005_rbf_self_fit.json",
+      "source": "imu_mocap_visualization_lab/metrics/06_take005_rbf_self_fit.json",
+      "bytes": 23356,
+      "sha256": "45cdece88d200836a1f74311c2572809739e94f3d5a29a951d583a43e998989c"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/07_take005_guided_ik.json",
+      "source": "imu_mocap_visualization_lab/metrics/07_take005_guided_ik.json",
+      "bytes": 21833,
+      "sha256": "033da05f3750d89a7db9f6c5bb9d1177d2bd813f424c13173216f6d31d6f9c3b"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/08_take006a_s2_continuous.json",
+      "source": "imu_mocap_visualization_lab/metrics/08_take006a_s2_continuous.json",
+      "bytes": 21997,
+      "sha256": "3d8d2c36e0959758303ef02b53416b2f0554454e84c1cb339f60b238f3264046"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/09_take006a_s2_gaussian.json",
+      "source": "imu_mocap_visualization_lab/metrics/09_take006a_s2_gaussian.json",
+      "bytes": 22163,
+      "sha256": "82cb4eab89ac2f6239e405ca0b117d76f7b73f69cf73f5c067bbfb253c477ec0"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/10_take006a_kalman_rts.json",
+      "source": "imu_mocap_visualization_lab/metrics/10_take006a_kalman_rts.json",
+      "bytes": 22163,
+      "sha256": "96b38d2a54564670ea1d719d291189aa9851eaa39284f98c8a6fd0a954b48e23"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/11_take006a_posterior_75.json",
+      "source": "imu_mocap_visualization_lab/metrics/11_take006a_posterior_75.json",
+      "bytes": 22095,
+      "sha256": "3874bc958b046148bd25bb6dec2549cc8465efd5ce126b5bd3522932404a93da"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/12_take006a_posterior_98.json",
+      "source": "imu_mocap_visualization_lab/metrics/12_take006a_posterior_98.json",
+      "bytes": 22117,
+      "sha256": "1e245ed3573eab1543a5b304698d414b7f7876adde0feb18a2d9c2a75b84a77f"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/13_take006a_rbf_self_fit.json",
+      "source": "imu_mocap_visualization_lab/metrics/13_take006a_rbf_self_fit.json",
+      "bytes": 23626,
+      "sha256": "abfa4e4b77cb0931280084dc45163f736db1b3effafd460f4a2de62f7eed472c"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/14_take006a_guided_ik.json",
+      "source": "imu_mocap_visualization_lab/metrics/14_take006a_guided_ik.json",
+      "bytes": 22111,
+      "sha256": "8edd7f705a0a5362e138b93ffe1c46ff5a82975b5076698b2058d053331c6cf0"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/15_take006b_s2_continuous.json",
+      "source": "imu_mocap_visualization_lab/metrics/15_take006b_s2_continuous.json",
+      "bytes": 22015,
+      "sha256": "d2e05dd20d2ed7848bad4351401f9b4049f500c2adfb1e8e686f7c0a49496871"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/16_take006b_s2_gaussian.json",
+      "source": "imu_mocap_visualization_lab/metrics/16_take006b_s2_gaussian.json",
+      "bytes": 22159,
+      "sha256": "d5680c837ca59a4cea7edbd42464bdbae50e4f5d6f19c62bd2b9a0b9afd174c1"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/17_take006b_kalman_rts.json",
+      "source": "imu_mocap_visualization_lab/metrics/17_take006b_kalman_rts.json",
+      "bytes": 22177,
+      "sha256": "e61fa7dba152dc3fa4e1f41440095c2a187fb7f381f2693d001f1966f2d88a04"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/18_take006b_posterior_75.json",
+      "source": "imu_mocap_visualization_lab/metrics/18_take006b_posterior_75.json",
+      "bytes": 22114,
+      "sha256": "9b32cc301a88220053fef7c984c3a7f8d3d560181744eb87bd960c0944d0609b"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/19_take006b_posterior_98.json",
+      "source": "imu_mocap_visualization_lab/metrics/19_take006b_posterior_98.json",
+      "bytes": 22126,
+      "sha256": "d1a3a35cbb1173ec089f426da9e605a20fa9e48cc98966ada120d1a5004fd4b7"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/20_take006b_rbf_self_fit.json",
+      "source": "imu_mocap_visualization_lab/metrics/20_take006b_rbf_self_fit.json",
+      "bytes": 23642,
+      "sha256": "56481e41413134e4322feba71bc6aea2118d06fc39e266bc9cb820f82e7a5a82"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/21_take006b_guided_ik.json",
+      "source": "imu_mocap_visualization_lab/metrics/21_take006b_guided_ik.json",
+      "bytes": 22116,
+      "sha256": "f439afa6a02bda26eab5bc91e9b0b34130e0ef16e6240f127b9e0c8a4dc59b30"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/22_take007_s2_continuous.json",
+      "source": "imu_mocap_visualization_lab/metrics/22_take007_s2_continuous.json",
+      "bytes": 21755,
+      "sha256": "350c69078f782242d19c9dc8a4da9567e6e23023582eb1dae6e9056763ffbb91"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/23_take007_s2_gaussian.json",
+      "source": "imu_mocap_visualization_lab/metrics/23_take007_s2_gaussian.json",
+      "bytes": 21901,
+      "sha256": "fc6a108381721efa7c64f22fad264ef8bd4866ed4d80f1d255362a95cf309f01"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/24_take007_kalman_rts.json",
+      "source": "imu_mocap_visualization_lab/metrics/24_take007_kalman_rts.json",
+      "bytes": 21909,
+      "sha256": "35bfe65eeb0da8251bbcfde30a08dc6a6e7ee88238f8a1d6d1f1cde832b6d57b"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/25_take007_posterior_75.json",
+      "source": "imu_mocap_visualization_lab/metrics/25_take007_posterior_75.json",
+      "bytes": 21872,
+      "sha256": "4ab479cffef1c081a9f817495e4e9655880196e76ae194814a5ffd1ab9757088"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/26_take007_posterior_98.json",
+      "source": "imu_mocap_visualization_lab/metrics/26_take007_posterior_98.json",
+      "bytes": 21871,
+      "sha256": "60365566e05721a25bd9b795cc81b41fb32732403a01fa6433f0bee69cf7ab56"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/27_take007_rbf_self_fit.json",
+      "source": "imu_mocap_visualization_lab/metrics/27_take007_rbf_self_fit.json",
+      "bytes": 23372,
+      "sha256": "d59477d62f98874bc754f25d6bfd358014ef3b55acad751abda819ab04b31257"
+    },
+    {
+      "path": "downloads/imu-visual-lab/metrics/28_take007_guided_ik.json",
+      "source": "imu_mocap_visualization_lab/metrics/28_take007_guided_ik.json",
+      "bytes": 21858,
+      "sha256": "b5abeb6068d10eafbd27bf9e9a3348101fb500fd52222b93885ee36d1e67207b"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/01_take005_s2_continuous.json",
+      "source": "imu_mocap_visualization_lab/motions/01_take005_s2_continuous.json",
+      "bytes": 1564013,
+      "sha256": "7323af222a94062f46f507560cd6f9de13e2988806fc6a305599a0456da50846"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/02_take005_s2_gaussian.json",
+      "source": "imu_mocap_visualization_lab/motions/02_take005_s2_gaussian.json",
+      "bytes": 1563996,
+      "sha256": "3e723f4a3ddbb2e8d28a3ec099bba61771ffd82275fd8e5856d60d3f9c29f8f4"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/03_take005_kalman_rts.json",
+      "source": "imu_mocap_visualization_lab/motions/03_take005_kalman_rts.json",
+      "bytes": 1563977,
+      "sha256": "c6248aa24425a88ce7767cd271fa29326691d08dc8f25bd20bd60195730b1e7e"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/04_take005_posterior_75.json",
+      "source": "imu_mocap_visualization_lab/motions/04_take005_posterior_75.json",
+      "bytes": 1564087,
+      "sha256": "c34308eefe1150c824532afdce0b28ba8311ecc91cf18fa86e89fa2e8ed90f9e"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/05_take005_posterior_98.json",
+      "source": "imu_mocap_visualization_lab/motions/05_take005_posterior_98.json",
+      "bytes": 1562060,
+      "sha256": "87033f4476bbcc07b357454ed01cbbe898f89b045d7780a578dd6d3d6b495976"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/06_take005_rbf_self_fit.json",
+      "source": "imu_mocap_visualization_lab/motions/06_take005_rbf_self_fit.json",
+      "bytes": 1561801,
+      "sha256": "0942716054b8f06689be7dadeab6aecfb893ca85a41473e192958cc4dad93504"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/07_take005_guided_ik.json",
+      "source": "imu_mocap_visualization_lab/motions/07_take005_guided_ik.json",
+      "bytes": 1561798,
+      "sha256": "29adbfb5486011dea9dd4336754d925c80ef8963bd90697f0000a6028aec61d4"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/08_take006a_s2_continuous.json",
+      "source": "imu_mocap_visualization_lab/motions/08_take006a_s2_continuous.json",
+      "bytes": 1087195,
+      "sha256": "189e7444c497ac0a3379ae7ee5c58d21a180a55907c5ea974fb3972a29f0ff44"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/09_take006a_s2_gaussian.json",
+      "source": "imu_mocap_visualization_lab/motions/09_take006a_s2_gaussian.json",
+      "bytes": 1087186,
+      "sha256": "8fb4a4160344f02a061aa9e3a796c8969b9c65d33bc1199dc48b5a4b3bcf4dd9"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/10_take006a_kalman_rts.json",
+      "source": "imu_mocap_visualization_lab/motions/10_take006a_kalman_rts.json",
+      "bytes": 1087182,
+      "sha256": "0cb149d45cf5b66252b37928217d1b549b77637ac4e3e1e1b2cd6bc22f5f0658"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/11_take006a_posterior_75.json",
+      "source": "imu_mocap_visualization_lab/motions/11_take006a_posterior_75.json",
+      "bytes": 1088644,
+      "sha256": "418a325e825e53849fa4d0ff8b27bccfc7df61a5f34d4f76e5554b3142eccb31"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/12_take006a_posterior_98.json",
+      "source": "imu_mocap_visualization_lab/motions/12_take006a_posterior_98.json",
+      "bytes": 1087208,
+      "sha256": "1811574e7ca85a58078cd41ef10153be0b97ea0fb39471867304dc60d6857616"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/13_take006a_rbf_self_fit.json",
+      "source": "imu_mocap_visualization_lab/motions/13_take006a_rbf_self_fit.json",
+      "bytes": 1087065,
+      "sha256": "10177a290ce54069266ddde1f3abac82e878681998eedecaa08312b19b18d146"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/14_take006a_guided_ik.json",
+      "source": "imu_mocap_visualization_lab/motions/14_take006a_guided_ik.json",
+      "bytes": 1087062,
+      "sha256": "318039cd63373671b6505c1e6f95c2785189785e80e0767a113357ea049078da"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/15_take006b_s2_continuous.json",
+      "source": "imu_mocap_visualization_lab/motions/15_take006b_s2_continuous.json",
+      "bytes": 1082339,
+      "sha256": "2f3e1ef081804f765eaf162f84793d5e7ea92a3b8c28a0d98f66753ef267e1b3"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/16_take006b_s2_gaussian.json",
+      "source": "imu_mocap_visualization_lab/motions/16_take006b_s2_gaussian.json",
+      "bytes": 1082324,
+      "sha256": "389a684d4702ba55ddf16066fa240e393c6d514368519a110904d72eec0fe18c"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/17_take006b_kalman_rts.json",
+      "source": "imu_mocap_visualization_lab/motions/17_take006b_kalman_rts.json",
+      "bytes": 1082334,
+      "sha256": "991a6de96068d843d2b0111f273876bb7daa454293e379de0c14211852f150a3"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/18_take006b_posterior_75.json",
+      "source": "imu_mocap_visualization_lab/motions/18_take006b_posterior_75.json",
+      "bytes": 1081650,
+      "sha256": "c720efc1b38d3fb817299effafaf851e30c2f40cb077208585a76346a7c39842"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/19_take006b_posterior_98.json",
+      "source": "imu_mocap_visualization_lab/motions/19_take006b_posterior_98.json",
+      "bytes": 1079695,
+      "sha256": "299791224f6b35f6e88a1b34b68beaf40a941092e3de079b2c2241ed8a4d4064"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/20_take006b_rbf_self_fit.json",
+      "source": "imu_mocap_visualization_lab/motions/20_take006b_rbf_self_fit.json",
+      "bytes": 1079428,
+      "sha256": "85fe5a151cc40e0569609efe5dc421bdf4b89a01be7db36cd15e0b4baa21a070"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/21_take006b_guided_ik.json",
+      "source": "imu_mocap_visualization_lab/motions/21_take006b_guided_ik.json",
+      "bytes": 1079425,
+      "sha256": "c9eff7c96ca87127e8ca461dd3c6928095592b501f6d451a92eb70ea3e4e0521"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/22_take007_s2_continuous.json",
+      "source": "imu_mocap_visualization_lab/motions/22_take007_s2_continuous.json",
+      "bytes": 1754287,
+      "sha256": "fe7223d0ec539f6ab6929c8c97c856c5776b0f797e4f36d31fe7b41a45b48282"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/23_take007_s2_gaussian.json",
+      "source": "imu_mocap_visualization_lab/motions/23_take007_s2_gaussian.json",
+      "bytes": 1754301,
+      "sha256": "dca90adfb2b74fbb8d334169d863b171e3a5d6d8ed0f38c9da36102886bc909d"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/24_take007_kalman_rts.json",
+      "source": "imu_mocap_visualization_lab/motions/24_take007_kalman_rts.json",
+      "bytes": 1754273,
+      "sha256": "6e2ebf0f6c685c211870ddaead34ad3ef596222e75a9ec89ecd5654ec3ddd6a1"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/25_take007_posterior_75.json",
+      "source": "imu_mocap_visualization_lab/motions/25_take007_posterior_75.json",
+      "bytes": 1748541,
+      "sha256": "56cbf5b7deab2e91c21e01bd113a0d883efffbd273b9771a23f08e01e7e6ad37"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/26_take007_posterior_98.json",
+      "source": "imu_mocap_visualization_lab/motions/26_take007_posterior_98.json",
+      "bytes": 1742359,
+      "sha256": "7fa92661a2d64c8a16fd0e6b109d077bbe35d8d22a2b82313b1590f99da946a2"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/27_take007_rbf_self_fit.json",
+      "source": "imu_mocap_visualization_lab/motions/27_take007_rbf_self_fit.json",
+      "bytes": 1741683,
+      "sha256": "c55738344234decf2d66d45f0f5b3faa46c279b6744255684913cd629cdc4557"
+    },
+    {
+      "path": "downloads/imu-visual-lab/motions/28_take007_guided_ik.json",
+      "source": "imu_mocap_visualization_lab/motions/28_take007_guided_ik.json",
+      "bytes": 1741680,
+      "sha256": "93796ba175cbe46058d36a968bd3d4f684d235511b007c7cb02e7383d9124379"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/01_take005_s2_continuous.jpg",
+      "source": "imu_mocap_visualization_lab/posters/01_take005_s2_continuous.jpg",
+      "bytes": 1060299,
+      "sha256": "8d893c1df56b86e7c8586906e48447ee69ddb26412234745ff75dfcc54bfd0ab"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/02_take005_s2_gaussian.jpg",
+      "source": "imu_mocap_visualization_lab/posters/02_take005_s2_gaussian.jpg",
+      "bytes": 1058124,
+      "sha256": "4fd04c3a7d7f3169957daa206434f9e445942eab2e4d13c6b9d62e53a999f932"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/03_take005_kalman_rts.jpg",
+      "source": "imu_mocap_visualization_lab/posters/03_take005_kalman_rts.jpg",
+      "bytes": 1061479,
+      "sha256": "e0350f5a3c9cf32be6dbd73c6850dfc0898d0386a86d301e68c331c2de50df86"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/04_take005_posterior_75.jpg",
+      "source": "imu_mocap_visualization_lab/posters/04_take005_posterior_75.jpg",
+      "bytes": 1043336,
+      "sha256": "b5ad161decca9811db4c02b412c45a53c1a05e35f7bcbbadd025f3be529a15ec"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/05_take005_posterior_98.jpg",
+      "source": "imu_mocap_visualization_lab/posters/05_take005_posterior_98.jpg",
+      "bytes": 1041761,
+      "sha256": "0ad0a3d7690e180eb3720a839a51aed39eae1c8d9be2c363bacfd74e09cd3a29"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/06_take005_rbf_self_fit.jpg",
+      "source": "imu_mocap_visualization_lab/posters/06_take005_rbf_self_fit.jpg",
+      "bytes": 1044184,
+      "sha256": "0daf31c9b00fe29c0192805eb6aa2a3decabc0bb48dc9eee918a86a989870667"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/07_take005_guided_ik.jpg",
+      "source": "imu_mocap_visualization_lab/posters/07_take005_guided_ik.jpg",
+      "bytes": 1057190,
+      "sha256": "0327189327f1cb4e9721f240b06706495d3ec4637e6415a2c7d380c10a9adcf1"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/08_take006a_s2_continuous.jpg",
+      "source": "imu_mocap_visualization_lab/posters/08_take006a_s2_continuous.jpg",
+      "bytes": 1076788,
+      "sha256": "15db33ecc6464dd9b4e64309a9ad745f087fb01aee7e09695209e1b36be82d00"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/09_take006a_s2_gaussian.jpg",
+      "source": "imu_mocap_visualization_lab/posters/09_take006a_s2_gaussian.jpg",
+      "bytes": 1074805,
+      "sha256": "51ae271e590b0d746529eae9531692e7989d30faa1eab01a7f813c27a7cf3b71"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/10_take006a_kalman_rts.jpg",
+      "source": "imu_mocap_visualization_lab/posters/10_take006a_kalman_rts.jpg",
+      "bytes": 1078315,
+      "sha256": "1b3cb5aa0b0fff89699731eae20d68947a156add4697fed28a45bc4ccfd3f356"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/11_take006a_posterior_75.jpg",
+      "source": "imu_mocap_visualization_lab/posters/11_take006a_posterior_75.jpg",
+      "bytes": 1058096,
+      "sha256": "f3b6141fca1634946f94ec5f06b7fc3fa190ec79ad3d4fa6c6b34d4c5af50a51"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/12_take006a_posterior_98.jpg",
+      "source": "imu_mocap_visualization_lab/posters/12_take006a_posterior_98.jpg",
+      "bytes": 1056978,
+      "sha256": "9538f5b0575fe80365d282b75842adde94940166b6ab2846c4659c5ae09c945a"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/13_take006a_rbf_self_fit.jpg",
+      "source": "imu_mocap_visualization_lab/posters/13_take006a_rbf_self_fit.jpg",
+      "bytes": 1059247,
+      "sha256": "65a95b3451f924be001164a4a696b999c7ec3d0ae1e346b8a5293befa12991f9"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/14_take006a_guided_ik.jpg",
+      "source": "imu_mocap_visualization_lab/posters/14_take006a_guided_ik.jpg",
+      "bytes": 1072084,
+      "sha256": "483bee1ed728437be7e0f8e2d0dc826bf6f05b7fc0686af7257f4c468c9ccafe"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/15_take006b_s2_continuous.jpg",
+      "source": "imu_mocap_visualization_lab/posters/15_take006b_s2_continuous.jpg",
+      "bytes": 1096413,
+      "sha256": "ad5eb5bc035f2ad2f3c33a3475d9a6fbfa491aa5b7204f370779f446475f1e74"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/16_take006b_s2_gaussian.jpg",
+      "source": "imu_mocap_visualization_lab/posters/16_take006b_s2_gaussian.jpg",
+      "bytes": 1094730,
+      "sha256": "a5ccfd29c2c57734d68ae6be97afdb9495165e8e828c6e92eb16f160083d2f6d"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/17_take006b_kalman_rts.jpg",
+      "source": "imu_mocap_visualization_lab/posters/17_take006b_kalman_rts.jpg",
+      "bytes": 1098261,
+      "sha256": "d1dffabd9c8d16c86d7ad13eaab3643b888fe6a5302992bf80abc81f45758b30"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/18_take006b_posterior_75.jpg",
+      "source": "imu_mocap_visualization_lab/posters/18_take006b_posterior_75.jpg",
+      "bytes": 1078908,
+      "sha256": "e72b9ea6fa462ce6eaa860fbba0b62a5dc73d8ec6d0d1d8668de12cb542f4be3"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/19_take006b_posterior_98.jpg",
+      "source": "imu_mocap_visualization_lab/posters/19_take006b_posterior_98.jpg",
+      "bytes": 1077720,
+      "sha256": "4711b95f8a397f400238aada56798bc3a2770f6f4d54f5ae8509a40ca71bec17"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/20_take006b_rbf_self_fit.jpg",
+      "source": "imu_mocap_visualization_lab/posters/20_take006b_rbf_self_fit.jpg",
+      "bytes": 1080083,
+      "sha256": "01e49c9f10bc282267391e4f67803cc0ce5bf199f373f7b8545e53863643e6a4"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/21_take006b_guided_ik.jpg",
+      "source": "imu_mocap_visualization_lab/posters/21_take006b_guided_ik.jpg",
+      "bytes": 1092560,
+      "sha256": "f8a2742c7cdf387519c9de7cb64110e890286a774fea1b14de5be91b49c6618d"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/22_take007_s2_continuous.jpg",
+      "source": "imu_mocap_visualization_lab/posters/22_take007_s2_continuous.jpg",
+      "bytes": 1083782,
+      "sha256": "09bf212d6038035d10b563a9fe9ff86e454c1d72a02d2f6a0ff0bd8538493aa5"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/23_take007_s2_gaussian.jpg",
+      "source": "imu_mocap_visualization_lab/posters/23_take007_s2_gaussian.jpg",
+      "bytes": 1081580,
+      "sha256": "dc2b67040b9b29fdaf825a3c478f56ed636692794fe23824301f4f5711291493"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/24_take007_kalman_rts.jpg",
+      "source": "imu_mocap_visualization_lab/posters/24_take007_kalman_rts.jpg",
+      "bytes": 1084742,
+      "sha256": "a05daf47fddfa8da522d3845899701fc05fb25690441f0567d91d3c2dc269b2c"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/25_take007_posterior_75.jpg",
+      "source": "imu_mocap_visualization_lab/posters/25_take007_posterior_75.jpg",
+      "bytes": 1069578,
+      "sha256": "201e1bf7b0f378c7568710d5b0e1d5556ef65bb9459f6f0cd89431102fb001d7"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/26_take007_posterior_98.jpg",
+      "source": "imu_mocap_visualization_lab/posters/26_take007_posterior_98.jpg",
+      "bytes": 1067361,
+      "sha256": "bb277d3c12c25ad053ed9279885f3cc3d053a09088160346ed847d358e5734ee"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/27_take007_rbf_self_fit.jpg",
+      "source": "imu_mocap_visualization_lab/posters/27_take007_rbf_self_fit.jpg",
+      "bytes": 1069137,
+      "sha256": "4ad7c0df1cfdda52d5710dcb34c9fb5b01a47a187302aead58c84e312dc6cd03"
+    },
+    {
+      "path": "downloads/imu-visual-lab/posters/28_take007_guided_ik.jpg",
+      "source": "imu_mocap_visualization_lab/posters/28_take007_guided_ik.jpg",
+      "bytes": 1082214,
+      "sha256": "8ab0c4e157892c7a189819a28552090bd28183f3972098b09fef883cc3c48a37"
+    },
+    {
+      "path": "downloads/imu-visual-lab/styles.css",
+      "source": "imu_mocap_visualization_lab/styles.css",
+      "bytes": 5365,
+      "sha256": "d269b2135c7af5b126d96cc8a03cf695bbf997a4c3812d40c1f14bab9beee940"
+    },
+    {
+      "path": "downloads/imu-visual-lab/validation.json",
+      "source": "imu_mocap_visualization_lab/validation.json",
+      "bytes": 8596,
+      "sha256": "e84a6d2b886926145ac0b8a317d9e669fad2fc9d48e633da79a922fd87f33433"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/01_take005_s2_continuous.mp4",
+      "source": "imu_mocap_visualization_lab/videos/01_take005_s2_continuous.mp4",
+      "bytes": 11197377,
+      "sha256": "8d7a64930dd53a63103797613a30b40d33cc2917b446ad28411113ac6a55df50"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/02_take005_s2_gaussian.mp4",
+      "source": "imu_mocap_visualization_lab/videos/02_take005_s2_gaussian.mp4",
+      "bytes": 11230111,
+      "sha256": "ef4fe66a254ec90a31234e3fd3360ce731e135f6de07f47875ecc25302d06f13"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/03_take005_kalman_rts.mp4",
+      "source": "imu_mocap_visualization_lab/videos/03_take005_kalman_rts.mp4",
+      "bytes": 11181003,
+      "sha256": "640b7c31212efcc0b6a3fdcadf14e1df667fe8d0dd65e485b23715f92abffb36"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/04_take005_posterior_75.mp4",
+      "source": "imu_mocap_visualization_lab/videos/04_take005_posterior_75.mp4",
+      "bytes": 11491493,
+      "sha256": "f6cea6b64de0a0759e59905b88c58fcfe573d62bd7c84d5c2960aaa08509efc8"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/05_take005_posterior_98.mp4",
+      "source": "imu_mocap_visualization_lab/videos/05_take005_posterior_98.mp4",
+      "bytes": 11519352,
+      "sha256": "2993f24d1ba94bce72fc74877ad6ca48661486193e086ce29c1b92b44a3f7959"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/06_take005_rbf_self_fit.mp4",
+      "source": "imu_mocap_visualization_lab/videos/06_take005_rbf_self_fit.mp4",
+      "bytes": 11479296,
+      "sha256": "8214e7079ce6401a6499a8689f8090c8e6b0d7082e555273ac6aac3b171c2965"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/07_take005_guided_ik.mp4",
+      "source": "imu_mocap_visualization_lab/videos/07_take005_guided_ik.mp4",
+      "bytes": 11480576,
+      "sha256": "412d105677dd70bc2ae119ed14d7f5eae1a9bb97bd6711cee8370fdaad985ff6"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/08_take006a_s2_continuous.mp4",
+      "source": "imu_mocap_visualization_lab/videos/08_take006a_s2_continuous.mp4",
+      "bytes": 8461635,
+      "sha256": "2f407fd7eabba8e52caf9a39a0597934cc5954c2984f768de7d8a96cbef08ada"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/09_take006a_s2_gaussian.mp4",
+      "source": "imu_mocap_visualization_lab/videos/09_take006a_s2_gaussian.mp4",
+      "bytes": 8535228,
+      "sha256": "d3890e9e7e5330d14fba32665d2a8cba0c875d2fd511a0a3c6e0367a255cac2c"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/10_take006a_kalman_rts.mp4",
+      "source": "imu_mocap_visualization_lab/videos/10_take006a_kalman_rts.mp4",
+      "bytes": 8614788,
+      "sha256": "d63cdc037804482112f2c3fe11116ec57aade104691b7a7029a7955bb703f332"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/11_take006a_posterior_75.mp4",
+      "source": "imu_mocap_visualization_lab/videos/11_take006a_posterior_75.mp4",
+      "bytes": 8930350,
+      "sha256": "23e6d551274d37ffea70ceacd36c0cc4ffff31c8c69ff2f27338603ceefda77c"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/12_take006a_posterior_98.mp4",
+      "source": "imu_mocap_visualization_lab/videos/12_take006a_posterior_98.mp4",
+      "bytes": 8853304,
+      "sha256": "6b70e2fa79faeac13fe1ec4f3db7f5027d13c49535410ed5b7a93f684552019c"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/13_take006a_rbf_self_fit.mp4",
+      "source": "imu_mocap_visualization_lab/videos/13_take006a_rbf_self_fit.mp4",
+      "bytes": 8831965,
+      "sha256": "aa07262fde533df45e760058bc9cd479192b5ee22859e1a546a64c9d6c6541e7"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/14_take006a_guided_ik.mp4",
+      "source": "imu_mocap_visualization_lab/videos/14_take006a_guided_ik.mp4",
+      "bytes": 8862607,
+      "sha256": "3b616e31af52fb053c805d0e272557116394ddcd4c61c0d6e4f3cc7e4d075d87"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/15_take006b_s2_continuous.mp4",
+      "source": "imu_mocap_visualization_lab/videos/15_take006b_s2_continuous.mp4",
+      "bytes": 7735587,
+      "sha256": "d3e5484cb255ccbc1155148bca6286ecb3a225cc319dc2770e7bd8344b5b5d54"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/16_take006b_s2_gaussian.mp4",
+      "source": "imu_mocap_visualization_lab/videos/16_take006b_s2_gaussian.mp4",
+      "bytes": 7785742,
+      "sha256": "71a9dc02c3cf853b8c560135f8e64c82441f8176e083aff814133d68f6aad92f"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/17_take006b_kalman_rts.mp4",
+      "source": "imu_mocap_visualization_lab/videos/17_take006b_kalman_rts.mp4",
+      "bytes": 7829876,
+      "sha256": "531700b0a6415259c1ef45aae2f0dd31d9c6c1989a9fc82976cfb4e0361d4a5f"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/18_take006b_posterior_75.mp4",
+      "source": "imu_mocap_visualization_lab/videos/18_take006b_posterior_75.mp4",
+      "bytes": 8046962,
+      "sha256": "033b06e6ae89717807eb47295ba09a4fb75019296d1385c01d452ecfbc97e4e7"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/19_take006b_posterior_98.mp4",
+      "source": "imu_mocap_visualization_lab/videos/19_take006b_posterior_98.mp4",
+      "bytes": 7985586,
+      "sha256": "9e0f7f26fc2ba4232b35c4c56a590bc8741343dd91718434fc5a5d494b65b892"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/20_take006b_rbf_self_fit.mp4",
+      "source": "imu_mocap_visualization_lab/videos/20_take006b_rbf_self_fit.mp4",
+      "bytes": 8029630,
+      "sha256": "6160871153a305be14abf15140be87faece74eecda45278d57d8facca0c5608b"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/21_take006b_guided_ik.mp4",
+      "source": "imu_mocap_visualization_lab/videos/21_take006b_guided_ik.mp4",
+      "bytes": 8044925,
+      "sha256": "f516c17d10be7f119f601ec4e92818b13a8e246e562a93d164474e459fcf5e0b"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/22_take007_s2_continuous.mp4",
+      "source": "imu_mocap_visualization_lab/videos/22_take007_s2_continuous.mp4",
+      "bytes": 13326953,
+      "sha256": "019f9ae120219042d94d2719272fdb99c1fc21d72598d2fc62a31331d17d6834"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/23_take007_s2_gaussian.mp4",
+      "source": "imu_mocap_visualization_lab/videos/23_take007_s2_gaussian.mp4",
+      "bytes": 13427725,
+      "sha256": "4625700ba4b7d9e3da99acede3957218eff7baab7c267cc177beb13d99ee1119"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/24_take007_kalman_rts.mp4",
+      "source": "imu_mocap_visualization_lab/videos/24_take007_kalman_rts.mp4",
+      "bytes": 13463589,
+      "sha256": "78c8c30de461f59a7d735d904073c8fa99f4b4fb02fc1bac70a0b22a8a50b664"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/25_take007_posterior_75.mp4",
+      "source": "imu_mocap_visualization_lab/videos/25_take007_posterior_75.mp4",
+      "bytes": 13899340,
+      "sha256": "bbd98c644ea33c1f53e8e8584afeec4afb246e58c780dc9e159f19de9faacfe9"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/26_take007_posterior_98.mp4",
+      "source": "imu_mocap_visualization_lab/videos/26_take007_posterior_98.mp4",
+      "bytes": 13905886,
+      "sha256": "01ee8cedbb2722a6a9e1a7a7c4df57b5605d6b4635e93c1dd9860ff35aaec578"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/27_take007_rbf_self_fit.mp4",
+      "source": "imu_mocap_visualization_lab/videos/27_take007_rbf_self_fit.mp4",
+      "bytes": 13908873,
+      "sha256": "4be16e41a83e955b4b16b2b0bd0191bb6a27ab430946dcd5b2a896ba0a8f6fd9"
+    },
+    {
+      "path": "downloads/imu-visual-lab/videos/28_take007_guided_ik.mp4",
+      "source": "imu_mocap_visualization_lab/videos/28_take007_guided_ik.mp4",
+      "bytes": 13920292,
+      "sha256": "8c5e129191ffb84a6e5401caee54d2e2a327fa88e9ecb24aeb58761c671e9391"
     },
     {
       "path": "downloads/mocap-root-fusion-profile-take-000.json",
@@ -1035,5 +1749,14 @@
       "bytes": 32625,
       "sha256": "9816b045395f96e789dc0607d45d92309b70093247d48143dbdb1e5057ce3137"
     }
-  ]
+  ],
+  "deploymentAssembly": {
+    "mode": "tracked_public_plus_three_tracked_deliveries",
+    "finalDeliverySchema": "gt_calib.final_nine_video_delivery.v1",
+    "finalDeliveryGeneratedAt": "2026-08-31T20:42:52.552392+00:00",
+    "imuComparisonSchema": "gt_calib.imu_solved_pose_mocap_comparison_delivery.v1",
+    "imuComparisonGeneratedAt": "2026-09-01T10:50:36.268243+00:00",
+    "imuVisualLabSchema": "gt_calib.imu_mocap_visualization_lab.v1",
+    "imuVisualLabGeneratedAt": "2026-09-01T14:25:30.170704+00:00"
+  }
 }

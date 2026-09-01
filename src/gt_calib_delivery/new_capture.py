@@ -10,7 +10,7 @@ import re
 import shutil
 import subprocess
 import tarfile
-from typing import Iterable, Sequence
+from typing import Iterable, Mapping, Sequence
 
 import cv2
 import numpy as np
@@ -623,6 +623,7 @@ def load_new_capture(
     *,
     recording: str = ACTION_RECORDING,
     take: str = ACTION_TAKE,
+    marker_tracks: Mapping[str, Sequence[Sequence[str]]] = MARKER_TRACKS,
 ) -> NewCapture:
     root = Path(dataset_root) / recording
     rgb_path = root / "rgbd_unpack" / "RGB.mp4"
@@ -657,7 +658,15 @@ def load_new_capture(
         intrinsics_path,
         expected_recording=recording,
     )
-    markers = load_marker_tracks(cmm_path, clock.target_cmm_counter)
+    normalized_marker_tracks = {
+        side: tuple(tuple(track) for track in marker_tracks[side])
+        for side in ANATOMICAL_SIDES
+    }
+    markers = load_marker_tracks(
+        cmm_path,
+        clock.target_cmm_counter,
+        marker_tracks=normalized_marker_tracks,
+    )
     return NewCapture(
         root=root,
         recording=recording,
@@ -669,7 +678,7 @@ def load_new_capture(
         camera=camera,
         clock=clock,
         marker_world_mm=markers,
-        marker_tracks=MARKER_TRACKS,
+        marker_tracks=normalized_marker_tracks,
         source_rgb_frame_count=rgb_count,
         source_depth_frame_count=depth_count,
     )

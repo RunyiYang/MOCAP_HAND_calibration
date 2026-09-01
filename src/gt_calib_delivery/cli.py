@@ -21,6 +21,10 @@ from .imu_mocap_comparison import (
     build_comparison_delivery,
     validate_comparison_delivery,
 )
+from .imu_visualization_lab import (
+    build_visualization_lab,
+    validate_visualization_lab,
+)
 
 
 def project_root() -> Path:
@@ -83,6 +87,23 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=Path,
     )
     validate_comparison.add_argument("--full-decode", action="store_true")
+
+    visual_lab = subparsers.add_parser(
+        "build-imu-visual-lab",
+        help=(
+            "Build 28 no-flicker/no-connector videos across four takes and "
+            "seven IMU smoothing, MOCAP-fusion, neural-fit, and IK methods."
+        ),
+    )
+    visual_lab.add_argument("--destination", type=Path)
+    visual_lab.add_argument("--manual-profile", type=Path)
+
+    validate_visual_lab = subparsers.add_parser(
+        "validate-imu-visual-lab",
+        help="Validate the 4-take x 7-method IMU visualization lab.",
+    )
+    validate_visual_lab.add_argument("--destination", type=Path)
+    validate_visual_lab.add_argument("--full-decode", action="store_true")
     build.add_argument(
         "--manual-profile",
         type=Path,
@@ -188,6 +209,27 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "validate-imu-comparison":
         result = validate_comparison_delivery(
             _project_path(args.destination, root / "imu_mocap_comparison_delivery"),
+            full_decode=args.full_decode,
+        )
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0 if result["status"] == "pass" else 2
+    if args.command == "build-imu-visual-lab":
+        lab_profile = _project_path(
+            args.manual_profile,
+            root
+            / "calibration_profiles"
+            / "operator_y_minus_44_all_hand_overlays.v1.json",
+        )
+        output = build_visualization_lab(
+            root,
+            _project_path(args.destination, root / "imu_mocap_visualization_lab"),
+            manual_profile=lab_profile,
+        )
+        print(output)
+        return 0
+    if args.command == "validate-imu-visual-lab":
+        result = validate_visualization_lab(
+            _project_path(args.destination, root / "imu_mocap_visualization_lab"),
             full_decode=args.full_decode,
         )
         print(json.dumps(result, ensure_ascii=False, indent=2))

@@ -1,8 +1,10 @@
 # GT Calib 文档入口
 
-- 当前状态：`verified_final_nine_bvh_fk_y_minus_44 + verified_imu_mocap_supplement`
+- 当前状态：`verified_final_nine + verified_imu_mocap_supplement + verified_imu_visual_lab_new_data_only`
 - 最近更新：2026-09-01
-- 当前数据版本：`20260829_take000-002 + thor_new4_take007 + no_glove_155410 + 20260831_tabletop_worldcalib`
+- 当前数据版本：final-nine/supplement 为 `20260829_take000-002 +
+  thor_new4_take007 + no_glove_155410`；IMU visual lab 为
+  `thor_new4_take005-007_only + 20260831_tabletop_worldcalib`。
 - 最新日报：[2026-09-01](daily/2026/2026-09-01.md)
 - 数据契约：[dataset/README.md](dataset/README.md)
 - 数据清单：[dataset/datalist.csv](dataset/datalist.csv)
@@ -10,6 +12,7 @@
 - 新采集与新世界坐标理解：[NEW_CAPTURE_2026-08-31.md](dataset/NEW_CAPTURE_2026-08-31.md)
 - Take_007 CMM 对齐合同：[TAKE007_CMM_ALIGNMENT_V1.md](calibration/TAKE007_CMM_ALIGNMENT_V1.md)
 - IMU 解算 pose × MOCAP 对比：[IMU_SOLVED_VS_MOCAP_V1.md](calibration/IMU_SOLVED_VS_MOCAP_V1.md)
+- IMU → MOCAP 七方案可视化实验室：[IMU_VISUALIZATION_LAB_V1.md](calibration/IMU_VISUALIZATION_LAB_V1.md)
 - 九视频人工 XYZ 合同：[FINAL_NINE_MANUAL_XYZ_V1.md](calibration/FINAL_NINE_MANUAL_XYZ_V1.md)
 - 评估协议：[CROSS_TAKE_EVALUATION.md](protocols/CROSS_TAKE_EVALUATION.md)
 - 当前推荐 calibrated fusion：[MOCAP_ROOT_FUSION_V1.md](calibration/MOCAP_ROOT_FUSION_V1.md)
@@ -24,6 +27,26 @@
 - 变更日志：[CHANGELOG.md](CHANGELOG.md)
 
 ## 当前一句话结论
+
+当前最优先的 `imu_mocap_visualization_lab/` 已改为只使用
+`thor_new4_20260831_processed`：`Take_005` full、`Take_006 A/B` 两个
+不重叠窗口、`Take_007` full，每段 7 个方法，并在网页中同步显示
+2D 视频和可旋转的 3D 手骨架。旧 Take 01/02/03 不再属于这个 visual
+lab。四个动作段均使用 operator `Y=-44 mm` 手部 display correction。
+Take_005/006/007 的 marker ID 依据用户提供的编号表和实物照片，
+不是根据空间距离推断；Take_007 左 thumb-tip 的 logical track 为
+`11781→12503`。网页默认 `guided_ik` 已升级为 fixed-phalanx
+constant-curvature Anatomical IK：PIP/DIP 同向弯曲且锁定时间连续
+hemisphere；真实六只手的 opposite-bend fraction 均为 `0`。新数据 only
+包已完成 28/28 full decode、checksum、逐帧
+可见性、2D↔3D 合同和本地/公网 Chrome 验收；没有沿用旧混合包数字。
+
+`155410` 是 98 帧 calibration-only recording：`0` glove packets、无
+solved pose、无 CMM。它只是无手套的 CS-400/RGB 标定证据，不伪装成
+第四个手部动作段，也不应用 `Y=-44 mm` 手部偏移。
+
+下述 `imu_mocap_comparison_delivery/` 仍是另一个保留的历史
+supplement，与新数据 only visual lab 的 4×7 矩阵不混用。
 
 新增的 `imu_mocap_comparison_delivery/` 是最终九视频之外的独立
 supplement，不改动 canonical 9-video manifest。它对每个 RGB 帧直接
@@ -112,8 +135,17 @@ Take 02/03 的 fusion P95 仍为 joint 86.06–97.44 mm、tip 104.87–113.80 mm
 - IMU-solved × MOCAP supplement 的 4/4 H.264 已 full decode；每帧 CSV
   明确分开 nearest-row display 与 strict-score mask，不会再因门控把手画面
   整体隐藏。
-- 全量回归为 `169 passed in 115.83s`，覆盖真实 bundle、MP4 full-decode
-  record、包内 profile、网站 mirror 和伪 MP4/篡改 metrics/CSV 负例。
+- IMU visual lab 的发布范围可明确为 Take_005 full、Take_006
+  A/B 无重叠窗口和 Take_007 full；它们均来自 thor_new4，不再混入
+  旧 BVH take。Marker 表与 `11781→12503` alias 已写入数据合同。
+- IMU visual lab 页面同步 2D video 与 3D Canvas；新包 45,269/45,269
+  帧双手 RESULT 可见，Chrome 已加载到
+  `3D ready · 62 joints · 1981 frames`。
+- 独立 parity 审计排除了全局 Z 轴翻转；直接翻 solver Z 会把 all-10
+  CMM median/P95 从 `35.9/91.3 mm` 恶化到 `80.0/179.3 mm`。旧版
+  “局部 Z 翻转”来自 PIP/DIP 镜像 IK branch，现已由 Anatomical IK 消除。
+- 当前代码全量回归为 `199 passed in 157.93s`；新 visual-lab 另有独立
+  28/28 full decode、45,269 帧可见性和浏览器运行时验收。
 
 ## 当前不可宣称
 
@@ -128,6 +160,14 @@ Take 02/03 的 fusion P95 仍为 joint 86.06–97.44 mm、tip 104.87–113.80 mm
 - 不能把 `PtpTimeStamp` 称为已验证的绝对 PTP epoch；当前仅使用其高分辨率相对节拍并由 Windows `TimeStamp` affine anchor。
 - 不能报告手套绝对腕部平移、方向或完整 6DoF 精度；fusion 的 wrist translation 与 orientation 均来自 MOCAP。
 - 不能把同段拟合结果称为独立测试精度。
+- 不能把 Take_006 A/B 称为两个 independent capture；它们是同一
+  recording 的两个无重叠时间窗口。
+- 不能把只有 98 帧标定画面、0 glove packet、无 solved pose 和无 CMM
+  的 155410 称为手部动作段。
+- 不能把已 superseded 的旧 Take 01/02/03 + Take_007 混合 visual-lab 包
+  的 hash、ranking 或 full-decode 记录复用为新数据 only 包的证据；当前
+  manifest SHA-256 是
+  `a0cbc268d94b91751c0aaf41b1a78f0aa7eec14cae6800d643b543ef912d79d6`。
 - 不能把全局表单中的 `Y=-44 mm` 解释为 2026-08-29 与 2026-08-31 共用的一条
   物理外参；实现会把同一数值分别复制到每段自己的 MOCAP world。
 - 不能把 operator XYZ display correction、BVH FK 投影或其视觉改善称为独立
@@ -168,6 +208,24 @@ uv run gt-calib-delivery validate-imu-comparison \
 
 本地网页为 `http://127.0.0.1:8811/downloads/imu-mocap/`；完整可下载目录是
 `/home/runyi/Project/hands_reloc/GT_calib/imu_mocap_comparison_delivery/`。
+
+## 快速复现新数据 only IMU visual lab
+
+```bash
+cd /home/runyi/Project/hands_reloc/GT_calib
+
+uv run gt-calib-delivery build-imu-visual-lab \
+  --destination rebuilt_imu_mocap_visualization_lab \
+  --manual-profile calibration_profiles/operator_y_minus_44_all_hand_overlays.v1.json
+uv run gt-calib-delivery validate-imu-visual-lab \
+  --destination rebuilt_imu_mocap_visualization_lab --full-decode
+python web/build_site.py --source
+```
+
+新包必须仅包含 `take005/take006a/take006b/take007`，每段恰好 7 个
+method MP4 和 7 个对应 motion JSON。`155410` 只能出现在 manifest 的
+calibration-evidence provenance 中，不能出现在可选动作列表中。完整算法和
+3D 验收合同见 [IMU_VISUALIZATION_LAB_V1.md](calibration/IMU_VISUALIZATION_LAB_V1.md)。
 
 ## 每日交付最小流程
 
