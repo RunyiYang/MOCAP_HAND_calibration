@@ -1,0 +1,85 @@
+# DESIGN CONFIGURATION ONLY: no training implementation is provided by this file.
+schema: handcalib.research_proposal.v1
+status: proposed_not_trained
+seed: 42
+inputs:
+  glove_mode: solved_pose
+  raw_imu_enabled: false
+  metric_depth_enabled: false # enable only after native depth audit passes
+  sensor_count: null # must be supplied from verified hardware manifest
+  acquisition_and_arrival_times_required: true
+  mocap_at_inference: false
+  crop_from_test_mocap: false
+geometry:
+  representation: audited_native_skeleton
+  require_skeleton_spec: true
+  fixed_bone_lengths_per_session: true
+  anatomical_mapping_old_takes:
+    glove_indices: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+    bvh_indices: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+  take007_label_type: surface_markers_not_joint_centers
+  test_mocap_registration: forbidden
+model:
+  visual_backbone: pretrained_hand_features_to_select
+  freeze_visual_backbone_initially: true
+  image_crop_size: 256
+  retain_crop_transform_and_intrinsics: true
+  glove_token_dim: 128
+  glove_graph_layers: 2
+  fast_gru_hidden: 256
+  fast_gru_layers: 2
+  slow_gru_hidden: 64
+  session_code_dim: 32
+  correction: augmented_error_state_filter
+  covariance: positive_definite_root_finger_blocks
+  include_calibration_uncertainty: true
+  stochastic_latent_dim: 0 # optional 32 after deterministic rollout baseline
+  carry_state_across_chunks: true
+  hold_slow_calibration_without_reliable_anchor: true
+  delayed_vision_update: acquisition_state_then_repropagate
+training:
+  optimizer: AdamW
+  fusion_lr: 0.0003
+  visual_finetune_lr: 0.00001
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  batch_sequences_target: 16
+  supervised_chunk_seconds: [2, 4]
+  dynamics_chunk_seconds: [2, 8]
+  persistent_stream_seconds: [30, 60]
+  pilot_steps: [5000, 10000]
+  final_comparison_seeds: [42, 43, 44]
+  rotation_and_covariance_math: float32
+  split_before_windowing: true
+  validation_selection: held_out_session_subject_as_available
+loss:
+  mean_reduce_by_valid_count_and_dimension: true
+  scales: {position_m: 0.01, rotation_deg: 5.0, reprojection_px: 5.0}
+  weights:
+    joints: 1.0
+    markers: 1.0 # only valid calibrated marker observations
+    root_translation: 1.0 # only independent root GT
+    rotation: 0.2 # only calibrated rotational GT
+    velocity: 0.1
+    reprojection: 0.05
+    depth: 0.05 # inactive while metric_depth_enabled is false
+    raw_sensor: 0.1 # inactive while raw_imu_enabled is false
+    rollout: 0.2 # ramp from zero
+    calibration: 0.01
+    joint_limits: 0.01
+    kl: 0.0 # optional anneal to 0.001 with stochastic latent
+  fingertip_relative_weight: 2.0
+  missing_label_policy: disable_loss
+  nll_after_warmup: replace_corresponding_deterministic_likelihood
+  covariance_floor_ceiling: estimate_and_freeze_from_training_validation
+  label_covariance: include_when_available
+evaluation:
+  forecast_horizons_ms: [100, 250, 500, 1000]
+  forecast_future_modalities: none
+  camera_outage_seconds: [0.1, 0.5, 1, 2, 5, 10]
+  camera_outage_glove_input: causal_only
+  long_session_target_minutes: [20, 30]
+  procrustes_primary_metric: false
+  report_output_coverage: true
+  report_end_to_end_latency: true
+  confidence_interval_unit: subject_or_session
