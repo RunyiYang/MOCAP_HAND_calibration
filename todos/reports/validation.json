@@ -1,0 +1,66 @@
+{
+  "schema": "handcalib.software_validation.v1",
+  "date": "2026-09-23",
+  "repository_base_commit": "7d586f33ac96a6a5360f98e37954afd2be0ffa43",
+  "environment": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "numpy": "2.3.5",
+    "pytest": "9.0.2",
+    "cuda_available": false
+  },
+  "tests": {
+    "command": "python -m pytest train/tests -q",
+    "passed": 25,
+    "failed": 0,
+    "duration_seconds": 4.7
+  },
+  "cli_checks": [
+    "dataset.synthetic",
+    "dataset.validate",
+    "train.fit (2 synthetic optimizer steps, CPU)",
+    "train.evaluate (test and free forecasts, synthetic)",
+    "train.predict (label-free synthetic export)"
+  ],
+  "default_model_parameters": 1547129,
+  "resume_test": "4 uninterrupted steps equal 2 steps + resume to step 4; exact CPU state_dict equality",
+  "fit_test": "25 local optimizer iterations on a 4-frame synthetic fixture; final loss <70% of initial",
+  "limitations": [
+    "No real acquisition files were available; proprietary raw-export adapter is an agent task.",
+    "No CUDA, cluster training, distributed run, or scheduler job was launched.",
+    "Original delivery regression suite was not run in this separate source-only test workspace.",
+    "Synthetic fixture scores are not hand-tracking results."
+  ],
+  "source_sha256": {
+    "dataset/__init__.py": "246e6bb7a7d64b0b71e2c967a9a3b67f709ab001f1c8bbbf56a7478dc5dede61",
+    "dataset/alignment.py": "2a982e4589f1f1b98032d611de3941131e2f52ee9ad549c94eeb18629c522fc4",
+    "dataset/pack.py": "88208d71f68eeb4f842f5ac9bda2231ad5b7e8e8c8f7e84280990201a7995aca",
+    "dataset/sequence.py": "5096850c4c29df0512ebae4937c00d330b5f6dcb384d4b599ab83f22eca31e18",
+    "dataset/synthetic.py": "5a3931f9e70fb592d9679913249259d43ca9adf01a6985e005d22e5c9aefde7d",
+    "dataset/validate.py": "ba11f5c47796e02230257d629fb08fb2bb94e72efd209e08179bda241570d894",
+    "models/__init__.py": "246e6bb7a7d64b0b71e2c967a9a3b67f709ab001f1c8bbbf56a7478dc5dede61",
+    "models/encoders.py": "a53a3ec1eccee79782a9ebbd0a48ef703ff53e6a75a3ecbcc188380bad7fbb79",
+    "models/geometry.py": "de94296b1ca5d08f0678bacddf5f3d0ac25458a9530235d17d441159461804c8",
+    "models/handcalib.py": "55de96f3f5387cc7bd3970f29739ec39324102cd13b41ef8be3e3a003119d385",
+    "train/__init__.py": "246e6bb7a7d64b0b71e2c967a9a3b67f709ab001f1c8bbbf56a7478dc5dede61",
+    "train/common.py": "dca59ad87fafcf647e2f6655b61ecab1f4a5c294d2b3e83bb511bbba384420a1",
+    "train/configs/fixed_noise.json": "4ad24f88ebe8ac0fddea0c0c774f0f48a2c1365f49796336296e97be6c04f4b2",
+    "train/configs/glove_only.json": "ee8d8a823b623737104ad2153e47547c352bfbd9e85a5dea8114c5b89b319551",
+    "train/configs/no_dynamics.json": "61246e8111eea0d04522cd8531c2244965d854e4326d47489ee04cadfc327083",
+    "train/configs/no_slow.json": "a4f38ba1d6869fbe8668821bd68e335e79bf1443bffcf7c9ef43ffde6a1beeaa",
+    "train/configs/rgb_image.json": "13cadd0ba3944d172bfd000f6d667a68c70b3e04259f6afe7e0d5616ee5333e7",
+    "train/configs/rgbd_image.json": "90d07e90d0dc4a1e28763becb2128d933dcaeb707585c39a356842867902e538",
+    "train/configs/smoke.json": "62de2810f22f8e22628d245486a7cd21b22585a098c820cf07efc73a3bee5c63",
+    "train/configs/solved_pose.json": "f5882530c1ba44885fe58241768db442c97632d17181a740b18024181102ca20",
+    "train/configs/supervised_warmup.json": "c81c8a42c06d4b33070797ef9095056c526b23bf1b6118266a2c46fe59f937fc",
+    "train/evaluate.py": "2909c40cc62b3a48981e5ead57f2946502561a20365255a0c1a5621de37e1698",
+    "train/fit.py": "a9e5556fdae70e84df7b5fb9aecf7c50076a1704258e1ed7ca6e1267389f1361",
+    "train/losses.py": "89b736ebfb2af837a44559138b9efa3bff6b13784b0cf6c608b23eb558ee5e1e",
+    "train/predict.py": "9215ab45e2f9206f0c5aa94bc5357b33abf5dd8ae4dbd206e9e49913c64b339d",
+    "train/tests/conftest.py": "bc2aea913463aa2bc257cd7d000dddcfefe4036fa2df36cda3fa5dc8a7019914",
+    "train/tests/test_causality.py": "5cf9e83446313a63432dc431853f6de1d613ac6a4915aebcb5d15a9a51bdcd9d",
+    "train/tests/test_dataset.py": "e3b2201eb35a8969582212702359d4c73b5366472a9ec3b4f66f4eb68078dd11",
+    "train/tests/test_geometry.py": "b116fddd804c1eee432e3e1c6027446867e48d73862c34ee7405cd1c17ec9914",
+    "train/tests/test_training.py": "9a93d21b30bd7f802b53e499ba0f7c5d70f944ffedf1c8b55cdad0b2538b1ba4"
+  }
+}

@@ -1,0 +1,4 @@
+# Keep the existing CUDA-matched torch installation when it satisfies this range.
+torch>=2.4,<3
+numpy>=1.26,<3
+pytest>=8,<10
